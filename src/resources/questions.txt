@@ -1,0 +1,80 @@
+Questions about decision in my code:
+
+
+TemporalPooler:
+
+PERMANANCE_INC = 0.1
+PERMANANCE_DEC = 0.1
+INITIAL_PERM = 0.4																											INITIAL_PERMANENCE = CONNECTED_PERM #initial permanence for distal synapses
+CONNECTED_PERMANANCE = 0.5
+MIN_TRESHOLD = 1
+ACTIVATION_TRESHOLD = 1																												3
+AMMOUNT_OF_SEGMENTS = 10
+AMMOUNT_OF_SYNAPSES = 30
+NEW_SYNAPSE_COUNT = 5																												5
+LEARNING_RADIUS =2
+xxMax
+yyMax
+TODO can a cell predict itself?
+Can new segments be added?
+in calculatePredictedState for every segment of a cell a getBestMatchingSegment segment is called.
+This will return every time the same segment. So this segments gets its synapse permanence increased too much.
+
+in updateSynapses I have the feeling this is wrong: if (!cells[c][i][Cell.NOW].hasPredictiveState()
+													&& cells[c][i][Cell.BEFORE].hasPredictiveState()) {
+													
+In adaptSegment I have the feeling this text is wrong it
+	 * should be After this step, any synapses in segmentUpdate that do NOT yet
+	 * exist get added with a permanence count of initialPerm.
+	 
+In getBestMatchingCell it says:
+
+then return the cell with the fewest number of segments
+ all cells have the same amount of segments. Do they mean
+		 connected synapses?
+
+in getSegmentActiveSynapses 
+In my version an active synapse doesn't have to be connected because this 
+	 * is the place where learning should be happening. Also, The synapses that 
+	 * are being updated are sometimes chosen in getBestmatchingegment. 
+	 * And in that method it doesn't matter if the synapse is connected or not.	 
+	 
+
+in segmentActive	 
+Are all cells that have learnstate also Active or should we also check if the cell is/was active?
+
+In calculating the next time
+there is discussion if this should be remembered over time
+cell.setSegmentUpdateList(cells[c][i][0].getSegmentUpdateList());
+
+SpatialPooler
+
+AMMOUNT_OF_COLLUMNS
+desiredLocalActivity																													self.desiredLocalActivity = self.inhibitionRadius * pctLocalActivity
+																																		pctLocalActivity=0.02
+connectedPermanance																													0.2
+minimalOverlap																														self.minOverlap = synapsesPerSegment * pctMinOverlap (pctMinOverlap=0.1)
+permananceDec																														0.04
+permananceInc																														0.05
+
+																																	pctInputPerCol=0.05
+																																	Percent of input bits each Column has potential synapses for.
+																																	synapsesPerSegment = int((self.inputWidth*self.inputHeight) * pctInputPerCol)
+																																    
+amountOfSynapses
+inhibitionRadius
+connectedPermananceMarge
+yyMax
+xxMax
+			// TODO if inhibitionRadius changes, shouldn't this also change?
+			column.setMinimalLocalActivity(minimalLocalActivity);
+
+			
+/**
+	 * increasePermanences(c, s) Increase the permanence value of every synapse
+	 * in column c by a scale factor s.
+	 * 
+	 * @param d
+	 */
+	 
+	 What is a scale factor?
