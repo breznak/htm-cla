@@ -1,79 +1,74 @@
 package nl.vanrijn.model.helper;
 
-public class InputSpace implements Comparable<InputSpace>{
+public class InputSpace implements Comparable<InputSpace> {
 
-	@Override
-	public String toString() {
-		return "x="+xPos+",y="+yPos+"input="+sourceInput;
-	}
+    @Override
+    public String toString() {
+        return "x=" + xPos + ",y=" + yPos + "input=" + sourceInput;
+    }
+    private int xPos;
+    private int yPos;
+    private int sourceInput;
 
-	private int	xPos;
+    public InputSpace(int xPos, int yPos, int sourceInput) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.sourceInput = sourceInput;
+    }
 
-	private int	yPos;
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        } else if(this.xPos == ((InputSpace) obj).getxPos() && (this.yPos == ((InputSpace) obj).getyPos())
+                && this.sourceInput == ((InputSpace) obj).getSourceInput()) {
+            return true;
+        }
+        return false;
 
-	private int	sourceInput;
+    }
 
-	public InputSpace(int xPos, int yPos, int sourceInput) {
-		this.xPos = xPos;
-		this.yPos = yPos;
-		this.sourceInput = sourceInput;
-	}
+    public int getxPos() {
+        return xPos;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		} else if (this.xPos == ((InputSpace)obj).getxPos() && (this.yPos == ((InputSpace)obj).getyPos())
-					&& this.sourceInput == ((InputSpace)obj).getSourceInput()) {
-			return  true;
-		}
-		return false;
+    public void setxPos(int xPos) {
+        this.xPos = xPos;
+    }
 
-	}
+    public int getyPos() {
+        return yPos;
+    }
 
-	public int getxPos() {
-		return xPos;
-	}
+    public void setyPos(int yPos) {
+        this.yPos = yPos;
+    }
 
-	public void setxPos(int xPos) {
-		this.xPos = xPos;
-	}
+    public int getSourceInput() {
+        return sourceInput;
+    }
 
-	public int getyPos() {
-		return yPos;
-	}
+    public void setSourceInput(int sourceInput) {
+        this.sourceInput = sourceInput;
+    }
 
-	public void setyPos(int yPos) {
-		this.yPos = yPos;
-	}
+    public int compareTo(InputSpace o) {
+        int returnValue = -3;
 
-	public int getSourceInput() {
-		return sourceInput;
-	}
-
-	public void setSourceInput(int sourceInput) {
-		this.sourceInput = sourceInput;
-	}
-
-	public int compareTo(InputSpace o) {
-		int returnValue=-3;
-		
-		if(this.equals(o)){
+        if(this.equals(o)) {
 //			System.out.println("gelijk");
-			returnValue= 0;
-			
-		} else if((this.yPos>  o.getyPos())
-				||
-				(this.yPos==o.getyPos() && this.xPos>o.getxPos())
-				||
-				(this.yPos==o.getyPos() && this.xPos==o.getxPos() && this.sourceInput==1 && o.sourceInput==0)) {
-			returnValue= -1;
-		} else{
-			returnValue= 1;
-		}
+            returnValue = 0;
+
+        } else if((this.yPos > o.getyPos())
+                || (this.yPos == o.getyPos() && this.xPos > o.getxPos())
+                || (this.yPos == o.getyPos() && this.xPos == o.getxPos() && this.sourceInput == 1 && o.sourceInput == 0)) {
+            returnValue = -1;
+        } else {
+            returnValue = 1;
+        }
 //		if(returnValue==0){
 //			System.out.println(this+"  "+o +" "+returnValue);
 //		}
-		return returnValue;
-	}
+        return returnValue;
+    }
 }
