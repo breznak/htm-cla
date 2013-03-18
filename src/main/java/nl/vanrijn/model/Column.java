@@ -8,32 +8,7 @@ import java.util.List;
 
 public class Column implements Comparable<Column> {
 
-    public Column(int index, int xx, int yy) {
-        this.columnIndex = index;
-        this.xPos = xx;
-        this.yPos = yy;
-        this.potentialSynapses = null;
-    }
-
-    public Column(int i, int x, int y, Synapse[] synapses) {
-
-        this.columnIndex = i;
-        this.xPos = x;
-        this.yPos = y;
-        this.potentialSynapses = synapses;
-    }
-
-    @Override
-    public String toString() {
-
-        return "column " + this.getColumnIndex() + "," + this.getxPos() + ","
-                + this.getyPos();
-    }
     private final int columnIndex;
-
-    public int getColumnIndex() {
-        return columnIndex;
-    }
     private final int xPos;
     private final int yPos;
     /**
@@ -49,19 +24,6 @@ public class Column implements Comparable<Column> {
     private double overlap;
     private boolean active;
     private ArrayList<Boolean> activeList = new ArrayList<Boolean>();
-
-    public void setActiveList(ArrayList<Boolean> activeList) {
-        this.activeList = activeList;
-    }
-
-    public void setTimesGreaterOverlapThanMinOverlap(
-            ArrayList<Boolean> timesGreaterOverlapThanMinOverlap) {
-        this.timesGreaterOverlapThanMinOverlap = timesGreaterOverlapThanMinOverlap;
-    }
-
-    public void setOverlapDutyCycle(double overlapDutyCycle) {
-        this.overlapDutyCycle = overlapDutyCycle;
-    }
     private ArrayList<Boolean> timesGreaterOverlapThanMinOverlap = new ArrayList<Boolean>();
     /**
      * neighbors(c) A list of all the columns that are within inhibitionRadius
@@ -98,6 +60,40 @@ public class Column implements Comparable<Column> {
      */
     public static int CELLS_PER_COLUMN = 3;
 
+    
+    public Column(int index, int xx, int yy) {
+        this(index, xx, yy, null);
+    }
+
+    public Column(int index, int x, int y, Synapse[] synapses) {
+        this.columnIndex = index;
+        this.xPos = x;
+        this.yPos = y;
+        this.potentialSynapses = synapses;
+    }
+
+    @Override
+    public String toString() {
+        return "column " + this.getColumnIndex() + "," + this.getxPos() + ","
+                + this.getyPos();
+    }
+
+    public int getColumnIndex() {
+        return columnIndex;
+    }
+    
+    public void setActiveList(ArrayList<Boolean> activeList) {
+        this.activeList = activeList;
+    }
+
+    public void setTimesGreaterOverlapThanMinOverlap(ArrayList<Boolean> timesGreaterOverlapThanMinOverlap) {
+        this.timesGreaterOverlapThanMinOverlap = timesGreaterOverlapThanMinOverlap;
+    }
+
+    public void setOverlapDutyCycle(double overlapDutyCycle) {
+        this.overlapDutyCycle = overlapDutyCycle;
+    }
+    
     public static int getCELLS_PER_COLUMN() {
         return CELLS_PER_COLUMN;
     }
@@ -123,7 +119,6 @@ public class Column implements Comparable<Column> {
      * @param minimalDesiredDutyCycle
      */
     public void calculateBoost(double minimalDesiredDutyCycle) {
-
         if(this.getActiveDutyCycle() > minimalDesiredDutyCycle) {
             this.boost = 1.0;
         } else {
@@ -133,11 +128,9 @@ public class Column implements Comparable<Column> {
     }
 
     public void addGreaterThanMinimalOverlap(boolean greaterThanMinimalOverlap) {
-
         // logger.log(Level.INFO, "timesGreate"
         // + timesGreaterOverlapThanMinOverlap.size());
-        this.timesGreaterOverlapThanMinOverlap
-                .add(0, greaterThanMinimalOverlap);
+        this.timesGreaterOverlapThanMinOverlap.add(0, greaterThanMinimalOverlap);
         if(timesGreaterOverlapThanMinOverlap.size() > 1000) {
             timesGreaterOverlapThanMinOverlap.remove(1000);
         }
@@ -241,18 +234,14 @@ public class Column implements Comparable<Column> {
      * @return
      */
     public double updateOverlapDutyCycle() {
-
         int totalGt = 0;
         for(boolean greater : this.timesGreaterOverlapThanMinOverlap) {
             if(greater) {
                 totalGt++;
             }
         }
-        this.overlapDutyCycle = (double) totalGt
-                / timesGreaterOverlapThanMinOverlap.size();
-
+        this.overlapDutyCycle = (double) totalGt / timesGreaterOverlapThanMinOverlap.size();
         return overlapDutyCycle;
-
     }
 
     /**
@@ -262,7 +251,6 @@ public class Column implements Comparable<Column> {
      * @return
      */
     public double updateActiveDutyCycle() {
-
         int totalActive = 0;
         for(boolean active : activeList) {
             if(active) {
@@ -270,7 +258,6 @@ public class Column implements Comparable<Column> {
             }
         }
         this.activeDutyCycle = (double) totalActive / activeList.size();
-
         return activeDutyCycle;
     }
 
@@ -285,7 +272,6 @@ public class Column implements Comparable<Column> {
     public void setActive(boolean active) {
         addActive(active);
         this.active = active;
-
     }
 
     public boolean isActive() {
@@ -293,19 +279,12 @@ public class Column implements Comparable<Column> {
     }
 
     public int compareTo(Column column) {
-        int returnValue = 0;
         if(this.getOverlap() > column.getOverlap()) {
-            returnValue = -1;
-        } else {
-            if(this.getOverlap() == column.getOverlap()) {
-                returnValue = 0;
-            } else {
-                if(this.getOverlap() < column.getOverlap()) {
-                    returnValue = 1;
-                }
-            }
-        }
-        return returnValue;
+            return -1;
+        } else if(this.getOverlap() < column.getOverlap()) {
+            return 1;
+        } else // ==
+            return 0;
     }
 
     public void setMinimalLocalActivity(double minimalLocalActivity) {

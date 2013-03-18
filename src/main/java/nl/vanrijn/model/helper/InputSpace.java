@@ -2,10 +2,6 @@ package nl.vanrijn.model.helper;
 
 public class InputSpace implements Comparable<InputSpace> {
 
-    @Override
-    public String toString() {
-        return "x=" + xPos + ",y=" + yPos + "input=" + sourceInput;
-    }
     private int xPos;
     private int yPos;
     private int sourceInput;
@@ -17,6 +13,11 @@ public class InputSpace implements Comparable<InputSpace> {
     }
 
     @Override
+    public String toString() {
+        return "x=" + xPos + ",y=" + yPos + "input=" + sourceInput;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if(this == obj) {
             return true;
@@ -25,7 +26,6 @@ public class InputSpace implements Comparable<InputSpace> {
             return true;
         }
         return false;
-
     }
 
     public int getxPos() {
@@ -53,22 +53,14 @@ public class InputSpace implements Comparable<InputSpace> {
     }
 
     public int compareTo(InputSpace o) {
-        int returnValue = -3;
-
         if(this.equals(o)) {
-//			System.out.println("gelijk");
-            returnValue = 0;
-
+            return 0;
         } else if((this.yPos > o.getyPos())
                 || (this.yPos == o.getyPos() && this.xPos > o.getxPos())
                 || (this.yPos == o.getyPos() && this.xPos == o.getxPos() && this.sourceInput == 1 && o.sourceInput == 0)) {
-            returnValue = -1;
+            return -1;
         } else {
-            returnValue = 1;
+            return 1;
         }
-//		if(returnValue==0){
-//			System.out.println(this+"  "+o +" "+returnValue);
-//		}
-        return returnValue;
     }
 }

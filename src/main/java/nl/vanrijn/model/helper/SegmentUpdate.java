@@ -6,7 +6,6 @@ package nl.vanrijn.model.helper;
 import java.util.List;
 
 import nl.vanrijn.model.LateralSynapse;
-import nl.vanrijn.model.Synapse;
 
 /**
  * segmentUpdate Data structure holding three pieces of information required to
@@ -18,25 +17,26 @@ import nl.vanrijn.model.Synapse;
  */
 public class SegmentUpdate {
 
-    public SegmentUpdate(int columnIndex, int cellIndex, int segmentUpdateIndex, List<LateralSynapse> activeSynapses) {
-        super();
+    private boolean sequenceSegment;
+    private int segmentUpdateIndex;
+    private int cellIndex;
+    private int columnIndex;
+    private List<LateralSynapse> activeSynapses;
+    public static boolean POSITIVE_REINFORCEMENT = true;
+    public static boolean NO_POSITIVE_REINFORCEMENT = false;
 
+    public SegmentUpdate(int columnIndex, int cellIndex, int segmentUpdateIndex, List<LateralSynapse> activeSynapses) {
         this.cellIndex = cellIndex;
         this.columnIndex = columnIndex;
         this.segmentUpdateIndex = segmentUpdateIndex;
 
         this.activeSynapses = activeSynapses;
     }
-    private boolean sequenceSegment;
-    private int segmentUpdateIndex;
 
     @Override
     public String toString() {
-
         return "segmentUpdate" + this.getColumnIndex() + "," + this.getCellIndex() + "," + this.getSegmentUpdateIndex() + "," + this.isSequenceSegment();
     }
-    private int cellIndex;
-    private int columnIndex;
 
     public int getColumnIndex() {
         return columnIndex;
@@ -45,10 +45,7 @@ public class SegmentUpdate {
     public void setColumnIndex(int columnIndex) {
         this.columnIndex = columnIndex;
     }
-    private List<LateralSynapse> activeSynapses;
-    public static boolean POSITIVE_REINFORCEMENT = true;
-    public static boolean NO_POSITIVE_REINFORCEMENT = false;
-
+    
     public int getCellIndex() {
         return cellIndex;
     }
@@ -79,6 +76,5 @@ public class SegmentUpdate {
 
     public void setSequenceSegment(boolean sequenceSegment) {
         this.sequenceSegment = sequenceSegment;
-
     }
 }

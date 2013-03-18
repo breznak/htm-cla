@@ -52,7 +52,6 @@ public class Segment {
 
     @Override
     public String toString() {
-
         return "segment on " + this.getColumnIndex() + "," + this.getCellIndex() + "," + this.getSegmentIndex() + ",isSeq " + isSsequenceSegment() + ",amm syn " + this.getSynapses().size();
     }
 

@@ -5,7 +5,6 @@ package nl.vanrijn.pooler;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -66,7 +65,7 @@ public class SpatialPooler {
      * input.
      */
     public ArrayList<Column> activeColumns = new ArrayList<Column>();
-    Logger logger = Logger.getLogger(SpatialPooler.class.getName());
+    static final Logger logger = Logger.getLogger(SpatialPooler.class.getName());
     /**
      * the amount of columns over y
      */
@@ -77,6 +76,19 @@ public class SpatialPooler {
     private int xxMax = 12;
     private int[] inputSpace;
     private Column[] columsSaved;
+
+    public SpatialPooler(int desiredLocalActivity, double connectedPermanance, int minimalOverlap,
+            double permananceDec, double permananceInc, int amountOfSynapses, double inhibitionRadius) {
+        this.inhibitionRadius = inhibitionRadius;
+        this.connectedPermanance = connectedPermanance;
+        this.minimalOverlap = minimalOverlap;
+        this.permananceDec = permananceDec;
+        this.permananceInc = permananceInc;
+        this.amountOfSynapses = amountOfSynapses;
+        this.inhibitionRadius = inhibitionRadius;
+
+        init();
+    }
 
     public Column[] getColumns() {
         return columns;
@@ -92,33 +104,11 @@ public class SpatialPooler {
 
     public void conectSynapsesToInputSpace(int[] inputSpace) {
         this.inputSpace = inputSpace;
-        // int index = 0;
-        // for (int y = 0; y < yyMax; y++) {
-        // for (int x = 0; x < xxMax; x++) {
-        // int i = inputSpace[index];
-        // System.out.print(" "+i);
-        // index++;
-        // }
-        // }
-
         for(Column column : this.columns) {
             for(Synapse synapse : column.getPotentialSynapses()) {
                 synapse.setSourceInput(inputSpace[synapse.getInputSpaceIndex()]);
             }
         }
-    }
-
-    public SpatialPooler(int desiredLocalActivity, double connectedPermanance, int minimalOverlap,
-            double permananceDec, double permananceInc, int amountOfSynapses, double inhibitionRadius) {
-        this.inhibitionRadius = inhibitionRadius;
-        this.connectedPermanance = connectedPermanance;
-        this.minimalOverlap = minimalOverlap;
-        this.permananceDec = permananceDec;
-        this.permananceInc = permananceInc;
-        this.amountOfSynapses = amountOfSynapses;
-        this.inhibitionRadius = inhibitionRadius;
-
-        init();
     }
 
     private void saveSetup() {
@@ -127,8 +117,7 @@ public class SpatialPooler {
         for(Column column : this.columns) {
             Synapse[] synapsesSaved = new Synapse[amountOfSynapses];
             System.arraycopy(column.getPotentialSynapses(), 0, synapsesSaved, 0, column.getPotentialSynapses().length);
-            columsSaved[column.getColumnIndex()] = new Column(column.getColumnIndex(), column.getxPos(), column
-                    .getyPos(), synapsesSaved);
+            columsSaved[column.getColumnIndex()] = new Column(column.getColumnIndex(), column.getxPos(), column.getyPos(), synapsesSaved);
         }
     }
 
@@ -150,7 +139,7 @@ public class SpatialPooler {
      * natural center over the input region, and the permanence values have a
      * bias towards this center (they have higher values near the center).
      */
-    // TODo A synapse can be connected but not active. And maybe also the other way arround
+    // TODO A synapse can be connected but not active. And maybe also the other way arround
     private void init() {
         // TODO the input space has to be the same size is the column space. That is not desireable .Make this better.
         // logger.log(Level.INFO, "SpatialPooler");
@@ -324,7 +313,7 @@ public class SpatialPooler {
         for(Integer integer : inhibitionRadiuses) {
             averageReceptiveFieldSize += integer;
         }
-        averageReceptiveFieldSize = averageReceptiveFieldSize / inhibitionRadiuses.size();
+        averageReceptiveFieldSize /= inhibitionRadiuses.size();
         inhibitionRadiuses = new ArrayList<Integer>();
         return averageReceptiveFieldSize;
     }
@@ -334,7 +323,6 @@ public class SpatialPooler {
     }
 
     private int input(int t, int sourceInput) {
-
         return sourceInput;
     }
 
@@ -368,19 +356,16 @@ public class SpatialPooler {
      * @return
      */
     private double kthScore(List<Column> neighbors, int disiredLocalActivity) {
-
         if(disiredLocalActivity > neighbors.size()) {
             disiredLocalActivity = neighbors.size();
         }
 
         Collections.sort(neighbors);
         double ktScore = neighbors.get(disiredLocalActivity - 1).getOverlap();
-
         return ktScore;
     }
 
     private List<Column> getNeigbors(Column column) {
-
         List<Column> neighbors = new ArrayList<Column>();
         int inhib = (int) Math.round(inhibitionRadius);
         int xxStart = Math.max(0, column.getxPos() - inhib);
@@ -411,42 +396,29 @@ public class SpatialPooler {
                         .getSourceInput()));
             }
         }
-        // for(InputSpace inputSpace : inputSpaces){
-        // System.out.println(inputSpace);
-        // }
-        // System.out.println("aantal aktief e " + inputSpaces.size());
+
         int ammountAcive = 0;
         int index = 0;
         for(int y = 0; y < yyMax; y++) {
             for(int x = 0; x < xxMax; x++) {
                 int i = inputSpace[index];
                 if(i == 1) {
-
                     ammountAcive++;
                 }
-
                 if(i == 1 && inputSpaces.contains(new InputSpace(x, y, 1))) {
                     ammountOk++;
-
                 } else if(i == 0 && inputSpaces.contains(new InputSpace(x, y, 0))) {
                     ammountWrong++;
-
                 } else if(i == 1 && !inputSpaces.contains(new InputSpace(x, y, 1))) {
                     ammountWrong++;
                 }
                 index++;
             }
-
         }
-        // System.out.println();
-        // System.out.println(ammountAcive + " ammountAcive");
-        // System.out.println(ammountOk + " ok");
-        // System.out.println(ammountWrong + " wrong");
-        if(ammountOk != 0) {
+        if(ammountAcive != 0) {
             return ((double) ammountOk / (double) (ammountAcive) * 100);
         }
         return 0;
-
     }
 
     public void setInputSpace(int[] inputSpace) {
