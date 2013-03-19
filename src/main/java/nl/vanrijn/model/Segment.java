@@ -8,9 +8,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class Segment {
-
-    public static final boolean GETS_NO_NEW_SYNAPSE = false;
-    public static final boolean GETS_NEW_SYNAPSE = true;
     private List<LateralSynapse> synapses;
     private boolean sequenceSegment;
     private int cellIndex;
@@ -33,17 +30,13 @@ public class Segment {
         return segmentIndex;
     }
 
-    public int getColumnIndex() {
-        return columnIndex;
-    }
-
     public List<LateralSynapse> getSynapses() {
         return Collections.unmodifiableList(synapses);
     }
 
     public List<LateralSynapse> getConnectedSynapses() {
         List<LateralSynapse> connectedSynapses = new ArrayList<>();
-        for(LateralSynapse synapse : synapses) {
+        for (LateralSynapse synapse : synapses) {
             if (synapse.isConnected()) {
                 connectedSynapses.add(synapse);
             }
@@ -53,11 +46,7 @@ public class Segment {
 
     @Override
     public String toString() {
-        return "segment on "+this.getColumnIndex()+","+this.getCellIndex()+","+this.getSegmentIndex()+",isSeq "+isSequenceSegment()+",amm syn "+this.getSynapses().size();
-    }
-
-    public void setSynapses(List<LateralSynapse> synapses) {
-        this.synapses = synapses;
+        return "segment on " + this.columnIndex + "," + this.cellIndex + "," + this.segmentIndex + ",isSeq " + sequenceSegment + ",amm syn " + this.getSynapses().size();
     }
 
     public boolean isSequenceSegment() {
