@@ -19,45 +19,23 @@ public class InputSpace implements Comparable<InputSpace> {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
-        } else if(this.xPos == ((InputSpace) obj).getxPos() && (this.yPos == ((InputSpace) obj).getyPos())
-                && this.sourceInput == ((InputSpace) obj).getSourceInput()) {
+        } else if (obj != null && obj.getClass().equals(this.getClass())
+                && this.xPos == ((InputSpace) obj).xPos && (this.yPos == ((InputSpace) obj).yPos)
+                && this.sourceInput == ((InputSpace) obj).sourceInput) {
             return true;
         }
         return false;
     }
 
-    public int getxPos() {
-        return xPos;
-    }
-
-    public void setxPos(int xPos) {
-        this.xPos = xPos;
-    }
-
-    public int getyPos() {
-        return yPos;
-    }
-
-    public void setyPos(int yPos) {
-        this.yPos = yPos;
-    }
-
-    public int getSourceInput() {
-        return sourceInput;
-    }
-
-    public void setSourceInput(int sourceInput) {
-        this.sourceInput = sourceInput;
-    }
-
+    @Override
     public int compareTo(InputSpace o) {
-        if(this.equals(o)) {
+        if (this.equals(o)) {
             return 0;
-        } else if((this.yPos > o.getyPos())
-                || (this.yPos == o.getyPos() && this.xPos > o.getxPos())
-                || (this.yPos == o.getyPos() && this.xPos == o.getxPos() && this.sourceInput == 1 && o.sourceInput == 0)) {
+        } else if ((this.yPos > o.yPos)
+                || (this.yPos == o.yPos && this.xPos > o.xPos)
+                || (this.yPos == o.yPos && this.xPos == o.xPos && this.sourceInput == 1 && o.sourceInput == 0)) {
             return -1;
         } else {
             return 1;
