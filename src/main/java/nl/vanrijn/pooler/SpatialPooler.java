@@ -191,8 +191,7 @@ public class SpatialPooler {
         for (Column column : this.columns) {
             double overlap = 0.0;
             for (Synapse connectedSynapse : column.getConnectedSynapses(connectedPermanance)) {
-                int t = 1;
-                overlap += input(t, connectedSynapse.getSourceInput());
+                overlap += input(connectedSynapse.getSourceInput());
             }
 
             if (overlap < minimalOverlap) {
@@ -313,7 +312,7 @@ public class SpatialPooler {
         return connectedPermanance;
     }
 
-    private int input(int t, int sourceInput) {
+    private int input(int sourceInput) {
         return sourceInput;
     }
 
