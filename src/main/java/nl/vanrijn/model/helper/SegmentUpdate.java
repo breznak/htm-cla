@@ -21,13 +21,13 @@ public class SegmentUpdate {
     private final static int NEW_SEGMENT_IDX = -1;
     private boolean sequenceSegment = false;
     private int segmentUpdateIndex = NEW_SEGMENT_IDX;
-    private int cellIndex;
-    private int columnIndex;
-    private List<LateralSynapse> activeSynapses;
+    private final int cellIndex;
+    private final int columnIndex;
+    private final List<LateralSynapse> activeSynapses;
     public static boolean POSITIVE_REINFORCEMENT = true;
     public static boolean NO_POSITIVE_REINFORCEMENT = false;
 
-    public SegmentUpdate(int columnIndex, int cellIndex, int segmentUpdateIndex, List<LateralSynapse> activeSynapses) {
+    public SegmentUpdate(final int columnIndex, final int cellIndex, int segmentUpdateIndex, List<LateralSynapse> activeSynapses) {
         this.cellIndex = cellIndex;
         this.columnIndex = columnIndex;
         this.segmentUpdateIndex = segmentUpdateIndex;
@@ -36,39 +36,23 @@ public class SegmentUpdate {
 
     @Override
     public String toString() {
-        return "segmentUpdate"+this.getColumnIndex()+","+this.getCellIndex()+","+this.getSegmentUpdateIndex()+","+this.isSequenceSegment();
+        return "segmentUpdate"+this.columnIndex+","+this.cellIndex+","+this.segmentUpdateIndex+","+this.sequenceSegment;
     }
 
     public int getColumnIndex() {
         return columnIndex;
     }
 
-    public void setColumnIndex(int columnIndex) {
-        this.columnIndex = columnIndex;
-    }
-
     public int getCellIndex() {
         return cellIndex;
-    }
-
-    public void setCellIndex(int cellIndex) {
-        this.cellIndex = cellIndex;
     }
 
     public int getSegmentUpdateIndex() {
         return segmentUpdateIndex;
     }
 
-    public void setSegmentUpdateIndex(int segmentUpdateIndex) {
-        this.segmentUpdateIndex = segmentUpdateIndex;
-    }
-
     public List<LateralSynapse> getActiveSynapses() {
         return activeSynapses;
-    }
-
-    public void setActiveSynapses(List<LateralSynapse> activeSynapses) {
-        this.activeSynapses = activeSynapses;
     }
 
     public boolean isSequenceSegment() {
