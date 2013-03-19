@@ -12,6 +12,9 @@ package nl.vanrijn.model;
 public class Synapse {
 
     private int sourceInput;
+    /**
+     * range 0..1
+     */
     private double permanance;
     private int inputSpaceIndex;
     private final int xPos;
@@ -49,8 +52,13 @@ public class Synapse {
         return this.permanance;
     }
 
+    /**
+     * set permanence value to d, ensure range is between 0..1
+     *
+     * @param d
+     */
     public void setPermanance(double d) {
-        this.permanance = d;
+        this.permanance = Math.min(Math.max(d, 0), 1);
     }
 
     public int getInputSpaceIndex() {

@@ -11,7 +11,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
-
 import nl.vanrijn.model.Column;
 import nl.vanrijn.model.Synapse;
 import nl.vanrijn.model.helper.InputSpace;
@@ -104,8 +103,8 @@ public class SpatialPooler {
 
     public void conectSynapsesToInputSpace(int[] inputSpace) {
         this.inputSpace = inputSpace;
-        for(Column column : this.columns) {
-            for(Synapse synapse : column.getPotentialSynapses()) {
+        for (Column column : this.columns) {
+            for (Synapse synapse : column.getPotentialSynapses()) {
                 synapse.setSourceInput(inputSpace[synapse.getInputSpaceIndex()]);
             }
         }
@@ -114,7 +113,7 @@ public class SpatialPooler {
     private void saveSetup() {
         columsSaved = new Column[AMMOUNT_OF_COLLUMNS];
 
-        for(Column column : this.columns) {
+        for (Column column : this.columns) {
             Synapse[] synapsesSaved = new Synapse[amountOfSynapses];
             System.arraycopy(column.getPotentialSynapses(), 0, synapsesSaved, 0, column.getPotentialSynapses().length);
             columsSaved[column.getColumnIndex()] = new Column(column.getColumnIndex(), column.getxPos(), column.getyPos(), synapsesSaved);
@@ -149,26 +148,25 @@ public class SpatialPooler {
         int i = 0;
 
         List<Integer> synapsesToInputt = new ArrayList<Integer>();
-        for(int k = 0; k < xxMax * yyMax; k++) {
+        for (int k = 0; k < xxMax * yyMax; k++) {
             synapsesToInputt.add(k);
         }
 
-        for(int y = 0; y < yyMax; y++) {
-            for(int x = 0; x < xxMax; x++) {
+        for (int y = 0; y < yyMax; y++) {
+            for (int x = 0; x < xxMax; x++) {
 
                 Collections.shuffle(synapsesToInputt);
                 Iterator<Integer> iter = synapsesToInputt.iterator();
 
                 Synapse[] synapses = new Synapse[amountOfSynapses];
 
-                for(int j = 0; j < synapses.length; j++) {
+                for (int j = 0; j < synapses.length; j++) {
 
                     Integer inputSpaceIndex = iter.next();
                     synapses[j] = new Synapse(inputSpaceIndex, inputSpaceIndex % 12, inputSpaceIndex / 12);
 
-                    // TODO 4 is not correct permananceMarge should be responsible for this value
-                    synapses[j].setPermanance(connectedPermanance - connectedPermananceMarge
-                            + (((double) random.nextInt(4)) / 10));
+                    // TODO 4 is not correct permanenceMarge should be responsible for this value WTF?!
+                    synapses[j].setPermanance(connectedPermanance - connectedPermananceMarge + (((double) random.nextInt(4)) / 10));
                     // logger.info(""+synapses[j].getPermanance());
                 }
                 columns[i] = new Column(i, x, y, synapses);
@@ -190,19 +188,18 @@ public class SpatialPooler {
      * zero.
      */
     public void computOverlap() {
-        for(Column column : this.columns) {
+        for (Column column : this.columns) {
             double overlap = 0.0;
-            for(Synapse connectedSynapse : column.getConnectedSynapses(connectedPermanance)) {
+            for (Synapse connectedSynapse : column.getConnectedSynapses(connectedPermanance)) {
                 int t = 1;
                 overlap += input(t, connectedSynapse.getSourceInput());
             }
 
-            if(overlap < minimalOverlap) {
+            if (overlap < minimalOverlap) {
                 column.setOverlap(0);
                 column.addGreaterThanMinimalOverlap(false);
             } else {
                 column.setOverlap(overlap * column.getBoost());
-
                 column.addGreaterThanMinimalOverlap(true);
             }
             column.updateOverlapDutyCycle();
@@ -220,15 +217,15 @@ public class SpatialPooler {
     public void computeWinningColumsAfterInhibition() {
 
         activeColumns = new ArrayList<Column>();
-        for(Column column : this.columns) {
-            if(Math.round(this.inhibitionRadius) != Math.round(this.inhibitionRadiusBefore)
+        for (Column column : this.columns) {
+            if (Math.round(this.inhibitionRadius) != Math.round(this.inhibitionRadiusBefore)
                     || column.getNeigbours() == null) {
                 column.setNeigbours(getNeigbors(column));
             }
             double minimalLocalActivity = kthScore(column.getNeigbours(), desiredLocalActivity);
             // TODO if inhibitionRadius changes, shouldn't this also change?
             column.setMinimalLocalActivity(minimalLocalActivity);
-            if(column.getOverlap() > 0 && column.getOverlap() >= minimalLocalActivity) {
+            if (column.getOverlap() > 0 && column.getOverlap() >= minimalLocalActivity) {
                 column.setActive(true);
                 activeColumns.add(column);
             } else {
@@ -255,34 +252,28 @@ public class SpatialPooler {
      * is recomputed (line 38).
      */
     public void updateSynapses() {
-        if(LEARNING) {
-            for(Column activeColumn : activeColumns) {
-                for(Synapse potentialSynapse : activeColumn.getPotentialSynapses()) {
-                    double permanance = potentialSynapse.getPermanance();
+        if (LEARNING) {
+            for (Column activeColumn : activeColumns) {
+                for (Synapse potentialSynapse : activeColumn.getPotentialSynapses()) {
                     // See page 29 point 6) For each....vice-versa.
-                    if(potentialSynapse.getSourceInput() == 1) {
-
-                        potentialSynapse.setPermanance(permanance + permananceInc);
-                        potentialSynapse.setPermanance(Math.min(potentialSynapse.getPermanance(), 1.0));
-
+                    if (potentialSynapse.getSourceInput() == 1) {
+                        potentialSynapse.setPermanance(potentialSynapse.getPermanance() + permananceInc);
                     } else {
-                        potentialSynapse.setPermanance(permanance - permananceDec);
-                        potentialSynapse.setPermanance(Math.max(potentialSynapse.getPermanance(), 0.0));
+                        potentialSynapse.setPermanance(potentialSynapse.getPermanance() - permananceDec);
                     }
                 }
-
             }
-            for(Column column : this.columns) {
+            for (Column column : this.columns) {
                 double minimalDutyCycle = (0.01 * (getMaxDutyCycle(column.getNeigbours())));
                 column.setMinimalDutyCycle(minimalDutyCycle);
                 column.calculateBoost(minimalDutyCycle);
 
                 double overlapDutyCycle = column.updateOverlapDutyCycle();
 
-                if(overlapDutyCycle < minimalDutyCycle) {
+                if (overlapDutyCycle < minimalDutyCycle) {
                     column.increasePermanances(0.1 * connectedPermanance);
                 }
-                for(Synapse synapse : column.getConnectedSynapses(connectedPermanance)) {
+                for (Synapse synapse : column.getConnectedSynapses(connectedPermanance)) {
 
                     this.inhibitionRadiuses.add(Math.max(Math.abs(column.getxPos() - synapse.getxPos()), Math
                             .abs(column.getyPos() - synapse.getyPos())));
@@ -310,7 +301,7 @@ public class SpatialPooler {
     private double averageReceptiveFieldSize() {
         double averageReceptiveFieldSize = 0;
 
-        for(Integer integer : inhibitionRadiuses) {
+        for (Integer integer : inhibitionRadiuses) {
             averageReceptiveFieldSize += integer;
         }
         averageReceptiveFieldSize /= inhibitionRadiuses.size();
@@ -336,11 +327,11 @@ public class SpatialPooler {
     private double getMaxDutyCycle(List<Column> neighbors) {
 
         Column highestNeighbor = null;
-        if(neighbors.size() > 0) {
+        if (neighbors.size() > 0) {
             highestNeighbor = neighbors.get(0);
         }
-        for(Column neighbor : neighbors) {
-            if(neighbor.getActiveDutyCycle() > highestNeighbor.getActiveDutyCycle()) {
+        for (Column neighbor : neighbors) {
+            if (neighbor.getActiveDutyCycle() > highestNeighbor.getActiveDutyCycle()) {
                 highestNeighbor = neighbor;
             }
         }
@@ -356,7 +347,7 @@ public class SpatialPooler {
      * @return
      */
     private double kthScore(List<Column> neighbors, int disiredLocalActivity) {
-        if(disiredLocalActivity > neighbors.size()) {
+        if (disiredLocalActivity > neighbors.size()) {
             disiredLocalActivity = neighbors.size();
         }
 
@@ -373,9 +364,9 @@ public class SpatialPooler {
         int yyStart = Math.max(0, column.getyPos() - inhib);
         int yyEnd = Math.min(yyMax, column.getyPos() + inhib + 1);
 
-        for(int y = yyStart; y < yyEnd; y++) {
-            for(int x = xxStart; x < xxEnd; x++) {
-                if(!(y == column.getyPos() && x == column.getxPos())) {
+        for (int y = yyStart; y < yyEnd; y++) {
+            for (int x = xxStart; x < xxEnd; x++) {
+                if (!(y == column.getyPos() && x == column.getxPos())) {
                     neighbors.add(this.columns[y * xxMax + x]);
                 }
             }
@@ -390,8 +381,8 @@ public class SpatialPooler {
         int ammountWrong = 0;
         Set<InputSpace> inputSpaces = new TreeSet<InputSpace>();
 
-        for(Column activeColumn : activeColumns) {
-            for(Synapse connectedSynapse : activeColumn.getConnectedSynapses(this.connectedPermanance)) {
+        for (Column activeColumn : activeColumns) {
+            for (Synapse connectedSynapse : activeColumn.getConnectedSynapses(this.connectedPermanance)) {
                 inputSpaces.add(new InputSpace(connectedSynapse.getxPos(), connectedSynapse.getyPos(), connectedSynapse
                         .getSourceInput()));
             }
@@ -399,23 +390,23 @@ public class SpatialPooler {
 
         int ammountAcive = 0;
         int index = 0;
-        for(int y = 0; y < yyMax; y++) {
-            for(int x = 0; x < xxMax; x++) {
+        for (int y = 0; y < yyMax; y++) {
+            for (int x = 0; x < xxMax; x++) {
                 int i = inputSpace[index];
-                if(i == 1) {
+                if (i == 1) {
                     ammountAcive++;
                 }
-                if(i == 1 && inputSpaces.contains(new InputSpace(x, y, 1))) {
+                if (i == 1 && inputSpaces.contains(new InputSpace(x, y, 1))) {
                     ammountOk++;
-                } else if(i == 0 && inputSpaces.contains(new InputSpace(x, y, 0))) {
+                } else if (i == 0 && inputSpaces.contains(new InputSpace(x, y, 0))) {
                     ammountWrong++;
-                } else if(i == 1 && !inputSpaces.contains(new InputSpace(x, y, 1))) {
+                } else if (i == 1 && !inputSpaces.contains(new InputSpace(x, y, 1))) {
                     ammountWrong++;
                 }
                 index++;
             }
         }
-        if(ammountAcive != 0) {
+        if (ammountAcive != 0) {
             return ((double) ammountOk / (double) (ammountAcive) * 100);
         }
         return 0;
