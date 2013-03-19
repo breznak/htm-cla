@@ -13,20 +13,12 @@ public class Cell {
     public static final int ACTIVE_STATE = 1;
     public static final int LEARN_STATE = 2;
     public static final int NOW = 1;
-
-    public int getTime() {
-        return time;
-    }
-
-    public void setTime(int time) {
-        this.time = time;
-    }
     public static final int BEFORE = 0;
     /**
      * segmentUpdateList A list of segmentUpdate structures. segmentUpdateList(c,i) is the list of changes for cell i in
      * column c.
      */
-    private List<SegmentUpdate> segmentUpdateList = new ArrayList<SegmentUpdate>();
+    private List<SegmentUpdate> segmentUpdateList = new ArrayList<>();
     private final int columnIndex;
     private final int cellIndex;
     private int time;
@@ -48,22 +40,10 @@ public class Cell {
      * appropriate temporal context.
      */
     private boolean activeState;
-
-    public boolean hasPredictiveState() {
-        return predictiveState;
-    }
-
-    public void setPredictiveState(boolean predictiveState) {
-        this.predictiveState = predictiveState;
-    }
     private final List<Segment> segments;
     private final int xpos;
     private final int ypos;
     private List<Cell> neighbors = null;
-
-    public boolean hasActiveState() {
-        return activeState;
-    }
 
     public Cell(int columnIndex, int cellIndex, int time, int xx, int yy, List<Segment> segments) {
         this.columnIndex = columnIndex;
@@ -72,6 +52,22 @@ public class Cell {
         this.ypos = yy;
         this.xpos = xx;
         this.segments = segments;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public boolean hasPredictiveState() {
+        return predictiveState;
+    }
+
+    public void setPredictiveState(boolean predictiveState) {
+        this.predictiveState = predictiveState;
+    }
+
+    public boolean hasActiveState() {
+        return activeState;
     }
 
     public int getColumnIndex() {
@@ -88,10 +84,9 @@ public class Cell {
 
     public void setLearnState(boolean learnState) {
         this.learnState = learnState;
-
     }
 
-    public boolean hasLearnState() {
+    public boolean getLearnState() {
         return this.learnState;
     }
 
@@ -105,14 +100,13 @@ public class Cell {
 
     public void setActiveState(boolean activeState) {
         this.activeState = activeState;
-
     }
 
     @Override
     public String toString() {
-        return "cell="+this.columnIndex+","+this.getCellIndex()+","+this.time+",activeState="
+        return "cell="+this.columnIndex+","+this.cellIndex+","+this.time+",activeState="
                +this.activeState+",learnState="+this.learnState+",predictivestate="+this.predictiveState
-               +",segments.size="+this.segments.size()+"x,y="+this.getXpos()+","+this.getYpos()+" "
+               +",segments.size="+this.segments.size()+"x,y="+this.xpos+","+this.ypos+" "
                +this.segmentUpdateList.size();
     }
 
@@ -126,7 +120,6 @@ public class Cell {
 
     public void setNeigbors(List<Cell> neighbors) {
         this.neighbors = neighbors;
-
     }
 
     public List<Cell> getNeighbors() {

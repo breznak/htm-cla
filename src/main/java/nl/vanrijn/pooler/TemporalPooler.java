@@ -270,7 +270,7 @@ public class TemporalPooler {
             for(int c = 0; c < xxMax * yyMax; c++) {
                 for(int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
                     Cell cell = cells[c][i][Cell.NOW];
-                    if(cell.hasLearnState()) {
+                    if(cell.getLearnState()) {
                         adaptSegments(cell.getSegmentUpdateList(),SegmentUpdate.POSITIVE_REINFORCEMENT);
                         cell.getSegmentUpdateList().clear();
                     } else // TODO I have the feeling that this is wrong. It should be:if
@@ -522,7 +522,7 @@ public class TemporalPooler {
 
                     for(Cell neighborCell : cells[c][i][Cell.NOW].getNeighbors()) {
                         Cell potentialCellWithLearnState = cells[neighborCell.getColumnIndex()][neighborCell.getCellIndex()][time];
-                        if(potentialCellWithLearnState.hasLearnState()) {
+                        if(potentialCellWithLearnState.getLearnState()) {
                             cellsWithLearnstate.add(potentialCellWithLearnState);
                         }
                     }
@@ -531,7 +531,7 @@ public class TemporalPooler {
                         for(int ii = 0; ii < Column.CELLS_PER_COLUMN; ii++) {
 
                             Cell cell = cells[ci][ii][time];
-                            if(cell.hasLearnState()) {
+                            if(cell.getLearnState()) {
                                 cellsWithLearnstate.add(cell);
                             }
                         }
@@ -647,7 +647,7 @@ public class TemporalPooler {
                 // TODO are all cells that have learnstate also Active or should we also check if the cell is/was active?
                 if(synapse.isConnected()
                         && cells[synapse.getFromColumnIndex()][synapse
-                        .getFromCellIndex()][time].hasLearnState()) {
+                        .getFromCellIndex()][time].getLearnState()) {
                     ammountConnected++;
                 }
             } else {
