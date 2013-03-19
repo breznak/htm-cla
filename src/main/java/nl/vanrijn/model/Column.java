@@ -4,6 +4,7 @@
 package nl.vanrijn.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Column implements Comparable<Column> {
@@ -60,7 +61,6 @@ public class Column implements Comparable<Column> {
      */
     public static int CELLS_PER_COLUMN = 3;
 
-    
     public Column(int index, int xx, int yy) {
         this(index, xx, yy, null);
     }
@@ -81,7 +81,7 @@ public class Column implements Comparable<Column> {
     public int getColumnIndex() {
         return columnIndex;
     }
-    
+
     public void setActiveList(ArrayList<Boolean> activeList) {
         this.activeList = activeList;
     }
@@ -93,7 +93,7 @@ public class Column implements Comparable<Column> {
     public void setOverlapDutyCycle(double overlapDutyCycle) {
         this.overlapDutyCycle = overlapDutyCycle;
     }
-    
+
     public static int getCELLS_PER_COLUMN() {
         return CELLS_PER_COLUMN;
     }
@@ -119,7 +119,7 @@ public class Column implements Comparable<Column> {
      * @param minimalDesiredDutyCycle
      */
     public void calculateBoost(double minimalDesiredDutyCycle) {
-        if(this.getActiveDutyCycle() > minimalDesiredDutyCycle) {
+        if (this.getActiveDutyCycle() > minimalDesiredDutyCycle) {
             this.boost = 1.0;
         } else {
             this.boost += minimalDesiredDutyCycle;
@@ -131,7 +131,7 @@ public class Column implements Comparable<Column> {
         // logger.log(Level.INFO, "timesGreate"
         // + timesGreaterOverlapThanMinOverlap.size());
         this.timesGreaterOverlapThanMinOverlap.add(0, greaterThanMinimalOverlap);
-        if(timesGreaterOverlapThanMinOverlap.size() > 1000) {
+        if (timesGreaterOverlapThanMinOverlap.size() > 1000) {
             timesGreaterOverlapThanMinOverlap.remove(1000);
         }
     }
@@ -143,7 +143,7 @@ public class Column implements Comparable<Column> {
     public void addActive(boolean active) {
         // logger.log(Level.INFO, "activeList" + activeList.size());
         activeList.add(0, active);
-        if(activeList.size() > 1000) {
+        if (activeList.size() > 1000) {
             activeList.remove(1000);
         }
     }
@@ -177,7 +177,7 @@ public class Column implements Comparable<Column> {
     }
 
     public List<Column> getNeigbours() {
-        return neigbours;
+        return Collections.unmodifiableList(neigbours);
     }
 
     public void setNeigbours(List<Column> neigbours) {
@@ -193,25 +193,18 @@ public class Column implements Comparable<Column> {
      * @return
      */
     public Synapse[] getConnectedSynapses(double connectedPermanance) {
-        ArrayList<Synapse> connectedSynapses = new ArrayList<Synapse>();
-        for(Synapse potentialSynapse : this.potentialSynapses) {
-            if(potentialSynapse.isConnected(connectedPermanance)) {
+        ArrayList<Synapse> connectedSynapses = new ArrayList<>();
+        for (Synapse potentialSynapse : this.potentialSynapses) {
+            if (potentialSynapse.isConnected(connectedPermanance)) {
                 connectedSynapses.add(potentialSynapse);
             }
         }
-        Object[] objects = connectedSynapses.toArray();
-        Synapse[] synapses = new Synapse[objects.length];
-        System.arraycopy(objects, 0, synapses, 0, objects.length);
-        connectedSynapses = null;
-        return synapses;
+        Synapse[] tmp = new Synapse[connectedSynapses.size()];
+        return connectedSynapses.toArray(tmp);
     }
 
     public double getBoost() {
         return boost;
-    }
-
-    public void setBoost(double boost) {
-        this.boost = boost;
     }
 
     /**
@@ -221,10 +214,9 @@ public class Column implements Comparable<Column> {
      * @param d
      */
     public void increasePermanances(double d) {
-        for(Synapse potenSynapse : potentialSynapses) {
+        for (Synapse potenSynapse : potentialSynapses) {
             potenSynapse.setPermanance(potenSynapse.getPermanance() + d);
         }
-
     }
 
     /**
@@ -235,8 +227,8 @@ public class Column implements Comparable<Column> {
      */
     public double updateOverlapDutyCycle() {
         int totalGt = 0;
-        for(boolean greater : this.timesGreaterOverlapThanMinOverlap) {
-            if(greater) {
+        for (boolean greater : this.timesGreaterOverlapThanMinOverlap) {
+            if (greater) {
                 totalGt++;
             }
         }
@@ -252,21 +244,13 @@ public class Column implements Comparable<Column> {
      */
     public double updateActiveDutyCycle() {
         int totalActive = 0;
-        for(boolean active : activeList) {
-            if(active) {
+        for (boolean act : activeList) {
+            if (act) {
                 totalActive++;
             }
         }
         this.activeDutyCycle = (double) totalActive / activeList.size();
         return activeDutyCycle;
-    }
-
-    public ArrayList<Boolean> getActiveList() {
-        return activeList;
-    }
-
-    public void setActive(ArrayList<Boolean> activeList) {
-        this.activeList = activeList;
     }
 
     public void setActive(boolean active) {
@@ -278,13 +262,16 @@ public class Column implements Comparable<Column> {
         return this.active;
     }
 
+    @Override
     public int compareTo(Column column) {
-        if(this.getOverlap() > column.getOverlap()) {
+        if (this.overlap > column.getOverlap()) {
             return -1;
-        } else if(this.getOverlap() < column.getOverlap()) {
+        } else if (this.overlap < column.getOverlap()) {
             return 1;
         } else // ==
+        {
             return 0;
+        }
     }
 
     public void setMinimalLocalActivity(double minimalLocalActivity) {
