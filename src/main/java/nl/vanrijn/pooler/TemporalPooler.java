@@ -189,7 +189,7 @@ public class TemporalPooler {
                     // from one time step before. and the cells
                     // connected to these synapses also.
                     Segment segment = getActiveSegment(column.getColumnIndex(), i, Cell.BEFORE, Cell.ACTIVE_STATE);
-                    if(segment != null && segment.isSsequenceSegment()) {
+                    if(segment != null && segment.isSequenceSegment()) {
                         buPredicted = true;
                         cells[column.getColumnIndex()][i][Cell.NOW].setActiveState(true);
                         // if these cells also had learnstate
@@ -335,11 +335,11 @@ public class TemporalPooler {
                     }
                     segmentToCompare.setAmmountActiveCells(ammountActiveCellsToCompare);
 
-                    if(segment.isSsequenceSegment() == segmentToCompare.isSsequenceSegment()
+                    if(segment.isSequenceSegment() == segmentToCompare.isSequenceSegment()
                             && segment.getAmmountActiveCells() == segmentToCompare.getAmmountActiveCells()) {
                         return 0;
-                    } else if((segment.isSsequenceSegment() && !segmentToCompare.isSsequenceSegment())
-                            || (segment.isSsequenceSegment() == segmentToCompare.isSsequenceSegment() && 
+                    } else if((segment.isSequenceSegment() && !segmentToCompare.isSequenceSegment())
+                            || (segment.isSequenceSegment() == segmentToCompare.isSequenceSegment() && 
                                        segment.getAmmountActiveCells() > segmentToCompare.getAmmountActiveCells())) {
                         return 1;
                     } else {

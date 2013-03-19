@@ -40,7 +40,7 @@ public class TemporalPoolerTest {
         Segment segmentToTest = tempo.getActiveSegment(0, 0, Cell.NOW, Cell.ACTIVE_STATE);
         System.out.println(this.getClass().getName()+">> segment connected synapses = "+segment.getConnectedSynapses().size());
         System.out.println(this.getClass().getName()+">> "+tempo.segmentActive(segment, Cell.NOW, Cell.ACTIVE_STATE));
-        System.out.println(this.getClass().getName()+">> is Ssequence segment: "+segmentToTest.isSsequenceSegment());
-        assertEquals(segmentToTest.isSsequenceSegment(), false);
+        System.out.println(this.getClass().getName()+">> is Ssequence segment: "+segmentToTest.isSequenceSegment());
+        assertEquals(segmentToTest.isSequenceSegment(), false);
     }
 }

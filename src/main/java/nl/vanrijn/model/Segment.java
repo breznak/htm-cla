@@ -53,14 +53,14 @@ public class Segment {
 
     @Override
     public String toString() {
-        return "segment on "+this.getColumnIndex()+","+this.getCellIndex()+","+this.getSegmentIndex()+",isSeq "+isSsequenceSegment()+",amm syn "+this.getSynapses().size();
+        return "segment on "+this.getColumnIndex()+","+this.getCellIndex()+","+this.getSegmentIndex()+",isSeq "+isSequenceSegment()+",amm syn "+this.getSynapses().size();
     }
 
     public void setSynapses(List<LateralSynapse> synapses) {
         this.synapses = synapses;
     }
 
-    public boolean isSsequenceSegment() {
+    public boolean isSequenceSegment() {
         return this.sequenceSegment;
     }
 
