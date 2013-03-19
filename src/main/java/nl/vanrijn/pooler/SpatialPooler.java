@@ -17,7 +17,7 @@ import nl.vanrijn.model.helper.InputSpace;
 
 public class SpatialPooler {
 
-    private List<Integer> inhibitionRadiuses = new ArrayList<Integer>();
+    private List<Integer> inhibitionRadiuses = new ArrayList<>();
     private static final int AMMOUNT_OF_COLLUMNS = 144;
     /**
      * if learning is on, the spatial pooler can learn new patterns
@@ -25,12 +25,12 @@ public class SpatialPooler {
     public static boolean LEARNING = true;
     /**
      * desiredLocalActivity A parameter controlling the number of columns that
-     * will be winners after the inhibition step.
+     * will be winners after the inhibition step. TODO range?
      */
     private int desiredLocalActivity = 1;
     /**
      * connectedPerm If the permanence value for a synapse is greater than this
-     * value, it is said to be connected.
+     * value, it is said to be connected. Range <0..1>
      */
     private double connectedPermanance = 0.7;
     /**
@@ -48,6 +48,7 @@ public class SpatialPooler {
      * learning.
      */
     private double permananceInc = 0.05;
+    private double connectedPermananceMarge = 0.2;
     private int amountOfSynapses = 60;
     /**
      * inhibitionRadius Average connected receptive field size of the columns.
@@ -58,12 +59,11 @@ public class SpatialPooler {
      * columns List of all columns.
      */
     private Column[] columns;
-    private double connectedPermananceMarge = 0.2;
     /**
      * activeColumns(t) List of column indices that are winners due to bottom-up
      * input.
      */
-    public ArrayList<Column> activeColumns = new ArrayList<Column>();
+    private ArrayList<Column> activeColumns = new ArrayList<>();
     static final Logger logger = Logger.getLogger(SpatialPooler.class.getName());
     /**
      * the amount of columns over y
@@ -74,8 +74,21 @@ public class SpatialPooler {
      */
     private int xxMax = 12;
     private int[] inputSpace;
-    private Column[] columsSaved;
+    private Column[] columnsSaved;
 
+    /**
+     * Initialization Prior to receiving any inputs, the region is initialized
+     * by computing a list of initial potential synapses for each column. This
+     * consists of a random set of inputs selected from the input space. Each
+     * input is represented by a synapse and assigned a random permanence value.
+     * The random permanence values are chosen with two criteria. First, the
+     * values are chosen to be in a small range around connectedPerm (the
+     * minimum permanence value at which a synapse is considered "connected").
+     * This enables potential synapses to become connected (or disconnected)
+     * after a small number of training iterations. Second, each column has a
+     * natural center over the input region, and the permanence values have a
+     * bias towards this center (they have higher values near the center).
+     */
     public SpatialPooler(int desiredLocalActivity, double connectedPermanance, int minimalOverlap,
             double permananceDec, double permananceInc, int amountOfSynapses, double inhibitionRadius) {
         this.inhibitionRadius = inhibitionRadius;
@@ -86,7 +99,38 @@ public class SpatialPooler {
         this.amountOfSynapses = amountOfSynapses;
         this.inhibitionRadius = inhibitionRadius;
 
-        init();
+
+        // TODO A synapse can be connected but not active. And maybe also the other way arround
+        // TODO the input space has to be the same size is the column space. That is not desireable .Make this better.
+        // logger.log(Level.INFO, "SpatialPooler");
+        columns = new Column[AMMOUNT_OF_COLLUMNS];
+
+        Random random = new Random();
+        int i = 0;
+
+        List<Integer> synapsesToInputt = new ArrayList<Integer>();
+        for (int k = 0; k < xxMax * yyMax; k++) {
+            synapsesToInputt.add(k);
+        }
+
+        for (int y = 0; y < yyMax; y++) {
+            for (int x = 0; x < xxMax; x++) {
+                Collections.shuffle(synapsesToInputt);
+                Iterator<Integer> iter = synapsesToInputt.iterator();
+                Synapse[] synapses = new Synapse[amountOfSynapses];
+
+                for (int j = 0; j < synapses.length; j++) {
+                    Integer inputSpaceIndex = iter.next();
+                    synapses[j] = new Synapse(inputSpaceIndex, inputSpaceIndex % 12, inputSpaceIndex / 12);
+                    // TODO 4 is not correct permanenceMarge should be responsible for this value WTF?!
+                    synapses[j].setPermanance(connectedPermanance - connectedPermananceMarge + (((double) random.nextInt(4)) / 10));
+                    // logger.info(""+synapses[j].getPermanance());
+                }
+                columns[i] = new Column(i, x, y, synapses);
+                i++;// next column
+            }
+        }
+        saveSetup();
     }
 
     public Column[] getColumns() {
@@ -111,69 +155,18 @@ public class SpatialPooler {
     }
 
     private void saveSetup() {
-        columsSaved = new Column[AMMOUNT_OF_COLLUMNS];
+        columnsSaved = new Column[AMMOUNT_OF_COLLUMNS];
 
         for (Column column : this.columns) {
             Synapse[] synapsesSaved = new Synapse[amountOfSynapses];
             System.arraycopy(column.getPotentialSynapses(), 0, synapsesSaved, 0, column.getPotentialSynapses().length);
-            columsSaved[column.getColumnIndex()] = new Column(column.getColumnIndex(), column.getxPos(), column.getyPos(), synapsesSaved);
+            columnsSaved[column.getColumnIndex()] = new Column(column.getColumnIndex(), column.getxPos(), column.getyPos(), synapsesSaved);
         }
     }
 
     public void restoreSavedSetup() {
         System.out.println("restoring");
-        this.columns = columsSaved;
-    }
-
-    /**
-     * Initialization Prior to receiving any inputs, the region is initialized
-     * by computing a list of initial potential synapses for each column. This
-     * consists of a random set of inputs selected from the input space. Each
-     * input is represented by a synapse and assigned a random permanence value.
-     * The random permanence values are chosen with two criteria. First, the
-     * values are chosen to be in a small range around connectedPerm (the
-     * minimum permanence value at which a synapse is considered "connected").
-     * This enables potential synapses to become connected (or disconnected)
-     * after a small number of training iterations. Second, each column has a
-     * natural center over the input region, and the permanence values have a
-     * bias towards this center (they have higher values near the center).
-     */
-    // TODO A synapse can be connected but not active. And maybe also the other way arround
-    private void init() {
-        // TODO the input space has to be the same size is the column space. That is not desireable .Make this better.
-        // logger.log(Level.INFO, "SpatialPooler");
-        columns = new Column[AMMOUNT_OF_COLLUMNS];
-
-        Random random = new Random();
-        int i = 0;
-
-        List<Integer> synapsesToInputt = new ArrayList<Integer>();
-        for (int k = 0; k < xxMax * yyMax; k++) {
-            synapsesToInputt.add(k);
-        }
-
-        for (int y = 0; y < yyMax; y++) {
-            for (int x = 0; x < xxMax; x++) {
-
-                Collections.shuffle(synapsesToInputt);
-                Iterator<Integer> iter = synapsesToInputt.iterator();
-
-                Synapse[] synapses = new Synapse[amountOfSynapses];
-
-                for (int j = 0; j < synapses.length; j++) {
-
-                    Integer inputSpaceIndex = iter.next();
-                    synapses[j] = new Synapse(inputSpaceIndex, inputSpaceIndex % 12, inputSpaceIndex / 12);
-
-                    // TODO 4 is not correct permanenceMarge should be responsible for this value WTF?!
-                    synapses[j].setPermanance(connectedPermanance - connectedPermananceMarge + (((double) random.nextInt(4)) / 10));
-                    // logger.info(""+synapses[j].getPermanance());
-                }
-                columns[i] = new Column(i, x, y, synapses);
-                i++;// next column
-            }
-        }
-        saveSetup();
+        this.columns = columnsSaved;
     }
 
     public double getInhibitionRadius() {
@@ -273,18 +266,14 @@ public class SpatialPooler {
                     column.increasePermanances(0.1 * connectedPermanance);
                 }
                 for (Synapse synapse : column.getConnectedSynapses(connectedPermanance)) {
-
-                    this.inhibitionRadiuses.add(Math.max(Math.abs(column.getxPos() - synapse.getxPos()), Math
-                            .abs(column.getyPos() - synapse.getyPos())));
+                    this.inhibitionRadiuses.add(Math.max(Math.abs(column.getxPos() - synapse.getxPos()), Math.abs(column.getyPos() - synapse.getyPos())));
                 }
             }
 
             // for performance I also save inhibitionRadius of the time step before.Neighbors don't need to be
-            // calculated if
-            // inhib didn't change
+            // calculated if inhib didn't change
             this.inhibitionRadiusBefore = inhibitionRadius;
             this.inhibitionRadius = averageReceptiveFieldSize();
-
         }
     }
 
@@ -304,7 +293,7 @@ public class SpatialPooler {
             averageReceptiveFieldSize += integer;
         }
         averageReceptiveFieldSize /= inhibitionRadiuses.size();
-        inhibitionRadiuses = new ArrayList<Integer>();
+        inhibitionRadiuses = new ArrayList<>();
         return averageReceptiveFieldSize;
     }
 
