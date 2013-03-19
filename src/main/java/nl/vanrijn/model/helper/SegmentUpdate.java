@@ -4,21 +4,23 @@
 package nl.vanrijn.model.helper;
 
 import java.util.List;
-
 import nl.vanrijn.model.LateralSynapse;
 
 /**
- * segmentUpdate Data structure holding three pieces of information required to
- * update a given segment: a) segment index (-1 if it's a new segment), b) a
- * list of existing active synapses, and c) a flag indicating whether this
- * segment should be marked as a sequence segment (defaults to false).
+ * segmentUpdate Data structure holding three pieces of information required to update a given segment: a) segment index
+ * (-1 if it's a new segment) b) a list of existing active synapses, and c) a flag indicating whether this segment
+ * should be marked as a sequence segment (defaults to false).
  *
  * @author vanrijn
  */
 public class SegmentUpdate {
 
-    private boolean sequenceSegment;
-    private int segmentUpdateIndex;
+    /**
+     * flag for new segment. Used in Index
+     */
+    private final static int NEW_SEGMENT_IDX = -1;
+    private boolean sequenceSegment = false;
+    private int segmentUpdateIndex = NEW_SEGMENT_IDX;
     private int cellIndex;
     private int columnIndex;
     private List<LateralSynapse> activeSynapses;
@@ -29,13 +31,12 @@ public class SegmentUpdate {
         this.cellIndex = cellIndex;
         this.columnIndex = columnIndex;
         this.segmentUpdateIndex = segmentUpdateIndex;
-
         this.activeSynapses = activeSynapses;
     }
 
     @Override
     public String toString() {
-        return "segmentUpdate" + this.getColumnIndex() + "," + this.getCellIndex() + "," + this.getSegmentUpdateIndex() + "," + this.isSequenceSegment();
+        return "segmentUpdate"+this.getColumnIndex()+","+this.getCellIndex()+","+this.getSegmentUpdateIndex()+","+this.isSequenceSegment();
     }
 
     public int getColumnIndex() {
@@ -45,7 +46,7 @@ public class SegmentUpdate {
     public void setColumnIndex(int columnIndex) {
         this.columnIndex = columnIndex;
     }
-    
+
     public int getCellIndex() {
         return cellIndex;
     }

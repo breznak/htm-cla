@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TemporalPoolerTest {
 
-    TemporalPooler tempo;
+    private TemporalPooler tempo;
 
     @Before
     public void setup() {

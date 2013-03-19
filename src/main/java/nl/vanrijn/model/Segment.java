@@ -75,7 +75,6 @@ public class Segment {
      */
     public void setAmmountActiveCells(int ammountActiveCells) {
         this.ammountActiveCells = ammountActiveCells;
-
     }
 
     public int getAmmountActiveCells() {
