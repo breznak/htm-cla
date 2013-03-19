@@ -16,8 +16,7 @@ public class Column implements Comparable<Column> {
      * boost(c) The boost value for column c as computed during learning - used
      * to increase the overlap value for inactive columns.
      */
-    private double boost = 1.0;
-    // choose value for boost
+    private double boost = 1.0; //TODO choose value for boost
     /**
      * overlap(c) The spatial pooler overlap of column c with a particular input
      * pattern.
@@ -60,6 +59,18 @@ public class Column implements Comparable<Column> {
      */
     public static final int CELLS_PER_COLUMN = 3;
     private static final int COLUMN_MAX_ACTIVE = 1000;
+    /**
+     * this object is "bigger"
+     */
+    public static final int COMPARE_GREATER = -1;
+    /**
+     * this Column is "equal"
+     */
+    public static final int COMPARE_EQUAL = 0;
+    /**
+     * this Column is "smaller" than the other
+     */
+    public static final int COMPARE_LESSER = 1;
 
     public Column(int index, int xx, int yy) {
         this(index, xx, yy, null);
@@ -107,8 +118,7 @@ public class Column implements Comparable<Column> {
     }
 
     public void addGreaterThanMinimalOverlap(boolean greaterThanMinimalOverlap) {
-        // logger.log(Level.INFO, "timesGreate"
-        // + timesGreaterOverlapThanMinOverlap.size());
+        // logger.log(Level.INFO, "timesGreate" + timesGreaterOverlapThanMinOverlap.size());
         this.timesGreaterOverlapThanMinOverlap.add(0, greaterThanMinimalOverlap);
         if (timesGreaterOverlapThanMinOverlap.size() > COLUMN_MAX_ACTIVE) {
             timesGreaterOverlapThanMinOverlap.remove(COLUMN_MAX_ACTIVE);
@@ -140,7 +150,7 @@ public class Column implements Comparable<Column> {
     }
 
     public Synapse[] getPotentialSynapses() {
-        return potentialSynapses;
+        return potentialSynapses.clone();
     }
 
     public List<Column> getNeigbours() {
@@ -232,15 +242,15 @@ public class Column implements Comparable<Column> {
         return this.activeList.get(0);
     }
 
+    //TODO verify +1/0/-1 are return correctly, or -1/+1 are switched???
     @Override
     public int compareTo(Column column) {
         if (this.overlap > column.getOverlap()) {
-            return -1;
+            return COMPARE_GREATER;
         } else if (this.overlap < column.getOverlap()) {
-            return 1;
-        } else // ==
-        {
-            return 0;
+            return COMPARE_LESSER;
+        } else { // ==
+            return COMPARE_EQUAL;
         }
     }
 
