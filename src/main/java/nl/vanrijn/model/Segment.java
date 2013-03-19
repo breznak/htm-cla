@@ -4,6 +4,7 @@
 package nl.vanrijn.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Segment {
@@ -37,13 +38,13 @@ public class Segment {
     }
 
     public List<LateralSynapse> getSynapses() {
-        return synapses;
+        return Collections.unmodifiableList(synapses);
     }
 
     public List<LateralSynapse> getConnectedSynapses() {
-        List<LateralSynapse> connectedSynapses = new ArrayList<LateralSynapse>();
+        List<LateralSynapse> connectedSynapses = new ArrayList<>();
         for(LateralSynapse synapse : synapses) {
-            if(synapse.isConnected()) {
+            if (synapse.isConnected()) {
                 connectedSynapses.add(synapse);
             }
         }
@@ -52,7 +53,7 @@ public class Segment {
 
     @Override
     public String toString() {
-        return "segment on " + this.getColumnIndex() + "," + this.getCellIndex() + "," + this.getSegmentIndex() + ",isSeq " + isSsequenceSegment() + ",amm syn " + this.getSynapses().size();
+        return "segment on "+this.getColumnIndex()+","+this.getCellIndex()+","+this.getSegmentIndex()+",isSeq "+isSsequenceSegment()+",amm syn "+this.getSynapses().size();
     }
 
     public void setSynapses(List<LateralSynapse> synapses) {
