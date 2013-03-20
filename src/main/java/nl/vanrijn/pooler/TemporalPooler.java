@@ -13,6 +13,7 @@ import nl.vanrijn.model.Column;
 import nl.vanrijn.model.LateralSynapse;
 import nl.vanrijn.model.Segment;
 import nl.vanrijn.model.helper.SegmentUpdate;
+import nl.vanrijn.utils.HelperMath;
 
 public class TemporalPooler {
 
@@ -94,10 +95,8 @@ public class TemporalPooler {
     public void init() {
         cells = new Cell[xxMax * yyMax][Column.CELLS_PER_COLUMN][TemporalPooler.AMMOUNT_TIME];
 
-        ArrayList<Integer> collumnIndexes = new ArrayList<>();
-        for (int c = 0; c < xxMax * yyMax; c++) {
-            collumnIndexes.add(c);
-        }
+        List<Integer> collumnIndexes = HelperMath.seq(xxMax * yyMax);
+
         Random random = new Random();
         int c = 0;
         for (int yy = 0; yy < yyMax; yy++) {
