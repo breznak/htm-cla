@@ -19,7 +19,7 @@ import java.util.List;
 import nl.vanrijn.model.Cell;
 import nl.vanrijn.model.Column;
 import nl.vanrijn.model.LateralSynapse;
-import nl.vanrijn.model.Segment;
+import nl.vanrijn.model.DendriteSegment;
 import nl.vanrijn.pooler.TemporalPooler;
 
 public class TemporaalPoolerApplet extends Applet implements Runnable {
@@ -256,7 +256,7 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
 
         Cell cell = tempo.getCells()[index][layer];
         System.out.println(cell);
-        for (Segment segment : cell.getSegments()) {
+        for (DendriteSegment segment : cell.getSegments()) {
 
             for (LateralSynapse synapse : segment.getConnectedSynapses()) {
                 if (tempo.getCells()[synapse.getFromColumnIndex()][synapse.getFromCellIndex()].output(Cell.BEFORE) == Cell.ACTIVE) {

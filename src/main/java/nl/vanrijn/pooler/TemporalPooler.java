@@ -11,7 +11,7 @@ import java.util.Random;
 import nl.vanrijn.model.Cell;
 import nl.vanrijn.model.Column;
 import nl.vanrijn.model.LateralSynapse;
-import nl.vanrijn.model.Segment;
+import nl.vanrijn.model.DendriteSegment;
 import nl.vanrijn.model.helper.SegmentUpdate;
 import nl.vanrijn.utils.HelperMath;
 
@@ -102,7 +102,7 @@ public class TemporalPooler {
         for (int yy = 0; yy < yyMax; yy++) {
             for (int xx = 0; xx < xxMax; xx++) {
                 for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
-                    List<Segment> segments = new ArrayList<>();
+                    List<DendriteSegment> segments = new ArrayList<>();
                     for (int s = 0; s < AMMOUNT_OF_SEGMENTS; s++) {
                         List<LateralSynapse> synapses = new ArrayList<>();
                         Collections.shuffle(collumnIndexes);
@@ -110,7 +110,7 @@ public class TemporalPooler {
                             // TODO can a cell predict itself?
                             synapses.add(new LateralSynapse(c, i, s, collumnIndexes.get(y), random.nextInt(3), TemporalPooler.INITIAL_PERM));
                         }
-                        segments.add(new Segment(c, i, s, synapses));
+                        segments.add(new DendriteSegment(c, i, s, synapses));
                         // System.out.println(c);
                     }
                     cells[c][i] = new Cell(c, i, xx, yy, segments);
@@ -180,7 +180,7 @@ public class TemporalPooler {
                     // So the synapses that made this segment active where also
                     // from one time step before. and the cells
                     // connected to these synapses also.
-                    Segment segment = getActiveSegment(column.getColumnIndex(), i, Cell.BEFORE, Cell.ACTIVE);
+                    DendriteSegment segment = getActiveSegment(column.getColumnIndex(), i, Cell.BEFORE, Cell.ACTIVE);
                     if (segment != null && segment.isSequenceSegment()) {
                         buPredicted = true;
                         cells[column.getColumnIndex()][i].setOutput(Cell.ACTIVE);
@@ -201,7 +201,7 @@ public class TemporalPooler {
                 Cell cell = getBestMatchingCell(column.getColumnIndex(), Cell.BEFORE);
                 // TODO Maybe now a new segment should be created in stead of
                 // getting the best matching segment
-                Segment segment = getBestMatchingSegment(column.getColumnIndex(), cell.getCellIndex(), Cell.BEFORE);
+                DendriteSegment segment = getBestMatchingSegment(column.getColumnIndex(), cell.getCellIndex(), Cell.BEFORE);
                 SegmentUpdate sUpdate = getSegmentActiveSynapses(column.getColumnIndex(), cell.getCellIndex(), segment, Cell.BEFORE, true);
                 sUpdate.setSequenceSegment(true);
 
@@ -228,7 +228,7 @@ public class TemporalPooler {
                 Cell cell = cells[c][i];
 
                 for (int s = 0; s < cell.getSegments().size(); s++) {
-                    Segment segment = cell.getSegments().get(s);
+                    DendriteSegment segment = cell.getSegments().get(s);
                     // is this segment active from cells that are active now?(In phase 1)
                     if (segmentActive(segment, Cell.NOW, Cell.ACTIVE)) {
                         cell.setOutput(Cell.PREDICT);
@@ -237,7 +237,7 @@ public class TemporalPooler {
                             cell.getSegmentUpdateList().add(activeUpdate);
                             // TODO This should not happen so often. Only once for
                             // an active cell. because it will always be the same segment
-                            Segment predSegment = getBestMatchingSegment(c, i, Cell.BEFORE);
+                            DendriteSegment predSegment = getBestMatchingSegment(c, i, Cell.BEFORE);
                             SegmentUpdate predUpdate = getSegmentActiveSynapses(c, i, predSegment, Cell.BEFORE, true);
                             cell.getSegmentUpdateList().add(predUpdate);
                         }
@@ -288,20 +288,20 @@ public class TemporalPooler {
      */
     // TODO this should only return a segment index. not a segment. the time of the
     // segment doen't mather!!
-    public Segment getActiveSegment(int c, int i, final int time, int state) {
+    public DendriteSegment getActiveSegment(int c, int i, final int time, int state) {
         Cell cell = cells[c][i];
-        List<Segment> activeSegments = new ArrayList<>();
+        List<DendriteSegment> activeSegments = new ArrayList<>();
 
-        for (Segment segment : cell.getSegments()) {
+        for (DendriteSegment segment : cell.getSegments()) {
             if (segmentActive(segment, time, state)) {
                 activeSegments.add(segment);
             }
         }
 
-        Collections.sort(activeSegments, new Comparator<Segment>() {
-            //TODO move compare to Segment class?
+        Collections.sort(activeSegments, new Comparator<DendriteSegment>() {
+            //TODO move compare to DendriteSegment class?
             @Override
-            public int compare(Segment segment, Segment segmentToCompare) {
+            public int compare(DendriteSegment segment, DendriteSegment segmentToCompare) {
                 //FIXME check these retcodes and actual returned numbers differ!
                 // 1 sequence most activity
                 // 2 sequence and active
@@ -367,8 +367,8 @@ public class TemporalPooler {
         for (SegmentUpdate su : segmentUpdateList) {
             Cell cell = cells[su.getColumnIndex()][su.getCellIndex()];
             if (su.getSegmentUpdateIndex() != -1) {
-                Segment segment = null;
-                for (Segment segmentq : cell.getSegments()) {
+                DendriteSegment segment = null;
+                for (DendriteSegment segmentq : cell.getSegments()) {
                     if (segmentq.getSegmentIndex() == su.getSegmentUpdateIndex()) {
                         segment = segmentq;
                         break;
@@ -401,7 +401,7 @@ public class TemporalPooler {
                     }
                 }
             } else {
-                // TODO Maybe We should create a new Segment now
+                // TODO Maybe We should create a new DendriteSegment now
             }
         }
     }
@@ -416,7 +416,7 @@ public class TemporalPooler {
      * @return
      */
     protected Cell getBestMatchingCell(int col, int time) {
-        List<Segment> bestMatchingSegments = new ArrayList<>();
+        List<DendriteSegment> bestMatchingSegments = new ArrayList<>();
         // TODO all cells have the same amount of segments. Do they mean
         // connected synapses?
         Cell min = cells[col][0];
@@ -426,13 +426,13 @@ public class TemporalPooler {
             if (cells[col][i].getSegments().size() < min.getSegments().size()) {
                 min = cells[col][i];
             }
-            Segment bestMatchingSegmentPerCell = getBestMatchingSegment(col, i, time);
+            DendriteSegment bestMatchingSegmentPerCell = getBestMatchingSegment(col, i, time);
             if (bestMatchingSegmentPerCell != null) {
                 bestMatchingSegments.add(bestMatchingSegmentPerCell);
             }
         }
         if (!bestMatchingSegments.isEmpty()) {
-            Segment bestMatchingSegment = getBestMatchingSegment(bestMatchingSegments, time);
+            DendriteSegment bestMatchingSegment = getBestMatchingSegment(bestMatchingSegments, time);
             return cells[col][bestMatchingSegment.getCellIndex()];
         }
         return min; // return the cell with the fewest number of segments.
@@ -460,11 +460,11 @@ public class TemporalPooler {
      * @param b
      * @return
      */
-    protected SegmentUpdate getSegmentActiveSynapses(int c, int i, Segment segment, int time, boolean newSynapses) {
+    protected SegmentUpdate getSegmentActiveSynapses(int c, int i, DendriteSegment segment, int time, boolean newSynapses) {
         // TODO Maybe if segment= null add synapses and a new segment.
         List<LateralSynapse> activeSynapses = new ArrayList<>();
         if (segment == null) {
-            // TODO Maybe add new Segment
+            // TODO Maybe add new DendriteSegment
             return new SegmentUpdate(c, i, -1, activeSynapses);
         }  // else
         for (LateralSynapse synapse : segment.getSynapses()) {
@@ -527,14 +527,14 @@ public class TemporalPooler {
      * @param cell
      * @return
      */
-    protected Segment getBestMatchingSegment(int c, int i, final int time) {
+    protected DendriteSegment getBestMatchingSegment(int c, int i, final int time) {
         return getBestMatchingSegment(cells[c][i].getSegments(), time);
     }
 
-    private Segment getBestMatchingSegment(List<Segment> segments, final int time) {
-        Collections.sort(segments, new Comparator<Segment>() {
+    private DendriteSegment getBestMatchingSegment(List<DendriteSegment> segments, final int time) {
+        Collections.sort(segments, new Comparator<DendriteSegment>() {
             @Override
-            public int compare(Segment segment, Segment toCompare) { //TODO implement compare and reuse!
+            public int compare(DendriteSegment segment, DendriteSegment toCompare) { //TODO implement compare and reuse!
                 int ammountActiveCells = 0;
                 int ammountActiveCellsToCompare = 0;
                 for (LateralSynapse synapse : segment.getSynapses()) {
@@ -576,7 +576,7 @@ public class TemporalPooler {
      * @param learnState
      * @return
      */
-    public boolean segmentActive(Segment segment, int time, int state) {
+    public boolean segmentActive(DendriteSegment segment, int time, int state) {
         List<LateralSynapse> synapses = segment.getSynapses();
         int ammountConnected = 0;
         // TODO take the synapses from now not other time.

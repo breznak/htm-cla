@@ -70,12 +70,12 @@ public class Cell {
     private List<SegmentUpdate> segmentUpdateList = new ArrayList<>();
     private final int columnIndex;
     private final int cellIndex;
-    private final List<Segment> segments;
+    private final List<DendriteSegment> segments;
     private final int xpos;
     private final int ypos;
     private List<Cell> neighbors = null;
 
-    public Cell(int columnIndex, int cellIndex, int xx, int yy, List<Segment> segments) {
+    public Cell(int columnIndex, int cellIndex, int xx, int yy, List<DendriteSegment> segments) {
         assertEquals(segments != null, true); // not null
         this.columnIndex = columnIndex;
         this.cellIndex = cellIndex;
@@ -120,7 +120,7 @@ public class Cell {
         return cellIndex;
     }
 
-    public List<Segment> getSegments() {
+    public List<DendriteSegment> getSegments() {
         return Collections.unmodifiableList(segments);
     }
 

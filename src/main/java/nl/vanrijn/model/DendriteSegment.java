@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Segment {
+public class DendriteSegment {
     private List<LateralSynapse> synapses;
     private boolean sequenceSegment;
     private int cellIndex;
@@ -15,7 +15,7 @@ public class Segment {
     private int columnIndex;
     private int ammountActiveCells;
 
-    public Segment(int c, int i, int s, List<LateralSynapse> synapses) {
+    public DendriteSegment(int c, int i, int s, List<LateralSynapse> synapses) {
         this.columnIndex = c;
         this.cellIndex = i;
         this.segmentIndex = s;
