@@ -260,6 +260,7 @@ public class SpatialPooler {
             // calculated if inhib didn't change
             this.inhibitionRadiusBefore = inhibitionRadius;
             this.inhibitionRadius = averageReceptiveFieldSize();
+            inhibitionRadiuses.clear();
         }
     }
 
@@ -279,7 +280,6 @@ public class SpatialPooler {
             averageReceptiveFieldSize += integer;
         }
         averageReceptiveFieldSize /= inhibitionRadiuses.size();
-        inhibitionRadiuses = new ArrayList<>();
         return averageReceptiveFieldSize;
     }
 
@@ -299,11 +299,7 @@ public class SpatialPooler {
      * @return
      */
     private double getMaxDutyCycle(List<Column> neighbors) {
-
-        Column highestNeighbor = null;
-        if (neighbors.size() > 0) {
-            highestNeighbor = neighbors.get(0);
-        }
+        Column highestNeighbor = neighbors.get(0);
         for (Column neighbor : neighbors) {
             if (neighbor.getActiveDutyCycle() > highestNeighbor.getActiveDutyCycle()) {
                 highestNeighbor = neighbor;
@@ -321,11 +317,9 @@ public class SpatialPooler {
      * @return
      */
     private double kthScore(List<Column> neighbors, int disiredLocalActivity) {
-
         if (disiredLocalActivity > neighbors.size()) {
             disiredLocalActivity = neighbors.size();
         }
-
         Collections.sort(neighbors);
         double ktScore = neighbors.get(disiredLocalActivity - 1).getOverlap();
         return ktScore;
@@ -353,12 +347,11 @@ public class SpatialPooler {
     public double reconstructionQuality() {
         int ammountOk = 0;
         int ammountWrong = 0;
-        Set<InputSpace> inputSpaces = new TreeSet<InputSpace>();
+        Set<InputSpace> inputSpaces = new TreeSet<>();
 
         for (Column activeColumn : activeColumns) {
             for (Synapse connectedSynapse : activeColumn.getConnectedSynapses(this.connectedPermanance)) {
-                inputSpaces.add(new InputSpace(connectedSynapse.getxPos(), connectedSynapse.getyPos(), connectedSynapse
-                        .getSourceInput()));
+                inputSpaces.add(new InputSpace(connectedSynapse.getxPos(), connectedSynapse.getyPos(), connectedSynapse.getSourceInput()));
             }
         }
 
