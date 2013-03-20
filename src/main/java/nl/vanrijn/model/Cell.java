@@ -9,10 +9,48 @@ import java.util.List;
 import nl.vanrijn.model.helper.SegmentUpdate;
 import static org.junit.Assert.*;
 
+/**
+ * Cell is a representation of neuron, like in (feed-forward) neural nets, it's
+ * similar to spiking NNs' neurons
+ *
+ * @author marek
+ */
 public class Cell {
+    // 3 output states:
 
-    public static final int ACTIVE_STATE = 1;
-    public static final int LEARN_STATE = 2;
+    /**
+     * active from feed-forward input
+     *
+     * activeState(c, i, t) A boolean vector with one number per cell. It
+     * represents the active state of the column c cell i at time t given the
+     * current feed-forward input and the past temporal context. activeState(c,
+     * i, t) is the contribution from column c cell i at time t. If 1, the cell
+     * has current feed-forward input as well as an appropriate temporal
+     * context.
+     */
+    public static final int ACTIVE = 1;
+    /**
+     * active from lateral input = prediction
+     *
+     * predictiveState(c, i, t) A boolean vector with one number per cell. It
+     * represents the prediction of the column c cell i at time t, given the
+     * bottom-up activity of other columns and the past temporal context.
+     * predictiveState(c, i, t) is the contribution of column c cell i at time
+     * t. If 1, the cell is predicting feed-forward input in the current
+     * temporal context.
+     */
+    public static final int PREDICT = 2;
+    /**
+     * inactive, inhibited
+     */
+    public static final int INACTIVE = 0;
+    /**
+     * Cell's output state: can have 3 values: Cell.ACTIVE/PREDICT/INACTIVE
+     *
+     * use setState/getState to query
+     */
+    private int output = Cell.INACTIVE;
+    //
     public static final int NOW = 1;
     public static final int BEFORE = 0;
     /**
@@ -24,28 +62,10 @@ public class Cell {
     private final int cellIndex;
     private int time;
     /**
-     * predictiveState(c, i, t) A boolean vector with one number per cell. It
-     * represents the prediction of the column c cell i at time t, given the
-     * bottom-up activity of other columns and the past temporal context.
-     * predictiveState(c, i, t) is the contribution of column c cell i at time
-     * t. If 1, the cell is predicting feed-forward input in the current
-     * temporal context.
-     */
-    private boolean predictiveState;
-    /**
      * learnState(c, i, t) A boolean indicating whether cell i in column c is
      * chosen as the cell to learn on.
      */
     private boolean learnState;
-    /**
-     * activeState(c, i, t) A boolean vector with one number per cell. It
-     * represents the active state of the column c cell i at time t given the
-     * current feed-forward input and the past temporal context. activeState(c,
-     * i, t) is the contribution from column c cell i at time t. If 1, the cell
-     * has current feed-forward input as well as an appropriate temporal
-     * context.
-     */
-    private boolean activeState;
     private final List<Segment> segments;
     private final int xpos;
     private final int ypos;
@@ -65,16 +85,23 @@ public class Cell {
         this.time = time;
     }
 
-    public boolean hasPredictiveState() {
-        return predictiveState;
+    /**
+     * query cell's output state: {active,predict,inactive}
+     *
+     * @return 0/1/2 only!
+     */
+    public int output() {
+        return this.output;
     }
 
-    public void setPredictiveState(boolean predictiveState) {
-        this.predictiveState = predictiveState;
-    }
-
-    public boolean hasActiveState() {
-        return activeState;
+    /**
+     * set cell's state. can be: ACTIVE/INACTIVE/PREDICT
+     *
+     * @param state
+     */
+    public void setOutput(int state) {
+        assertEquals(state == Cell.ACTIVE || state == Cell.INACTIVE || state == Cell.PREDICT, true);
+        this.output = state;
     }
 
     public int getColumnIndex() {
@@ -89,6 +116,7 @@ public class Cell {
         return Collections.unmodifiableList(segments);
     }
 
+//TODO what is learnState??
     public void setLearnState(boolean learnState) {
         this.learnState = learnState;
     }
@@ -103,10 +131,6 @@ public class Cell {
 
     public void setSegmentUpdateList(List<SegmentUpdate> segmentUpdateList) {
         this.segmentUpdateList = segmentUpdateList;
-    }
-
-    public void setActiveState(boolean activeState) {
-        this.activeState = activeState;
     }
 
     @Override

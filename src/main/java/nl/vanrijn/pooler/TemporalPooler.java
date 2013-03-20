@@ -171,18 +171,18 @@ public class TemporalPooler {
             boolean buPredicted = false;
             boolean lcChosen = false;//used for learning
             for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
-                if (cells[column.getColumnIndex()][i][Cell.BEFORE].hasPredictiveState()) {
+                if (cells[column.getColumnIndex()][i][Cell.BEFORE].output() == Cell.PREDICT) {
                     // get the segment that became active in the time step
                     // before.(That made this cell active).
                     // So the synapses that made this segment active where also
                     // from one time step before. and the cells
                     // connected to these synapses also.
-                    Segment segment = getActiveSegment(column.getColumnIndex(), i, Cell.BEFORE, Cell.ACTIVE_STATE);
+                    Segment segment = getActiveSegment(column.getColumnIndex(), i, Cell.BEFORE, Cell.ACTIVE);
                     if (segment != null && segment.isSequenceSegment()) {
                         buPredicted = true;
-                        cells[column.getColumnIndex()][i][Cell.NOW].setActiveState(true);
+                        cells[column.getColumnIndex()][i][Cell.NOW].setOutput(Cell.ACTIVE);
                         // if these cells also had learnstate
-                        if (segmentActive(segment, Cell.BEFORE, Cell.LEARN_STATE) && LEARNING) {
+                        if (segmentActive(segment, Cell.BEFORE, Cell.PREDICT) && LEARNING) {
                             lcChosen = true;
                             cells[column.getColumnIndex()][i][Cell.NOW].setLearnState(true);
                         }
@@ -191,7 +191,7 @@ public class TemporalPooler {
             }
             if (!buPredicted) {
                 for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
-                    cells[column.getColumnIndex()][i][Cell.NOW].setActiveState(true);
+                    cells[column.getColumnIndex()][i][Cell.NOW].setOutput(Cell.ACTIVE);
                 }
             }
             if (!lcChosen && LEARNING) {
@@ -227,8 +227,8 @@ public class TemporalPooler {
                 for (int s = 0; s < cell.getSegments().size(); s++) {
                     Segment segment = cell.getSegments().get(s);
                     // is this segment active from cells that are active now?(In phase 1)
-                    if (segmentActive(segment, Cell.NOW, Cell.ACTIVE_STATE)) {
-                        cell.setPredictiveState(true);
+                    if (segmentActive(segment, Cell.NOW, Cell.ACTIVE)) {
+                        cell.setOutput(Cell.PREDICT);
                         if (LEARNING) {
                             SegmentUpdate activeUpdate = getSegmentActiveSynapses(c, i, segment, Cell.NOW, false);
                             cell.getSegmentUpdateList().add(activeUpdate);
@@ -262,7 +262,7 @@ public class TemporalPooler {
                     } else // TODO I have the feeling that this is wrong. It should be:if
                     // the cell was predicted but is not
                     // active now. (or maybe not)
-                    if (!cells[c][i][Cell.NOW].hasPredictiveState() && cells[c][i][Cell.BEFORE].hasPredictiveState()) {
+                    if (!(cells[c][i][Cell.NOW].output() == Cell.PREDICT) && (cells[c][i][Cell.BEFORE].output() == Cell.PREDICT)) {
                         adaptSegments(cell.getSegmentUpdateList(), SegmentUpdate.NO_POSITIVE_REINFORCEMENT);
                         cell.getSegmentUpdateList().clear();
                     }
@@ -308,13 +308,13 @@ public class TemporalPooler {
                 int ammountActiveCells = 0;
                 int ammountActiveCellsToCompare = 0;
                 for (LateralSynapse synapse : segment.getSynapses()) {
-                    if (cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].hasActiveState()) {
+                    if (cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].output() == Cell.ACTIVE) {
                         ammountActiveCells++;
                     }
                 }
                 segment.setAmmountActiveCells(ammountActiveCells);
                 for (LateralSynapse synapse : segmentToCompare.getSynapses()) {
-                    if (cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].hasActiveState()) {
+                    if (cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].output() == Cell.ACTIVE) {
                         ammountActiveCellsToCompare++;
                     }
                 }
@@ -479,7 +479,7 @@ public class TemporalPooler {
         }
         // else
         for (LateralSynapse synapse : segment.getSynapses()) {
-            if (cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].hasActiveState()) {
+            if (cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].output() == Cell.ACTIVE) {
                 activeSynapses.add(synapse);
             }
         }
@@ -549,13 +549,13 @@ public class TemporalPooler {
                 int ammountActiveCells = 0;
                 int ammountActiveCellsToCompare = 0;
                 for (LateralSynapse synapse : segment.getSynapses()) {
-                    if (cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].hasActiveState()) {
+                    if (cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].output() == Cell.ACTIVE) {
                         ammountActiveCells++;
                     }
                 }
                 segment.setAmmountActiveCells(ammountActiveCells);
                 for (LateralSynapse synapse : toCompare.getSynapses()) {
-                    if (cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].hasActiveState()) {
+                    if (cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].output() == Cell.ACTIVE) {
                         ammountActiveCellsToCompare++;
                     }
                 }
@@ -592,11 +592,11 @@ public class TemporalPooler {
         int ammountConnected = 0;
         // TODO take the synapses from now not other time.
         for (LateralSynapse synapse : synapses) {
-            //TODO incorporate LEARN_STATE in getLearnState() ?
-            if (state == Cell.LEARN_STATE && synapse.isConnected() && cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].getLearnState()) {
+            //TODO incorporate PREDICT in getLearnState() ?
+            if (state == Cell.PREDICT && synapse.isConnected() && cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].getLearnState()) {
                 // TODO are all cells that have learnstate also Active or should we also check if the cell is/was active?
                 ammountConnected++;
-            } else if (state == Cell.ACTIVE_STATE && synapse.isConnected() && cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].hasActiveState()) {
+            } else if (state == Cell.ACTIVE && synapse.isConnected() && cells[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][time].output() == Cell.ACTIVE) {
                 ammountConnected++;
             }
         }
