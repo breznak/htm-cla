@@ -56,6 +56,11 @@ public class Cell {
      * use setState/getState to query
      */
     private List<Integer> output = new CircularList<>(TIME_STEPS);
+    /**
+     * learnState(c, i, t) A boolean indicating whether cell i in column c is
+     * chosen as the cell to learn on.
+     */
+    private List<Boolean> learnState = new CircularList<>(TIME_STEPS);
     public static final int BEFORE = 1;
     public static final int NOW = 0;
     /**
@@ -65,11 +70,6 @@ public class Cell {
     private List<SegmentUpdate> segmentUpdateList = new ArrayList<>();
     private final int columnIndex;
     private final int cellIndex;
-    /**
-     * learnState(c, i, t) A boolean indicating whether cell i in column c is
-     * chosen as the cell to learn on.
-     */
-    private boolean learnState;
     private final List<Segment> segments;
     private final int xpos;
     private final int ypos;
@@ -126,11 +126,11 @@ public class Cell {
 
 //TODO what is learnState??
     public void setLearnState(boolean learnState) {
-        this.learnState = learnState;
+        this.learnState.add(NOW, learnState);
     }
 
-    public boolean getLearnState() {
-        return this.learnState;
+    public boolean getLearnState(int time) {
+        return this.learnState.get(time);
     }
 
     public List<SegmentUpdate> getSegmentUpdateList() {

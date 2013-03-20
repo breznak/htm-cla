@@ -414,7 +414,7 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
                             break;
                     }
                 }
-                if (cell.getLearnState()) {
+                if (cell.getLearnState(Cell.NOW)) {
                     // System.out.println(cell
                     // +" "+cell.getXpos()+","+cell.getYpos()
                     // );

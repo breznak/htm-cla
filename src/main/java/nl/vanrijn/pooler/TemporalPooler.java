@@ -259,7 +259,7 @@ public class TemporalPooler {
             for (int c = 0; c < xxMax * yyMax; c++) {
                 for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
                     Cell cell = cells[c][i];
-                    if (cell.getLearnState()) {
+                    if (cell.getLearnState(Cell.NOW)) {
                         adaptSegments(cell.getSegmentUpdateList(), SegmentUpdate.POSITIVE_REINFORCEMENT);
                         cell.getSegmentUpdateList().clear();
                     } else // TODO I have the feeling that this is wrong. It should be:if
