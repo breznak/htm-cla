@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Random;
 import nl.vanrijn.model.Cell;
 import nl.vanrijn.model.Column;
-import nl.vanrijn.model.LateralSynapse;
 import nl.vanrijn.model.DendriteSegment;
+import nl.vanrijn.model.LateralSynapse;
 import nl.vanrijn.model.helper.SegmentUpdate;
 import nl.vanrijn.utils.HelperMath;
 
@@ -127,7 +127,7 @@ public class TemporalPooler {
      * @param cell
      * @return
      */
-    private List<Cell> getNeighbors(Cell cell) { //TODO rename to getPotentialNeighbors
+    private List<Cell> neighborhoodCells(Cell cell) {
         List<Cell> neighbors = new ArrayList<>();
         int xxStart = Math.max(0, cell.getXpos() - LEARNING_RADIUS);
         int xxEnd = Math.min(xxMax, cell.getXpos() + LEARNING_RADIUS + 1);
@@ -480,7 +480,7 @@ public class TemporalPooler {
                 //If the cell doesn't have its neighbors calculated yet, that will happen now.
                 //The neighbors are set on the cells with time NOW.(In that case we don't loose them if the time is recalculated.
                 if (cells[c][i].getNeighbors() == null) {
-                    cells[c][i].setNeigbors(getNeighbors(cells[c][i]));
+                    cells[c][i].setNeigbors(neighborhoodCells(cells[c][i]));
                 }
 
                 for (Cell neighborCell : cells[c][i].getNeighbors()) {
