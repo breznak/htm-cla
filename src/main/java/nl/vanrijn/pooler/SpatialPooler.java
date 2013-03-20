@@ -107,9 +107,8 @@ public class SpatialPooler {
 
         Random random = new Random();
         int i = 0;
-
-        List<Integer> synapsesToInputt = new ArrayList<Integer>();
-        for (int k = 0; k < xxMax * yyMax; k++) {
+        List<Integer> synapsesToInputt = new ArrayList<>();
+        for (int k = 0; k < xxMax * yyMax; k++) { //TODO sequence method?
             synapsesToInputt.add(k);
         }
 
@@ -135,10 +134,6 @@ public class SpatialPooler {
 
     public Column[] getColumns() {
         return columns;
-    }
-
-    public void setColumns(Column[] columns) {
-        this.columns = columns;
     }
 
     public ArrayList<Column> getActiveColumns() {
@@ -188,12 +183,10 @@ public class SpatialPooler {
             }
 
             if (overlap < minimalOverlap) {
-                column.setOverlap(0);
-                column.addGreaterThanMinimalOverlap(false);
-            } else {
-                column.setOverlap(overlap * column.getBoost());
-                column.addGreaterThanMinimalOverlap(true);
+                overlap = 0;
             }
+            column.setOverlap(overlap * column.getBoost());
+            column.addGreaterThanMinimalOverlap(overlap >= minimalOverlap);
             column.updateOverlapDutyCycle();
         }
     }
