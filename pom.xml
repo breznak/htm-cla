@@ -96,11 +96,5 @@
             </plugin>
         </plugins>
     </reporting>
-    <distributionManagement>
-        <repository>
-            <id>googlecode.htm.repo</id>
-            <url>dav:https://htm.googlecode.com/svn/trunk/</url>
-        </repository>
-    </distributionManagement>
 
 </project>

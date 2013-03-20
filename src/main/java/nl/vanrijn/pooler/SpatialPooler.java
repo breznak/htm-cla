@@ -213,7 +213,6 @@ public class SpatialPooler {
             } else {
                 column.setActive(false);
             }
-            column.updateActiveDutyCycle();
         }
     }
 

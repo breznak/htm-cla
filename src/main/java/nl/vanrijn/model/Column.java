@@ -219,7 +219,7 @@ public class Column implements Comparable<Column> {
      *
      * @return
      */
-    public double updateActiveDutyCycle() {
+    private double updateActiveDutyCycle() {
         int totalActive = 0;
         for (boolean act : activeList) {
             if (act) {
@@ -236,6 +236,7 @@ public class Column implements Comparable<Column> {
         if (activeList.size() > COLUMN_MAX_ACTIVE) {
             activeList.remove(COLUMN_MAX_ACTIVE);
         }
+        updateActiveDutyCycle();
     }
 
     public boolean isActive() {
