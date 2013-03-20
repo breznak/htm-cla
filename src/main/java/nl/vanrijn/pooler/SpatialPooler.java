@@ -185,9 +185,7 @@ public class SpatialPooler {
             if (overlap < minimalOverlap) {
                 overlap = 0;
             }
-            column.setOverlap(overlap * column.getBoost());
-            column.addGreaterThanMinimalOverlap(overlap >= minimalOverlap);
-            column.updateOverlapDutyCycle();
+            column.setOverlap(overlap * column.getBoost(), minimalOverlap);
         }
     }
 
@@ -200,17 +198,16 @@ public class SpatialPooler {
      * inhibition radius.
      */
     public void computeWinningColumsAfterInhibition() {
-
-        activeColumns = new ArrayList<Column>();
+        activeColumns = new ArrayList<>();
         for (Column column : this.columns) {
             if (Math.round(this.inhibitionRadius) != Math.round(this.inhibitionRadiusBefore)
                     || column.getNeigbours() == null) {
-                column.setNeigbours(getNeigbors(column));
+                column.setNeigbours(findMyNeigbors(column));
             }
             double minimalLocalActivity = kthScore(column.getNeigbours(), desiredLocalActivity);
             // TODO if inhibitionRadius changes, shouldn't this also change?
             column.setMinimalLocalActivity(minimalLocalActivity);
-            if (column.getOverlap() > 0 && column.getOverlap() >= minimalLocalActivity) {
+            if (column.getOverlap() >= minimalLocalActivity) {
                 column.setActive(true);
                 activeColumns.add(column);
             } else {
@@ -252,10 +249,7 @@ public class SpatialPooler {
                 double minimalDutyCycle = (0.01 * (getMaxDutyCycle(column.getNeigbours())));
                 column.setMinimalDutyCycle(minimalDutyCycle);
                 column.calculateBoost(minimalDutyCycle);
-
-                double overlapDutyCycle = column.updateOverlapDutyCycle();
-
-                if (overlapDutyCycle < minimalDutyCycle) {
+                if (column.getOverlapDutyCycle() < minimalDutyCycle) {
                     column.increasePermanances(0.1 * connectedPermanance);
                 }
                 for (Synapse synapse : column.getConnectedSynapses(connectedPermanance)) {
@@ -328,6 +322,7 @@ public class SpatialPooler {
      * @return
      */
     private double kthScore(List<Column> neighbors, int disiredLocalActivity) {
+
         if (disiredLocalActivity > neighbors.size()) {
             disiredLocalActivity = neighbors.size();
         }
@@ -337,8 +332,8 @@ public class SpatialPooler {
         return ktScore;
     }
 
-    private List<Column> getNeigbors(Column column) {
-        List<Column> neighbors = new ArrayList<Column>();
+    private List<Column> findMyNeigbors(Column column) {
+        List<Column> neighbors = new ArrayList<>();
         int inhib = (int) Math.round(inhibitionRadius);
         int xxStart = Math.max(0, column.getxPos() - inhib);
         int xxEnd = Math.min(xxMax, column.getxPos() + inhib + 1);
@@ -347,13 +342,12 @@ public class SpatialPooler {
 
         for (int y = yyStart; y < yyEnd; y++) {
             for (int x = xxStart; x < xxEnd; x++) {
-                if (!(y == column.getyPos() && x == column.getxPos())) {
-                    neighbors.add(this.columns[y * xxMax + x]);
+                if (y == column.getyPos() && x == column.getxPos()) {
+                    continue; //skip myself
                 }
+                neighbors.add(this.columns[y * xxMax + x]);
             }
         }
-
-        column.setNeigbours(neighbors);
         return neighbors;
     }
 

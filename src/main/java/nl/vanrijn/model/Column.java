@@ -4,7 +4,6 @@
 package nl.vanrijn.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Column implements Comparable<Column> {
@@ -19,7 +18,7 @@ public class Column implements Comparable<Column> {
     private double boost = 1.0; //TODO choose value for boost
     /**
      * overlap(c) The spatial pooler overlap of column c with a particular input
-     * pattern.
+     * pattern. RANGE 0..
      */
     private double overlap;
     private ArrayList<Boolean> activeList = new ArrayList<>();
@@ -117,12 +116,13 @@ public class Column implements Comparable<Column> {
         // logger.log(Level.INFO, "new calculated boost=" + this.boost);
     }
 
-    public void addGreaterThanMinimalOverlap(boolean greaterThanMinimalOverlap) {
+    private void addGreaterThanMinimalOverlap(boolean greaterThanMinimalOverlap) {
         // logger.log(Level.INFO, "timesGreate" + timesGreaterOverlapThanMinOverlap.size());
         this.timesGreaterOverlapThanMinOverlap.add(0, greaterThanMinimalOverlap);
         if (timesGreaterOverlapThanMinOverlap.size() > COLUMN_MAX_ACTIVE) {
             timesGreaterOverlapThanMinOverlap.remove(COLUMN_MAX_ACTIVE);
         }
+        updateOverlapDutyCycle();
     }
 
     public double getOverlapDutyCycle() {
@@ -145,8 +145,9 @@ public class Column implements Comparable<Column> {
         return overlap;
     }
 
-    public void setOverlap(double d) {
+    public void setOverlap(double d, double minimalOverlap) {
         this.overlap = d;
+        addGreaterThanMinimalOverlap(d >= minimalOverlap);
     }
 
     public Synapse[] getPotentialSynapses() {
@@ -154,7 +155,7 @@ public class Column implements Comparable<Column> {
     }
 
     public List<Column> getNeigbours() {
-        return Collections.unmodifiableList(neigbours);
+        return neigbours;
     }
 
     public void setNeigbours(List<Column> neigbours) {
@@ -176,8 +177,7 @@ public class Column implements Comparable<Column> {
                 connectedSynapses.add(potentialSynapse);
             }
         }
-        Synapse[] tmp = new Synapse[connectedSynapses.size()];
-        return connectedSynapses.toArray(tmp);
+        return connectedSynapses.toArray(new Synapse[connectedSynapses.size()]);
     }
 
     public double getBoost() {
@@ -202,7 +202,7 @@ public class Column implements Comparable<Column> {
      *
      * @return
      */
-    public double updateOverlapDutyCycle() {
+    private double updateOverlapDutyCycle() {
         int totalGt = 0;
         for (boolean greater : this.timesGreaterOverlapThanMinOverlap) {
             if (greater) {
