@@ -10,7 +10,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
-
 import nl.vanrijn.model.Column;
 import nl.vanrijn.pooler.TemporalPooler;
 
@@ -31,7 +30,7 @@ public class Pong extends Applet {
     private boolean moveStraight = true;
     private int scoreLeft = 0;
     private int scoreRight = 0;
-    private TemporalPooler tempo = new TemporalPooler(39, 28);
+    private TemporalPooler tempo;
     private int[] columns = new int[3];
 
     @Override
@@ -42,7 +41,7 @@ public class Pong extends Applet {
     @Override
     public void init() {
         super.init();
-        tempo.init();
+        tempo = new TemporalPooler(39, 28);
 
         image = createImage(getSize().width, getSize().height);
         graphics = image.getGraphics();
@@ -61,9 +60,9 @@ public class Pong extends Applet {
     }
 
     protected void movePlayer(int yPos) {
-        if(yPos > 260) {
+        if (yPos > 260) {
             yPos = 260;
-        } else if(yPos < 20) {
+        } else if (yPos < 20) {
             yPos = 20;
 
         }
@@ -90,7 +89,7 @@ public class Pong extends Applet {
 
         Thread thread = new Thread(new Runnable() {
             public void run() {
-                if(scoreLeft == 9 || scoreRight == 9) {
+                if (scoreLeft == 9 || scoreRight == 9) {
                     scoreLeft = 0;
                     scoreRight = 0;
                     graphics.clearRect(170, 0, 50, 50);
@@ -100,12 +99,13 @@ public class Pong extends Applet {
                 }
                 ballX = 130;
                 ballY = 180;
-                while(!scored) {
+                while (!scored) {
                     moveBall();
                     repaint();
                     try {
                         Thread.sleep(50);
-                    } catch(Exception e) {
+                    }
+                    catch (Exception e) {
                         System.out.println("fucked");
                     }
                 }
@@ -116,17 +116,17 @@ public class Pong extends Applet {
     }
 
     protected void moveBall() {
-        if(ballX != 120) {//middle line should not be deleted
+        if (ballX != 120) {//middle line should not be deleted
             graphics.clearRect(100 + ballX, 30 + ballY, 10, 10);
         }
-        if(ballX > 310) {
+        if (ballX > 310) {
             scoreLeft++;
             moveRight = true;
 
             moveStraight = true;
             this.scored = true;
             graphics.clearRect(170, 0, 50, 50);
-            if(scoreLeft == 9) {
+            if (scoreLeft == 9) {
                 graphics.setColor(Color.red);
             } else {
                 graphics.setColor(Color.green);
@@ -135,13 +135,13 @@ public class Pong extends Applet {
             graphics.setColor(Color.green);
 
 
-        } else if(ballX < -70) {
+        } else if (ballX < -70) {
             scoreRight++;
             moveRight = false;
             moveStraight = true;
             this.scored = true;
             graphics.clearRect(230, 0, 50, 50);
-            if(scoreRight == 9) {
+            if (scoreRight == 9) {
                 graphics.setColor(Color.red);
             } else {
                 graphics.setColor(Color.green);
@@ -150,44 +150,44 @@ public class Pong extends Applet {
             graphics.setColor(Color.green);
         }
 
-        if(ballY <= 30) {
+        if (ballY <= 30) {
             Toolkit.getDefaultToolkit().beep();
             moveUp = true;
-        } else if(ballY > 290) {
+        } else if (ballY > 290) {
             moveUp = false;
             Toolkit.getDefaultToolkit().beep();
         }
 
-        if(ballX == 310 && yPos + 20 <= ballY && yPos + 30 >= ballY) {//middle
+        if (ballX == 310 && yPos + 20 <= ballY && yPos + 30 >= ballY) {//middle
             Toolkit.getDefaultToolkit().beep();
             moveStraight = true;
             moveRight = !moveRight;
-        } else if(ballX == 310 && yPos <= ballY && yPos + 20 >= ballY) {//topend
+        } else if (ballX == 310 && yPos <= ballY && yPos + 20 >= ballY) {//topend
             Toolkit.getDefaultToolkit().beep();
 
             moveUp = false;
             moveStraight = false;
 
             moveRight = !moveRight;
-        } else if(ballX == 310 && yPos + 30 <= ballY && yPos + 50 >= ballY) {//lowerend
+        } else if (ballX == 310 && yPos + 30 <= ballY && yPos + 50 >= ballY) {//lowerend
             Toolkit.getDefaultToolkit().beep();
 
             moveUp = true;
             moveStraight = false;
 
             moveRight = !moveRight;
-        } else if(ballX == -70 && yPos + 20 <= ballY && yPos + 30 >= ballY) {//middle
+        } else if (ballX == -70 && yPos + 20 <= ballY && yPos + 30 >= ballY) {//middle
             Toolkit.getDefaultToolkit().beep();
             moveStraight = true;
             moveRight = !moveRight;
-        } else if(ballX == -70 && yPos <= ballY && yPos + 20 >= ballY) {//end
+        } else if (ballX == -70 && yPos <= ballY && yPos + 20 >= ballY) {//end
             Toolkit.getDefaultToolkit().beep();
 
             moveUp = false;
             moveStraight = false;
 
             moveRight = !moveRight;
-        } else if(ballX == -70 && yPos + 30 <= ballY && yPos + 50 >= ballY) {//end
+        } else if (ballX == -70 && yPos + 30 <= ballY && yPos + 50 >= ballY) {//end
             Toolkit.getDefaultToolkit().beep();
 
             moveUp = true;
@@ -195,14 +195,14 @@ public class Pong extends Applet {
 
             moveRight = !moveRight;
         }
-        if(!moveStraight) {
-            if(moveUp) {
+        if (!moveStraight) {
+            if (moveUp) {
                 ballY += 10;
             } else {
                 ballY -= 10;
             }
         }
-        if(moveRight) {
+        if (moveRight) {
             ballX += 10;
         } else {
             ballX -= 10;
@@ -217,18 +217,18 @@ public class Pong extends Applet {
     private void temporal() {
         ArrayList<Column> activeColumns = new ArrayList<Column>();
         int index = -1;
-        for(int yy = 30; yy < 320; yy += 10) {
+        for (int yy = 30; yy < 320; yy += 10) {
 
-            for(int xx = -70; xx < 320; xx += 10) {
+            for (int xx = -70; xx < 320; xx += 10) {
                 index++;
 
-                if(yPos >= yy && yPos < yy + 10 && xx == -70) {
+                if (yPos >= yy && yPos < yy + 10 && xx == -70) {
                     //System.out.println(yy+"");
                     Column column = new Column(index, -80, yy);//is -80 TODO right?
                     column.setActive(true);
                     activeColumns.add(column);
                 }
-                if(ballX == xx && ballY == yy) {
+                if (ballX == xx && ballY == yy) {
 
                     //System.out.print("found");
                     Column column = new Column(index, xx, yy);

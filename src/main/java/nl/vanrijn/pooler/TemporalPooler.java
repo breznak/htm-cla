@@ -89,10 +89,8 @@ public class TemporalPooler {
     public TemporalPooler(int xxMax, int yyMax) {
         this.xxMax = xxMax;
         this.yyMax = yyMax;
-    }
 
-    // TODO remove this method
-    public void init() {
+        // init
         cells = new Cell[xxMax * yyMax][Column.CELLS_PER_COLUMN];
 
         List<Integer> collumnIndexes = HelperMath.seq(xxMax * yyMax);

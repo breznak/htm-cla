@@ -18,27 +18,29 @@ import java.util.ArrayList;
 import java.util.List;
 import nl.vanrijn.model.Cell;
 import nl.vanrijn.model.Column;
-import nl.vanrijn.model.LateralSynapse;
 import nl.vanrijn.model.DendriteSegment;
+import nl.vanrijn.model.LateralSynapse;
 import nl.vanrijn.pooler.TemporalPooler;
 
-public class TemporaalPoolerApplet extends Applet implements Runnable {
+public class TemporalPoolerApplet extends Applet implements Runnable {
 
     private boolean mouseDragged = false;
     private boolean mousePressed = false;
     private Button addPattern = null;
     private boolean black = true;
+    private int xxMax = 12; // cells per x-axis
+    private int yyMax = 12; // cells on y
     /**
      * input(t,j) The input to this level at time t. input(t, j) is 1 if the
      * j'th input is on.
      */
-    private int[] columns = new int[144];
+    private int[] columns = new int[xxMax * yyMax];
     private List<int[]> patterns = new ArrayList<>();
     private static final long serialVersionUID = 1L;
     private Graphics graphics;
     private Image image;
     // private Column[] columns;
-    private TemporalPooler tempo = new TemporalPooler(12, 12);
+    private TemporalPooler tempo = new TemporalPooler(xxMax, yyMax);
     DecimalFormat df2 = new DecimalFormat("#,###,###,##0.00");
     private Cell[][] cells;
     private Thread runner;
@@ -145,7 +147,6 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
                 mouseOver(e.getX(), e.getY());
             }
         });
-        tempo.init();
 
         draw();
     }
@@ -176,7 +177,7 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
         for (int i = 0; i < columns.length; i++) {
             columns[i] = 0;
         }
-        tempo.init();
+        tempo = new TemporalPooler(this.xxMax, this.yyMax);
         draw();
     }
 

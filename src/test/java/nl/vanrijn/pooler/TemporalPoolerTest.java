@@ -1,8 +1,8 @@
 package nl.vanrijn.pooler;
 
 import nl.vanrijn.model.Cell;
-import nl.vanrijn.model.LateralSynapse;
 import nl.vanrijn.model.DendriteSegment;
+import nl.vanrijn.model.LateralSynapse;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +14,6 @@ public class TemporalPoolerTest {
     @Before
     public void setup() {
         tempo = new TemporalPooler(12, 12);
-        tempo.init();
     }
 
     @Test
