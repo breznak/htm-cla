@@ -371,7 +371,7 @@ public class TemporalPooler {
                             break;
                         }
                     }
-                    if (segment == null) { //TODD is segment ever null?
+                    if (segment == null) { //TODO is segment ever null?
                         System.out.println("segment=null");
                         System.exit(1);
                     }
