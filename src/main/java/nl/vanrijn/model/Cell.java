@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import nl.vanrijn.model.helper.SegmentUpdate;
+import static org.junit.Assert.*;
 
 public class Cell {
 
@@ -15,29 +16,34 @@ public class Cell {
     public static final int NOW = 1;
     public static final int BEFORE = 0;
     /**
-     * segmentUpdateList A list of segmentUpdate structures. segmentUpdateList(c,i) is the list of changes for cell i in
-     * column c.
+     * segmentUpdateList A list of segmentUpdate structures.
+     * segmentUpdateList(c,i) is the list of changes for cell i in column c.
      */
     private List<SegmentUpdate> segmentUpdateList = new ArrayList<>();
     private final int columnIndex;
     private final int cellIndex;
     private int time;
     /**
-     * predictiveState(c, i, t) A boolean vector with one number per cell. It represents the prediction of the column c
-     * cell i at time t, given the bottom-up activity of other columns and the past temporal context. predictiveState(c,
-     * i, t) is the contribution of column c cell i at time t. If 1, the cell is predicting feed-forward input in the
-     * current temporal context.
+     * predictiveState(c, i, t) A boolean vector with one number per cell. It
+     * represents the prediction of the column c cell i at time t, given the
+     * bottom-up activity of other columns and the past temporal context.
+     * predictiveState(c, i, t) is the contribution of column c cell i at time
+     * t. If 1, the cell is predicting feed-forward input in the current
+     * temporal context.
      */
     private boolean predictiveState;
     /**
-     * learnState(c, i, t) A boolean indicating whether cell i in column c is chosen as the cell to learn on.
+     * learnState(c, i, t) A boolean indicating whether cell i in column c is
+     * chosen as the cell to learn on.
      */
     private boolean learnState;
     /**
-     * activeState(c, i, t) A boolean vector with one number per cell. It represents the active state of the column c
-     * cell i at time t given the current feed-forward input and the past temporal context. activeState(c, i, t) is the
-     * contribution from column c cell i at time t. If 1, the cell has current feed-forward input as well as an
-     * appropriate temporal context.
+     * activeState(c, i, t) A boolean vector with one number per cell. It
+     * represents the active state of the column c cell i at time t given the
+     * current feed-forward input and the past temporal context. activeState(c,
+     * i, t) is the contribution from column c cell i at time t. If 1, the cell
+     * has current feed-forward input as well as an appropriate temporal
+     * context.
      */
     private boolean activeState;
     private final List<Segment> segments;
@@ -46,6 +52,7 @@ public class Cell {
     private List<Cell> neighbors = null;
 
     public Cell(int columnIndex, int cellIndex, int time, int xx, int yy, List<Segment> segments) {
+        assertEquals(segments != null, true); // not null
         this.columnIndex = columnIndex;
         this.cellIndex = cellIndex;
         this.time = time;
@@ -104,10 +111,10 @@ public class Cell {
 
     @Override
     public String toString() {
-        return "cell="+this.columnIndex+","+this.cellIndex+","+this.time+",activeState="
-               +this.activeState+",learnState="+this.learnState+",predictivestate="+this.predictiveState
-               +",segments.size="+this.segments.size()+"x,y="+this.xpos+","+this.ypos+" "
-               +this.segmentUpdateList.size();
+        return "cell=" + this.columnIndex + "," + this.cellIndex + "," + this.time + ",activeState="
+                + this.activeState + ",learnState=" + this.learnState + ",predictivestate=" + this.predictiveState
+                + ",segments.size=" + this.segments.size() + "x,y=[" + this.xpos + "," + this.ypos + "], up= "
+                + this.segmentUpdateList.size();
     }
 
     public int getXpos() {
