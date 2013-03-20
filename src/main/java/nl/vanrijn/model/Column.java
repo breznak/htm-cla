@@ -5,6 +5,7 @@ package nl.vanrijn.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import nl.vanrijn.utils.CircularList;
 
 public class Column implements Comparable<Column> {
 
@@ -21,8 +22,8 @@ public class Column implements Comparable<Column> {
      * pattern. RANGE 0..
      */
     private double overlap;
-    private ArrayList<Boolean> activeList = new ArrayList<>();
-    private ArrayList<Boolean> timesGreaterOverlapThanMinOverlap = new ArrayList<>();
+    private ArrayList<Boolean> activeList = new CircularList<>(COLUMN_MAX_ACTIVE);
+    private ArrayList<Boolean> timesGreaterOverlapThanMinOverlap = new CircularList<>(COLUMN_MAX_ACTIVE);
     /**
      * neighbors(c) A list of all the columns that are within inhibitionRadius
      * of column c.
@@ -119,9 +120,6 @@ public class Column implements Comparable<Column> {
     private void addGreaterThanMinimalOverlap(boolean greaterThanMinimalOverlap) {
         // logger.log(Level.INFO, "timesGreate" + timesGreaterOverlapThanMinOverlap.size());
         this.timesGreaterOverlapThanMinOverlap.add(0, greaterThanMinimalOverlap);
-        if (timesGreaterOverlapThanMinOverlap.size() > COLUMN_MAX_ACTIVE) {
-            timesGreaterOverlapThanMinOverlap.remove(COLUMN_MAX_ACTIVE);
-        }
         updateOverlapDutyCycle();
     }
 
@@ -233,9 +231,6 @@ public class Column implements Comparable<Column> {
     public void setActive(boolean active) {
         // logger.log(Level.INFO, "activeList" + activeList.size());
         activeList.add(0, active);
-        if (activeList.size() > COLUMN_MAX_ACTIVE) {
-            activeList.remove(COLUMN_MAX_ACTIVE);
-        }
         updateActiveDutyCycle();
     }
 
@@ -257,7 +252,6 @@ public class Column implements Comparable<Column> {
 
     public void setMinimalLocalActivity(double minimalLocalActivity) {
         this.minimalLocalActivity = minimalLocalActivity;
-
     }
 
     public double getMinimalLocalActivity() {
