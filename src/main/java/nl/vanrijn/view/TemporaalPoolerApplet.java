@@ -26,29 +26,31 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
 
     private boolean mouseDragged = false;
     private boolean mousePressed = false;
-    Button addPattern = null;
+    private Button addPattern = null;
     private boolean black = true;
     /**
      * input(t,j) The input to this level at time t. input(t, j) is 1 if the
      * j'th input is on.
      */
     private int[] columns = new int[144];
-    private List<int[]> patterns = new ArrayList<int[]>();
+    private List<int[]> patterns = new ArrayList<>();
     private static final long serialVersionUID = 1L;
     private Graphics graphics;
     private Image image;
     // private Column[] columns;
     private TemporalPooler tempo = new TemporalPooler(12, 12);
     DecimalFormat df2 = new DecimalFormat("#,###,###,##0.00");
-    private Cell[][][] cells;
+    private Cell[][] cells;
     private Thread runner;
     private boolean starting = true;
     private int counter;
 
+    @Override
     public void init() {
         Button submitButton = new Button("Temporal Pooler");
         submitButton.setActionCommand("temporal");
         submitButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("temporal")) {
                     // this.invokeTemporalPooler()();
@@ -61,6 +63,7 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
 
         Button reset = new Button("reset");
         reset.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("reset")) // System.out.println("reset");
                 {
@@ -72,7 +75,8 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
 
         Button running = new Button("run");
         running.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+            public void actionPerformed(ActionEvent e) { //TODO use one actionListener everywhere
                 if (e.getActionCommand().equals("run")) {
                     running();
                 }
@@ -82,6 +86,7 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
 
         Button stop = new Button("stop");
         stop.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("stop")) {
                     stopping();
@@ -93,6 +98,7 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
         addPattern = new Button("addPattern       ");
         addPattern.setActionCommand("addPattern");
         addPattern.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("addPattern")) {
                     addPattern();
@@ -248,15 +254,15 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
 
     private void logCell(int layer, int index, int xPos, int yPos) {
 
-        Cell cell = tempo.getCells()[index][layer][Cell.BEFORE];
+        Cell cell = tempo.getCells()[index][layer];
         System.out.println(cell);
         for (Segment segment : cell.getSegments()) {
 
             for (LateralSynapse synapse : segment.getConnectedSynapses()) {
-                if (tempo.getCells()[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][Cell.BEFORE].output() == Cell.ACTIVE) {
+                if (tempo.getCells()[synapse.getFromColumnIndex()][synapse.getFromCellIndex()].output(Cell.BEFORE) == Cell.ACTIVE) {
                     System.out.println(segment);
                     System.out.println(synapse);
-                    System.out.println(tempo.getCells()[synapse.getFromColumnIndex()][synapse.getFromCellIndex()][Cell.BEFORE]);
+                    System.out.println(tempo.getCells()[synapse.getFromColumnIndex()][synapse.getFromCellIndex()]);
                 }
             }
 
@@ -348,11 +354,9 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
         for (int c = 0; c < 144; c++) {
             for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
 
-                Cell cell = cells[c][i][1];
-                if (cell.output() == Cell.ACTIVE) {
-                    // System.out.println(cell
-                    // +" "+cell.getXpos()+","+cell.getYpos()
-                    // );
+                Cell cell = cells[c][i];
+                if (cell.output(Cell.NOW) == Cell.ACTIVE) {
+                    // System.out.println(cell +" "+cell.getXpos()+","+cell.getYpos());
                     graphics.setColor(Color.black);
 
                     switch (cell.getCellIndex()) {
@@ -379,7 +383,7 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
                             break;
                     }
                 }
-                if (cell.output() == Cell.PREDICT) {
+                if (cell.output(Cell.NOW) == Cell.PREDICT) {
                     // System.out.println(cell
                     // +" "+cell.getXpos()+","+cell.getYpos()
                     // );
@@ -443,7 +447,7 @@ public class TemporaalPoolerApplet extends Applet implements Runnable {
             }
         }
         repaint();
-        tempo.nextTime();
+        //! tempo.nextTime(); //FIXME i deleted nexttime() :P
     }
 
     public void run() {

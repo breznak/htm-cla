@@ -19,11 +19,11 @@ public class TemporalPoolerTest {
 
     @Test
     public void checkactiveSegment() {
-        Cell cell = tempo.getCells()[0][0][Cell.NOW];
+        Cell cell = tempo.getCells()[0][0];
         Segment segment = cell.getSegments().get(0);
 
         for (LateralSynapse synaps : segment.getSynapses()) {
-            Cell cell1 = tempo.getCells()[synaps.getFromColumnIndex()][synaps.getFromCellIndex()][Cell.NOW];
+            Cell cell1 = tempo.getCells()[synaps.getFromColumnIndex()][synaps.getFromCellIndex()];
             cell1.setOutput(Cell.ACTIVE);
             cell1.setLearnState(true);
             System.out.println(synaps);
@@ -32,7 +32,7 @@ public class TemporalPoolerTest {
         Segment segment2 = cell.getSegments().get(1);
         segment2.setSequenceSegment(true);
         for (LateralSynapse synaps : segment2.getSynapses()) {
-            Cell cell1 = tempo.getCells()[synaps.getFromColumnIndex()][synaps.getFromCellIndex()][Cell.NOW];
+            Cell cell1 = tempo.getCells()[synaps.getFromColumnIndex()][synaps.getFromCellIndex()];
             cell1.setOutput(Cell.ACTIVE);
             cell1.setLearnState(true);
         }

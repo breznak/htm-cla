@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import nl.vanrijn.model.helper.SegmentUpdate;
+import nl.vanrijn.utils.CircularList;
 import static org.junit.Assert.*;
 
 /**
@@ -44,15 +45,19 @@ public class Cell {
      * inactive, inhibited
      */
     public static final int INACTIVE = 0;
+    // time
+    /**
+     * cell will keep a buffer of its last TIME_STEPS output values
+     */
+    private static int TIME_STEPS = 2;
     /**
      * Cell's output state: can have 3 values: Cell.ACTIVE/PREDICT/INACTIVE
      *
      * use setState/getState to query
      */
-    private int output = Cell.INACTIVE;
-    //
-    public static final int NOW = 1;
-    public static final int BEFORE = 0;
+    private List<Integer> output = new CircularList<>(TIME_STEPS);
+    public static final int BEFORE = 1;
+    public static final int NOW = 0;
     /**
      * segmentUpdateList A list of segmentUpdate structures.
      * segmentUpdateList(c,i) is the list of changes for cell i in column c.
@@ -60,7 +65,6 @@ public class Cell {
     private List<SegmentUpdate> segmentUpdateList = new ArrayList<>();
     private final int columnIndex;
     private final int cellIndex;
-    private int time;
     /**
      * learnState(c, i, t) A boolean indicating whether cell i in column c is
      * chosen as the cell to learn on.
@@ -71,27 +75,31 @@ public class Cell {
     private final int ypos;
     private List<Cell> neighbors = null;
 
-    public Cell(int columnIndex, int cellIndex, int time, int xx, int yy, List<Segment> segments) {
+    public Cell(int columnIndex, int cellIndex, int xx, int yy, List<Segment> segments) {
         assertEquals(segments != null, true); // not null
         this.columnIndex = columnIndex;
         this.cellIndex = cellIndex;
-        this.time = time;
         this.ypos = yy;
         this.xpos = xx;
         this.segments = segments;
     }
 
-    public void setTime(int time) {
-        this.time = time;
-    }
-
     /**
-     * query cell's output state: {active,predict,inactive}
+     * query cell's output state: {active,predict,inactive} at given time
+     *
+     * when requested time exceeds cell's history buffer, oldest is returned.
+     *
+     * @param time - when was this state. 0==Cell.NOW==actual, 1=BEFORE, ..upto
+     * TIME_STEPS
      *
      * @return 0/1/2 only!
      */
-    public int output() {
-        return this.output;
+    public int output(int time) {
+        if (time >= TIME_STEPS) {
+            System.err.println("! i dont remember so much, asshole");
+            time = TIME_STEPS - 1;
+        }
+        return this.output.get(time);
     }
 
     /**
@@ -101,7 +109,7 @@ public class Cell {
      */
     public void setOutput(int state) {
         assertEquals(state == Cell.ACTIVE || state == Cell.INACTIVE || state == Cell.PREDICT, true);
-        this.output = state;
+        this.output.add(0, state);
     }
 
     public int getColumnIndex() {
@@ -135,9 +143,8 @@ public class Cell {
 
     @Override
     public String toString() {
-        return "cell=" + this.columnIndex + "," + this.cellIndex + "," + this.time + ",activeState="
-                + this.activeState + ",learnState=" + this.learnState + ",predictivestate=" + this.predictiveState
-                + ",segments.size=" + this.segments.size() + "x,y=[" + this.xpos + "," + this.ypos + "], up= "
+        return "cell=" + this.columnIndex + "," + this.cellIndex + ", State=" + this.output
+                + ",learnState=" + this.learnState + ",segments.size=" + this.segments.size() + "x,y=[" + this.xpos + "," + this.ypos + "], up= "
                 + this.segmentUpdateList.size();
     }
 
