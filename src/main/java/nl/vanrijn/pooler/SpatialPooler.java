@@ -119,8 +119,8 @@ public class SpatialPooler {
                 Synapse[] synapses = new Synapse[amountOfSynapses];
 
                 for (int j = 0; j < synapses.length; j++) {
-                    Integer inputSpaceIndex = iter.next();
-                    synapses[j] = new Synapse(inputSpaceIndex, inputSpaceIndex % 12, inputSpaceIndex / 12);
+                    int inputSpaceIndex = iter.next().intValue();
+                    synapses[j] = new Synapse(inputSpaceIndex, inputSpaceIndex % 12, inputSpaceIndex / 12, 0); //TODO fix init perm
                     // TODO 4 is not correct permanenceMarge should be responsible for this value WTF?!
                     synapses[j].setPermanance(connectedPermanance - connectedPermananceMarge + (((double) random.nextInt(4)) / 10));
                     // logger.info(""+synapses[j].getPermanance());

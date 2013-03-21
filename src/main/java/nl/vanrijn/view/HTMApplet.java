@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import nl.vanrijn.model.Column;
-import nl.vanrijn.model.Synapse;
+import nl.vanrijn.model.SynapseAbstract;
 import nl.vanrijn.pooler.SpatialPooler;
 import nl.vanrijn.pooler.TemporalPooler;
 
@@ -211,7 +211,7 @@ public class HTMApplet extends Applet implements Runnable {
                     }
 
                     for(int i = 0; i < loggedColum.getPotentialSynapses().length; i++) {
-                        Synapse potentialSynapse = loggedColum.getPotentialSynapses()[i];
+                        SynapseAbstract potentialSynapse = loggedColum.getPotentialSynapses()[i];
                         if(potentialSynapse.isConnected(spat.getConnectedPermanance())) {
                             g.setColor(Color.GREEN);
                         } else {
@@ -391,7 +391,7 @@ public class HTMApplet extends Applet implements Runnable {
         graphics.setColor(Color.black);
 
         for(int i = 0; i < column.getPotentialSynapses().length; i++) {
-            Synapse potentialSynapse = column.getPotentialSynapses()[i];
+            SynapseAbstract potentialSynapse = column.getPotentialSynapses()[i];
             if(potentialSynapse.isConnected(spat.getConnectedPermanance())) {
                 graphics.setColor(Color.GREEN);
             } else {
