@@ -74,10 +74,25 @@ public class Cell {
      * unique ID of cell, use getName()
      */
     private int uniqName;
+    /**
+     * dendrite segments (contain Synapse) that this Cell contains
+     */
     private final List<DendriteSegment> segments;
+    /**
+     * receptive field of this cell = cells it can communicate with
+     */
     private List<Cell> neighbors = null;
+    /**
+     * Column is a higher structer, each Cell belongs to one Column
+     */
     private final Column partOfColumn;
 
+    /**
+     * create a new Cell (aka Neuron)
+     *
+     * @param belongsToColumn belonging to this Column
+     * @param segments containing these DendriteSegments
+     */
     public Cell(Column belongsToColumn, List<DendriteSegment> segments) {
         assertEquals(segments != null, true); // not null
         this.partOfColumn = belongsToColumn;
@@ -146,6 +161,7 @@ public class Cell {
         return this.learnState.get(time);
     }
 
+    //TODO possible to remove SegmentUpdate class?
     public List<SegmentUpdate> getSegmentUpdateList() {
         return segmentUpdateList;
     }
