@@ -102,7 +102,7 @@ public class TemporalPooler {
                 for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
                     List<DendriteSegment> segments = new ArrayList<>();
                     Column col = new Column(i, xx, yy);
-                    cells[c][i] = new Cell(col, xx, yy, segments);  //! hack: cells with segments must be here, below we add elements to segments, which link to cell
+                    cells[c][i] = new Cell(col, segments);  //! hack: cells with segments must be here, below we add elements to segments, which link to cell
                     for (int s = 0; s < AMMOUNT_OF_SEGMENTS; s++) {
                         List<LateralSynapse> synapses = new ArrayList<>();
                         Collections.shuffle(collumnIndexes);
@@ -129,10 +129,10 @@ public class TemporalPooler {
      */
     private List<Cell> neighborhoodCells(Cell cell) {
         List<Cell> neighbors = new ArrayList<>();
-        int xxStart = Math.max(0, cell.getXpos() - LEARNING_RADIUS);
-        int xxEnd = Math.min(xxMax, cell.getXpos() + LEARNING_RADIUS + 1);
-        int yyStart = Math.max(0, cell.getYpos() - LEARNING_RADIUS);
-        int yyEnd = Math.min(yyMax, cell.getYpos() + LEARNING_RADIUS + 1);
+        int xxStart = Math.max(0, cell.getColumn().getxPos() - LEARNING_RADIUS);
+        int xxEnd = Math.min(xxMax, cell.getColumn().getxPos() + LEARNING_RADIUS + 1);
+        int yyStart = Math.max(0, cell.getColumn().getyPos() - LEARNING_RADIUS);
+        int yyEnd = Math.min(yyMax, cell.getColumn().getyPos() + LEARNING_RADIUS + 1);
         int c;
         for (int yy = yyStart; yy < yyEnd; yy++) {
             for (int xx = xxStart; xx < xxEnd; xx++) {

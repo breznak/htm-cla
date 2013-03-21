@@ -77,18 +77,14 @@ public class Cell {
      */
     private int uniqName;
     private final List<DendriteSegment> segments;
-    private final int xpos;
-    private final int ypos;
     private List<Cell> neighbors = null;
     private final Column partOfColumn;
 
-    public Cell(Column belongsToColumn, int xx, int yy, List<DendriteSegment> segments) {
+    public Cell(Column belongsToColumn, List<DendriteSegment> segments) {
         assertEquals(segments != null, true); // not null
         this.partOfColumn = belongsToColumn;
         this.uniqName = Cell.cellCounter; //unique name
         Cell.cellCounter++;
-        this.ypos = yy;
-        this.xpos = xx;
         this.segments = segments;
     }
 
@@ -152,16 +148,7 @@ public class Cell {
     @Override
     public String toString() {
         return "cell=" + this.partOfColumn + "," + this.uniqName + ", State=" + this.output
-                + ",learnState=" + this.learnState + ",segments.size=" + this.segments.size() + "x,y=[" + this.xpos + "," + this.ypos + "], up= "
-                + this.segmentUpdateList.size();
-    }
-
-    public int getXpos() {
-        return xpos;
-    }
-
-    public int getYpos() {
-        return ypos;
+                + ",learnState=" + this.learnState + ",segments.size=" + this.segments.size() + ", up= " + this.segmentUpdateList.size();
     }
 
     public void setNeigbors(List<Cell> neighbors) {

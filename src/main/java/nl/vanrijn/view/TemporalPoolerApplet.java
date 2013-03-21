@@ -365,19 +365,19 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
 
                             // System.out.println("nuuuuu0" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
-                            graphics.fillOval(19 * cell.getXpos() + 260, 100 + (19 * cell.getYpos()), 16, 16);
+                            graphics.fillOval(19 * cell.getColumn().getxPos() + 260, 100 + (19 * cell.getColumn().getyPos()), 16, 16);
                             break;
                         }
                         case 1: {
                             // System.out.println("nuuuuu1" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
-                            graphics.fillOval(19 * cell.getXpos() + 520, 100 + (19 * cell.getYpos()), 16, 16);
+                            graphics.fillOval(19 * cell.getColumn().getxPos() + 520, 100 + (19 * cell.getColumn().getyPos()), 16, 16);
                             break;
                         }
                         case 2: {
                             // System.out.println("nuuuuu2" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
-                            graphics.fillOval(19 * cell.getXpos() + 780, 100 + (19 * cell.getYpos()), 16, 16);
+                            graphics.fillOval(19 * cell.getColumn().getxPos() + 780, 100 + (19 * cell.getColumn().getyPos()), 16, 16);
                             break;
                         }
                         default:
@@ -396,19 +396,19 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
 
                             // System.out.println("nuuuuu0" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
-                            graphics.fillOval(19 * cell.getXpos() + 263, 103 + (19 * cell.getYpos()), 10, 10);
+                            graphics.fillOval(19 * cell.getColumn().getxPos() + 263, 103 + (19 * cell.getColumn().getyPos()), 10, 10);
                             break;
                         }
                         case 1: {
                             // System.out.println("nuuuuu1" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
-                            graphics.fillOval(19 * cell.getXpos() + 523, 103 + (19 * cell.getYpos()), 10, 10);
+                            graphics.fillOval(19 * cell.getColumn().getxPos() + 523, 103 + (19 * cell.getColumn().getyPos()), 10, 10);
                             break;
                         }
                         case 2: {
                             // System.out.println("nuuuuu2" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
-                            graphics.fillOval(19 * cell.getXpos() + 783, 103 + (19 * cell.getYpos()), 10, 10);
+                            graphics.fillOval(19 * cell.getColumn().getxPos() + 783, 103 + (19 * cell.getColumn().getyPos()), 10, 10);
                             break;
                         }
                         default:
@@ -425,19 +425,19 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
 
                             // System.out.println("nuuuuu0" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
-                            graphics.fillOval(19 * cell.getXpos() + 266, 105 + (19 * cell.getYpos()), 5, 5);
+                            graphics.fillOval(19 * cell.getColumn().getxPos() + 266, 105 + (19 * cell.getColumn().getyPos()), 5, 5);
                             break;
                         }
                         case 1: {
                             // System.out.println("nuuuuu1" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
-                            graphics.fillOval(19 * cell.getXpos() + 526, 105 + (19 * cell.getYpos()), 5, 5);
+                            graphics.fillOval(19 * cell.getColumn().getxPos() + 526, 105 + (19 * cell.getColumn().getyPos()), 5, 5);
                             break;
                         }
                         case 2: {
                             // System.out.println("nuuuuu2" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
-                            graphics.fillOval(19 * cell.getXpos() + 786, 105 + (19 * cell.getYpos()), 5, 5);
+                            graphics.fillOval(19 * cell.getColumn().getxPos() + 786, 105 + (19 * cell.getColumn().getyPos()), 5, 5);
                             break;
                         }
                         default:
