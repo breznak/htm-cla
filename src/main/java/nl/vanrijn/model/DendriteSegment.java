@@ -6,6 +6,7 @@ package nl.vanrijn.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import nl.vanrijn.pooler.TemporalPooler;
 
 public class DendriteSegment {
 
@@ -36,7 +37,7 @@ public class DendriteSegment {
     public List<LateralSynapse> getConnectedSynapses() {
         List<LateralSynapse> connectedSynapses = new ArrayList<>();
         for (LateralSynapse synapse : synapses) {
-            if (synapse.isConnected()) {
+            if (synapse.isConnected(TemporalPooler.CONNECTED_PERMANANCE)) {
                 connectedSynapses.add(synapse);
             }
         }

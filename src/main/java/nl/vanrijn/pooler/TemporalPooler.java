@@ -581,10 +581,10 @@ public class TemporalPooler {
         // TODO take the synapses from now not other time.
         for (LateralSynapse synapse : synapses) {
             //TODO incorporate PREDICT in getLearnState() ?
-            if (state == Cell.PREDICT && synapse.isConnected() && synapse.getFromCell().getLearnState(time)) {
+            if (state == Cell.PREDICT && synapse.isConnected(CONNECTED_PERMANANCE) && synapse.getFromCell().getLearnState(time)) {
                 // TODO are all cells that have learnstate also Active or should we also check if the cell is/was active?
                 ammountConnected++;
-            } else if (state == Cell.ACTIVE && synapse.isConnected() && synapse.getFromCell().output(time) == Cell.ACTIVE) {
+            } else if (state == Cell.ACTIVE && synapse.isConnected(CONNECTED_PERMANANCE) && synapse.getFromCell().output(time) == Cell.ACTIVE) {
                 ammountConnected++;
             }
         }
