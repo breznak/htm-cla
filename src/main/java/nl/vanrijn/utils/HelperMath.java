@@ -16,6 +16,13 @@ import java.util.List;
 public abstract class HelperMath {
 
     /**
+     * this object is greater than the one passed as argument
+     */
+    public static final int GREATER = 1;
+    public static final int EQUAL = 0;
+    private static final int LESSER = -1;
+
+    /**
      * make integer sequence 1..maxValue
      *
      * @param maxValue
