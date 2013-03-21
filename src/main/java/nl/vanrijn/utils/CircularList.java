@@ -15,7 +15,6 @@ import java.util.ArrayList;
 public class CircularList<T> extends ArrayList<T> {
 
     private static final long serialVersionUID = 1L;
-    private ArrayList<T> buffer;
     private int maxCapacity;
 
     /**
@@ -25,7 +24,7 @@ public class CircularList<T> extends ArrayList<T> {
      * @param capacity
      */
     public CircularList(int capacity) {
-        this.buffer = new ArrayList<>(capacity);
+        super(capacity);
         this.maxCapacity = capacity;
     }
 
@@ -38,8 +37,8 @@ public class CircularList<T> extends ArrayList<T> {
     @Override
     public void add(int index, T element) {
         super.add(index, element);
-        if (buffer.size() > maxCapacity) {
-            buffer.remove(maxCapacity);
+        if (this.size() > maxCapacity) {
+            this.remove(maxCapacity);
         }
     }
 }
