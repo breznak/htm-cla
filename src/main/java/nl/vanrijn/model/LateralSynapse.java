@@ -7,27 +7,19 @@ import nl.vanrijn.pooler.TemporalPooler;
 
 public class LateralSynapse extends SynapseAbstract {
 
-    private final int fromColumnIndex;
-    private final int fromCellIndex;
-    private final int columnIndex;
-    private final int cellIndex;
+    private final Cell fromCell;
+    private final Cell onCell;
     private final int segmentIndex;
 
-    public LateralSynapse(int c, int i, int s, int fromColumnIndex, int fromCellIndex, double initialPerm) {
+    public LateralSynapse(Cell on, int s, Cell from, double initialPerm) {
         super(initialPerm);
-        this.columnIndex = c;
-        this.cellIndex = i;
+        this.onCell = on;
         this.segmentIndex = s;
-        this.fromColumnIndex = fromColumnIndex;
-        this.fromCellIndex = fromCellIndex;
+        this.fromCell = from;
     }
 
-    public int getFromColumnIndex() {
-        return fromColumnIndex;
-    }
-
-    public int getFromCellIndex() {
-        return fromCellIndex;
+    public Cell getFromCell() {
+        return fromCell;
     }
 
     public boolean isConnected() {
@@ -38,7 +30,6 @@ public class LateralSynapse extends SynapseAbstract {
 
     @Override
     public String toString() {
-        return "LateralSynapse from " + this.fromColumnIndex + "," + this.fromCellIndex + ", on " + this.columnIndex
-                + "," + this.cellIndex + "," + this.segmentIndex + ",perm " + getPermanance();
+        return "LateralSynapse from " + this.fromCell + ", on " + this.onCell + "," + this.segmentIndex + ",perm " + getPermanance();
     }
 }
