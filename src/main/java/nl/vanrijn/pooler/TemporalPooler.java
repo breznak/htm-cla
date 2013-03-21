@@ -101,6 +101,7 @@ public class TemporalPooler {
             for (int xx = 0; xx < xxMax; xx++) {
                 for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
                     List<DendriteSegment> segments = new ArrayList<>();
+                    cells[c][i] = new Cell(c, i, xx, yy, segments);  //! hack: cells with segments must be here, below we add elements to segments, which link to cell
                     for (int s = 0; s < AMMOUNT_OF_SEGMENTS; s++) {
                         List<LateralSynapse> synapses = new ArrayList<>();
                         Collections.shuffle(collumnIndexes);
@@ -108,10 +109,9 @@ public class TemporalPooler {
                             // TODO can a cell predict itself?
                             synapses.add(new LateralSynapse(c, i, s, collumnIndexes.get(y), random.nextInt(3), TemporalPooler.INITIAL_PERM));
                         }
-                        segments.add(new DendriteSegment(c, i, s, synapses));
+                        segments.add(new DendriteSegment(cells[c][i], s, synapses));
                         // System.out.println(c);
                     }
-                    cells[c][i] = new Cell(c, i, xx, yy, segments);
                 }
                 c++;
             }
@@ -431,7 +431,7 @@ public class TemporalPooler {
         }
         if (!bestMatchingSegments.isEmpty()) {
             DendriteSegment bestMatchingSegment = getBestMatchingSegment(bestMatchingSegments, time);
-            return cells[col][bestMatchingSegment.getCellIndex()];
+            return bestMatchingSegment.getBelongingCell();
         }
         return min; // return the cell with the fewest number of segments.
     }

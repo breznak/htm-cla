@@ -8,22 +8,21 @@ import java.util.Collections;
 import java.util.List;
 
 public class DendriteSegment {
+
     private List<LateralSynapse> synapses;
     private boolean sequenceSegment;
-    private int cellIndex;
     private int segmentIndex;
-    private int columnIndex;
     private int ammountActiveCells;
+    private Cell belongsToCell;
 
-    public DendriteSegment(int c, int i, int s, List<LateralSynapse> synapses) {
-        this.columnIndex = c;
-        this.cellIndex = i;
+    public DendriteSegment(Cell belongsToCell, int s, List<LateralSynapse> synapses) {
+        this.belongsToCell = belongsToCell;
         this.segmentIndex = s;
         this.synapses = synapses;
     }
 
-    public int getCellIndex() {
-        return cellIndex;
+    public Cell getBelongingCell() {
+        return this.belongsToCell;
     }
 
     public int getSegmentIndex() {
@@ -46,7 +45,7 @@ public class DendriteSegment {
 
     @Override
     public String toString() {
-        return "segment on " + this.columnIndex + "," + this.cellIndex + "," + this.segmentIndex + ",isSeq " + sequenceSegment + ",amm syn " + this.getSynapses().size();
+        return "segment on " + getBelongingCell().getColumnIndex() + "," + getBelongingCell().getCellIndex() + "," + this.segmentIndex + ",isSeq " + sequenceSegment + ",amm syn " + this.getSynapses().size();
     }
 
     public boolean isSequenceSegment() {

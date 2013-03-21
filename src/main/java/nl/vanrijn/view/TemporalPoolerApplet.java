@@ -363,19 +363,19 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
                     switch (cell.getCellIndex()) {
                         case 0: {
 
-                            // System.out.println("nuuuuu0" + cell.getCellIndex()
+                            // System.out.println("nuuuuu0" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
                             graphics.fillOval(19 * cell.getXpos() + 260, 100 + (19 * cell.getYpos()), 16, 16);
                             break;
                         }
                         case 1: {
-                            // System.out.println("nuuuuu1" + cell.getCellIndex()
+                            // System.out.println("nuuuuu1" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
                             graphics.fillOval(19 * cell.getXpos() + 520, 100 + (19 * cell.getYpos()), 16, 16);
                             break;
                         }
                         case 2: {
-                            // System.out.println("nuuuuu2" + cell.getCellIndex()
+                            // System.out.println("nuuuuu2" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
                             graphics.fillOval(19 * cell.getXpos() + 780, 100 + (19 * cell.getYpos()), 16, 16);
                             break;
@@ -394,19 +394,19 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
 
                         case 0: {
 
-                            // System.out.println("nuuuuu0" + cell.getCellIndex()
+                            // System.out.println("nuuuuu0" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
                             graphics.fillOval(19 * cell.getXpos() + 263, 103 + (19 * cell.getYpos()), 10, 10);
                             break;
                         }
                         case 1: {
-                            // System.out.println("nuuuuu1" + cell.getCellIndex()
+                            // System.out.println("nuuuuu1" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
                             graphics.fillOval(19 * cell.getXpos() + 523, 103 + (19 * cell.getYpos()), 10, 10);
                             break;
                         }
                         case 2: {
-                            // System.out.println("nuuuuu2" + cell.getCellIndex()
+                            // System.out.println("nuuuuu2" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
                             graphics.fillOval(19 * cell.getXpos() + 783, 103 + (19 * cell.getYpos()), 10, 10);
                             break;
@@ -423,19 +423,19 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
                     switch (cell.getCellIndex()) {
                         case 0: {
 
-                            // System.out.println("nuuuuu0" + cell.getCellIndex()
+                            // System.out.println("nuuuuu0" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
                             graphics.fillOval(19 * cell.getXpos() + 266, 105 + (19 * cell.getYpos()), 5, 5);
                             break;
                         }
                         case 1: {
-                            // System.out.println("nuuuuu1" + cell.getCellIndex()
+                            // System.out.println("nuuuuu1" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
                             graphics.fillOval(19 * cell.getXpos() + 526, 105 + (19 * cell.getYpos()), 5, 5);
                             break;
                         }
                         case 2: {
-                            // System.out.println("nuuuuu2" + cell.getCellIndex()
+                            // System.out.println("nuuuuu2" + cell.getBelongingCell()
                             // +" "+cell.getXpos()+" " +cell.getYpos());
                             graphics.fillOval(19 * cell.getXpos() + 786, 105 + (19 * cell.getYpos()), 5, 5);
                             break;
