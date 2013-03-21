@@ -11,8 +11,6 @@ import nl.vanrijn.utils.HelperMath;
 public class Column implements Comparable<Column> {
 
     private final int columnIndex;
-    private final int xPos;
-    private final int yPos;
     /**
      * boost(c) The boost value for column c as computed during learning - used
      * to increase the overlap value for inactive columns.
@@ -61,32 +59,22 @@ public class Column implements Comparable<Column> {
     public static final int CELLS_PER_COLUMN = 3;
     private static final int COLUMN_MAX_ACTIVE = 1000;
 
-    public Column(int index, int xx, int yy) {
-        this(index, xx, yy, null);
+    public Column(int index) {
+        this(index, null);
     }
 
-    public Column(int index, int x, int y, List<Synapse> synapses) {
+    public Column(int index, List<Synapse> synapses) {
         this.columnIndex = index;
-        this.xPos = x;
-        this.yPos = y;
         this.potentialSynapses = synapses;
     }
 
     @Override
     public String toString() {
-        return "column " + this.columnIndex + "," + this.xPos + "," + this.yPos;
+        return "column " + this.columnIndex;
     }
 
     public int getColumnIndex() {
         return columnIndex;
-    }
-
-    public int getxPos() {
-        return xPos;
-    }
-
-    public int getyPos() {
-        return yPos;
     }
 
     /**
