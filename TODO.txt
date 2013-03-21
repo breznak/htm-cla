@@ -1,0 +1,21 @@
+===TODO===
+
+make it run :) 
+
+persistence/storage
+
+optimisation/parallelization
+
+visualize SpatialPooler
+
+ROS communication layer
+
+examples
+
+autotune Pooler sizes (num of columnts in regards to inputs)
+
+regions
+
+stack SpatialP-TempP-...
+
+j2me

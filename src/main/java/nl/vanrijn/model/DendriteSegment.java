@@ -4,7 +4,6 @@
 package nl.vanrijn.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import nl.vanrijn.pooler.TemporalPooler;
 
@@ -31,7 +30,7 @@ public class DendriteSegment {
     }
 
     public List<LateralSynapse> getSynapses() {
-        return Collections.unmodifiableList(synapses);
+        return synapses;
     }
 
     public List<LateralSynapse> getConnectedSynapses() {
