@@ -21,6 +21,7 @@ import nl.vanrijn.model.Column;
 import nl.vanrijn.model.DendriteSegment;
 import nl.vanrijn.model.LateralSynapse;
 import nl.vanrijn.pooler.TemporalPooler;
+import nl.vanrijn.utils.HelperMath;
 
 public class TemporalPoolerApplet extends Applet implements Runnable {
 
@@ -260,14 +261,14 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
         for (DendriteSegment segment : cell.getSegments()) {
 
             for (LateralSynapse synapse : segment.getConnectedSynapses()) {
-                if (synapse.getFromCell().output(Cell.BEFORE) == Cell.ACTIVE) {
+                if (synapse.getFromCell().output(HelperMath.BEFORE) == Cell.ACTIVE) {
                     System.out.println(segment);
                     System.out.println(synapse);
                     System.out.println(synapse.getFromCell());
                 }
             }
 
-            if (this.tempo.segmentActive(segment, Cell.BEFORE, Cell.ACTIVE)) {
+            if (this.tempo.segmentActive(segment, HelperMath.BEFORE, Cell.ACTIVE)) {
                 System.out.println(segment + " is active");
             }
         }
@@ -356,7 +357,7 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
             for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
 
                 Cell cell = cells[c][i];
-                if (cell.output(Cell.NOW) == Cell.ACTIVE) {
+                if (cell.output(HelperMath.NOW) == Cell.ACTIVE) {
                     // System.out.println(cell +" "+cell.getXpos()+","+cell.getYpos());
                     graphics.setColor(Color.black);
 
@@ -384,7 +385,7 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
                             break;
                     }
                 }
-                if (cell.output(Cell.NOW) == Cell.PREDICT) {
+                if (cell.output(HelperMath.NOW) == Cell.PREDICT) {
                     // System.out.println(cell
                     // +" "+cell.getXpos()+","+cell.getYpos()
                     // );
@@ -415,7 +416,7 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
                             break;
                     }
                 }
-                if (cell.getLearnState(Cell.NOW)) {
+                if (cell.getLearnState(HelperMath.NOW)) {
                     // System.out.println(cell
                     // +" "+cell.getXpos()+","+cell.getYpos()
                     // );

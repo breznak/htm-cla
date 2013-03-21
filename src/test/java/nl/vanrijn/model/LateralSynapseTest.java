@@ -11,7 +11,7 @@ public class LateralSynapseTest {
 
     @Before
     public void setup() {
-        Cell c = new Cell(new Column(1, 1, 2), 2, 5, new ArrayList<DendriteSegment>());
+        Cell c = new Cell(new Column(1, 1, 2), new ArrayList<DendriteSegment>());
         this.synapse = new LateralSynapse(c, 0.8);
     }
 

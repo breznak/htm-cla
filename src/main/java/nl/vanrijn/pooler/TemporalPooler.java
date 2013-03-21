@@ -174,18 +174,18 @@ public class TemporalPooler {
             boolean buPredicted = false;
             boolean lcChosen = false;//used for learning
             for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
-                if (cells[column.getColumnIndex()][i].output(Cell.BEFORE) == Cell.PREDICT) {
+                if (cells[column.getColumnIndex()][i].output(HelperMath.BEFORE) == Cell.PREDICT) {
                     // get the segment that became active in the time step
                     // before.(That made this cell active).
                     // So the synapses that made this segment active where also
                     // from one time step before. and the cells
                     // connected to these synapses also.
-                    DendriteSegment segment = getActiveSegment(column.getColumnIndex(), i, Cell.BEFORE, Cell.ACTIVE);
+                    DendriteSegment segment = getActiveSegment(column.getColumnIndex(), i, HelperMath.BEFORE, Cell.ACTIVE);
                     if (segment != null && segment.isSequenceSegment()) {
                         buPredicted = true;
                         cells[column.getColumnIndex()][i].setOutput(Cell.ACTIVE);
                         // if these cells also had learnstate
-                        if (segmentActive(segment, Cell.BEFORE, Cell.PREDICT) && LEARNING) {
+                        if (segmentActive(segment, HelperMath.BEFORE, Cell.PREDICT) && LEARNING) {
                             lcChosen = true;
                             cells[column.getColumnIndex()][i].setLearnState(true);
                         }
@@ -198,11 +198,11 @@ public class TemporalPooler {
                 }
             }
             if (!lcChosen && LEARNING) {
-                Cell cellToUpdate = getBestMatchingCell(column.getColumnIndex(), Cell.BEFORE);
+                Cell cellToUpdate = getBestMatchingCell(column.getColumnIndex(), HelperMath.BEFORE);
                 // TODO Maybe now a new segment should be created in stead of
                 // getting the best matching segment
-                DendriteSegment segment = getBestMatchingSegment(column.getColumnIndex(), cellToUpdate.getName(), Cell.BEFORE);
-                SegmentUpdate sUpdate = getSegmentActiveSynapses(column.getColumnIndex(), cellToUpdate.getName(), segment, Cell.BEFORE, true);
+                DendriteSegment segment = getBestMatchingSegment(column.getColumnIndex(), cellToUpdate.getName(), HelperMath.BEFORE);
+                SegmentUpdate sUpdate = getSegmentActiveSynapses(column.getColumnIndex(), cellToUpdate.getName(), segment, HelperMath.BEFORE, true);
                 sUpdate.setSequenceSegment(true);
                 cellToUpdate.setLearnState(true);
                 cellToUpdate.getSegmentUpdateList().add(sUpdate);
@@ -228,15 +228,15 @@ public class TemporalPooler {
                 for (int s = 0; s < cell.getSegments().size(); s++) {
                     DendriteSegment segment = cell.getSegments().get(s);
                     // is this segment active from cells that are active now?(In phase 1)
-                    if (segmentActive(segment, Cell.NOW, Cell.ACTIVE)) {
+                    if (segmentActive(segment, HelperMath.NOW, Cell.ACTIVE)) {
                         cell.setOutput(Cell.PREDICT);
                         if (LEARNING) {
-                            SegmentUpdate activeUpdate = getSegmentActiveSynapses(c, i, segment, Cell.NOW, false);
+                            SegmentUpdate activeUpdate = getSegmentActiveSynapses(c, i, segment, HelperMath.NOW, false);
                             cell.getSegmentUpdateList().add(activeUpdate);
                             // TODO This should not happen so often. Only once for
                             // an active cell. because it will always be the same segment
-                            DendriteSegment predSegment = getBestMatchingSegment(c, i, Cell.BEFORE);
-                            SegmentUpdate predUpdate = getSegmentActiveSynapses(c, i, predSegment, Cell.BEFORE, true);
+                            DendriteSegment predSegment = getBestMatchingSegment(c, i, HelperMath.BEFORE);
+                            SegmentUpdate predUpdate = getSegmentActiveSynapses(c, i, predSegment, HelperMath.BEFORE, true);
                             cell.getSegmentUpdateList().add(predUpdate);
                         }
                     }
@@ -257,13 +257,13 @@ public class TemporalPooler {
             for (int c = 0; c < xxMax * yyMax; c++) {
                 for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
                     Cell cell = cells[c][i];
-                    if (cell.getLearnState(Cell.NOW)) {
+                    if (cell.getLearnState(HelperMath.NOW)) {
                         adaptSegments(cell.getSegmentUpdateList(), SegmentUpdate.POSITIVE_REINFORCEMENT);
                         cell.getSegmentUpdateList().clear();
                     } else // TODO I have the feeling that this is wrong. It should be:if
                     // the cell was predicted but is not
                     // active now. (or maybe not)
-                    if (!(cells[c][i].output(Cell.NOW) == Cell.PREDICT) && (cells[c][i].output(Cell.BEFORE) == Cell.PREDICT)) {
+                    if (!(cells[c][i].output(HelperMath.NOW) == Cell.PREDICT) && (cells[c][i].output(HelperMath.BEFORE) == Cell.PREDICT)) {
                         adaptSegments(cell.getSegmentUpdateList(), SegmentUpdate.NO_POSITIVE_REINFORCEMENT);
                         cell.getSegmentUpdateList().clear();
                     }

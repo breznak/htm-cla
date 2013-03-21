@@ -21,6 +21,8 @@ public abstract class HelperMath {
     public static final int GREATER = 1;
     public static final int EQUAL = 0;
     public static final int LESSER = -1;
+    public static final int BEFORE = 1;
+    public static final int NOW = 0;
 
     /**
      * make integer sequence 1..maxValue

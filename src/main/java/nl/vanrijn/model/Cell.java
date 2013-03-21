@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import nl.vanrijn.model.helper.SegmentUpdate;
 import nl.vanrijn.utils.CircularList;
+import nl.vanrijn.utils.HelperMath;
 import static org.junit.Assert.*;
 
 /**
@@ -60,8 +61,6 @@ public class Cell {
      * chosen as the cell to learn on.
      */
     private List<Boolean> learnState = new CircularList<>(TIME_STEPS);
-    public static final int BEFORE = 1;
-    public static final int NOW = 0;
     /**
      * segmentUpdateList A list of segmentUpdate structures.
      * segmentUpdateList(c,i) is the list of changes for cell i in column c.
@@ -112,7 +111,7 @@ public class Cell {
      */
     public void setOutput(int state) {
         assertEquals(state == Cell.ACTIVE || state == Cell.INACTIVE || state == Cell.PREDICT, true);
-        this.output.add(NOW, state);
+        this.output.add(HelperMath.NOW, state);
     }
 
     /**
@@ -140,7 +139,7 @@ public class Cell {
 
 //TODO what is learnState??
     public void setLearnState(boolean learnState) {
-        this.learnState.add(NOW, learnState);
+        this.learnState.add(HelperMath.NOW, learnState);
     }
 
     public boolean getLearnState(int time) {
