@@ -17,7 +17,10 @@ public class CellTest {
 
     @Test
     public void checkCell() {
-        c = new Cell(1, 1, 1, 1, new ArrayList<DendriteSegment>());
+        ArrayList<DendriteSegment> seg = new ArrayList<>();
+        Column col = new Column(1, 1, 2);
+
+        c = new Cell(col, 1, 1, 1, seg);
         System.out.println("CellTest: created a cell = " + c.toString());
     }
 }

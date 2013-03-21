@@ -68,16 +68,16 @@ public class Cell {
      * segmentUpdateList(c,i) is the list of changes for cell i in column c.
      */
     private List<SegmentUpdate> segmentUpdateList = new ArrayList<>();
-    private final int columnIndex;
     private final int cellIndex;
     private final List<DendriteSegment> segments;
     private final int xpos;
     private final int ypos;
     private List<Cell> neighbors = null;
+    private final Column partOfColumn;
 
-    public Cell(int columnIndex, int cellIndex, int xx, int yy, List<DendriteSegment> segments) {
+    public Cell(Column belongsToColumn, int cellIndex, int xx, int yy, List<DendriteSegment> segments) {
         assertEquals(segments != null, true); // not null
-        this.columnIndex = columnIndex;
+        this.partOfColumn = belongsToColumn;
         this.cellIndex = cellIndex;
         this.ypos = yy;
         this.xpos = xx;
@@ -112,8 +112,8 @@ public class Cell {
         this.output.add(0, state);
     }
 
-    public int getColumnIndex() {
-        return columnIndex;
+    public Column getColumn() {
+        return this.partOfColumn;
     }
 
     public int getCellIndex() {
@@ -134,7 +134,7 @@ public class Cell {
     }
 
     public List<SegmentUpdate> getSegmentUpdateList() {
-        return Collections.unmodifiableList(segmentUpdateList);
+        return segmentUpdateList;
     }
 
     public void setSegmentUpdateList(List<SegmentUpdate> segmentUpdateList) {
@@ -143,7 +143,7 @@ public class Cell {
 
     @Override
     public String toString() {
-        return "cell=" + this.columnIndex + "," + this.cellIndex + ", State=" + this.output
+        return "cell=" + this.partOfColumn + "," + this.cellIndex + ", State=" + this.output
                 + ",learnState=" + this.learnState + ",segments.size=" + this.segments.size() + "x,y=[" + this.xpos + "," + this.ypos + "], up= "
                 + this.segmentUpdateList.size();
     }

@@ -101,7 +101,8 @@ public class TemporalPooler {
             for (int xx = 0; xx < xxMax; xx++) {
                 for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
                     List<DendriteSegment> segments = new ArrayList<>();
-                    cells[c][i] = new Cell(c, i, xx, yy, segments);  //! hack: cells with segments must be here, below we add elements to segments, which link to cell
+                    Column col = new Column(i, xx, yy);
+                    cells[c][i] = new Cell(col, i, xx, yy, segments);  //! hack: cells with segments must be here, below we add elements to segments, which link to cell
                     for (int s = 0; s < AMMOUNT_OF_SEGMENTS; s++) {
                         List<LateralSynapse> synapses = new ArrayList<>();
                         Collections.shuffle(collumnIndexes);
@@ -197,14 +198,12 @@ public class TemporalPooler {
                 }
             }
             if (!lcChosen && LEARNING) {
-                Cell cell = getBestMatchingCell(column.getColumnIndex(), Cell.BEFORE);
+                Cell cellToUpdate = getBestMatchingCell(column.getColumnIndex(), Cell.BEFORE);
                 // TODO Maybe now a new segment should be created in stead of
                 // getting the best matching segment
-                DendriteSegment segment = getBestMatchingSegment(column.getColumnIndex(), cell.getCellIndex(), Cell.BEFORE);
-                SegmentUpdate sUpdate = getSegmentActiveSynapses(column.getColumnIndex(), cell.getCellIndex(), segment, Cell.BEFORE, true);
+                DendriteSegment segment = getBestMatchingSegment(column.getColumnIndex(), cellToUpdate.getCellIndex(), Cell.BEFORE);
+                SegmentUpdate sUpdate = getSegmentActiveSynapses(column.getColumnIndex(), cellToUpdate.getCellIndex(), segment, Cell.BEFORE, true);
                 sUpdate.setSequenceSegment(true);
-
-                Cell cellToUpdate = cells[cell.getColumnIndex()][cell.getCellIndex()];
                 cellToUpdate.setLearnState(true);
                 cellToUpdate.getSegmentUpdateList().add(sUpdate);
             }
@@ -483,9 +482,8 @@ public class TemporalPooler {
                 }
 
                 for (Cell neighborCell : cells[c][i].getNeighbors()) {
-                    Cell potentialCellWithLearnState = cells[neighborCell.getColumnIndex()][neighborCell.getCellIndex()];
-                    if (potentialCellWithLearnState.getLearnState(time)) { //TODO must make learnState time vector
-                        cellsWithLearnstate.add(potentialCellWithLearnState);
+                    if (neighborCell.getLearnState(time)) { //TODO must make learnState time vector
+                        cellsWithLearnstate.add(neighborCell);
                     }
                 }
             } else {
@@ -506,7 +504,7 @@ public class TemporalPooler {
                 }
                 for (int k = 0; k < ammountNewSynapsesToAdd; k++) {
                     Cell cell = cellsWithLearnstate.get(k);
-                    activeSynapses.add(new LateralSynapse(cells[cell.getColumnIndex()][cell.getCellIndex()], INITIAL_PERM));
+                    activeSynapses.add(new LateralSynapse(cell, INITIAL_PERM));
                 }
             }
         }

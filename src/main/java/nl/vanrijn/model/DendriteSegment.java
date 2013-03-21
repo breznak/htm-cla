@@ -46,7 +46,7 @@ public class DendriteSegment {
 
     @Override
     public String toString() {
-        return "segment on " + getBelongingCell().getColumnIndex() + "," + getBelongingCell().getCellIndex() + "," + this.segmentIndex + ",isSeq " + sequenceSegment + ",amm syn " + this.getSynapses().size();
+        return "segment on " + getBelongingCell().getColumn() + "," + getBelongingCell().getCellIndex() + "," + this.segmentIndex + ",isSeq " + sequenceSegment + ",amm syn " + this.getSynapses().size();
     }
 
     public boolean isSequenceSegment() {
