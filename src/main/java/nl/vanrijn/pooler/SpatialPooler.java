@@ -28,6 +28,15 @@ public class SpatialPooler {
     private int xxMax;
     private int columnsTotal;
     /**
+     * columns List of all columns.
+     */
+    private Column[] columns;
+    /**
+     * activeColumns(t) List of column indices that are winners due to bottom-up
+     * input.
+     */
+    private ArrayList<Column> activeColumns = new ArrayList<>();
+    /**
      * if learning is on, the spatial pooler can learn new patterns, turn off
      * for prediction only/testing
      */
@@ -65,15 +74,6 @@ public class SpatialPooler {
     private double inhibitionRadius = 5.0;
     private double inhibitionRadiusBefore = 0.0;
     private List<Integer> inhibitionRadiuses = new ArrayList<>();
-    /**
-     * columns List of all columns.
-     */
-    private Column[] columns;
-    /**
-     * activeColumns(t) List of column indices that are winners due to bottom-up
-     * input.
-     */
-    private ArrayList<Column> activeColumns = new ArrayList<>();
     static final Logger logger = Logger.getLogger(SpatialPooler.class.getName());
     private int[] inputSpace;
 
