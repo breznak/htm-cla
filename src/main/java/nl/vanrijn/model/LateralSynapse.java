@@ -8,13 +8,9 @@ import nl.vanrijn.pooler.TemporalPooler;
 public class LateralSynapse extends SynapseAbstract {
 
     private final Cell fromCell;
-    private final Cell onCell;
-    private final int segmentIndex;
 
-    public LateralSynapse(Cell on, int s, Cell from, double initialPerm) {
+    public LateralSynapse(Cell from, double initialPerm) {
         super(initialPerm);
-        this.onCell = on;
-        this.segmentIndex = s;
         this.fromCell = from;
     }
 
@@ -30,6 +26,6 @@ public class LateralSynapse extends SynapseAbstract {
 
     @Override
     public String toString() {
-        return "LateralSynapse from " + this.fromCell + ", on " + this.onCell + "," + this.segmentIndex + ",perm " + getPermanance();
+        return "LateralSynapse from " + this.fromCell + ",perm " + getPermanance();
     }
 }

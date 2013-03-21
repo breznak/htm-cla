@@ -108,7 +108,7 @@ public class TemporalPooler {
                         for (int y = 0; y < AMMOUNT_OF_SYNAPSES; y++) {
                             // TODO can a cell predict itself?
                             //FIXME 3?!
-                            synapses.add(new LateralSynapse(cells[c][i], s, cells[collumnIndexes.get(y)][random.nextInt(3)], TemporalPooler.INITIAL_PERM));
+                            synapses.add(new LateralSynapse(cells[collumnIndexes.get(y)][random.nextInt(3)], TemporalPooler.INITIAL_PERM));
                         }
                         segments.add(new DendriteSegment(cells[c][i], s, synapses));
                         // System.out.println(c);
@@ -506,7 +506,7 @@ public class TemporalPooler {
                 }
                 for (int k = 0; k < ammountNewSynapsesToAdd; k++) {
                     Cell cell = cellsWithLearnstate.get(k);
-                    activeSynapses.add(new LateralSynapse(cells[c][i], segment.getSegmentIndex(), cells[cell.getColumnIndex()][cell.getCellIndex()], INITIAL_PERM));
+                    activeSynapses.add(new LateralSynapse(cells[cell.getColumnIndex()][cell.getCellIndex()], INITIAL_PERM));
                 }
             }
         }
