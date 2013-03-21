@@ -3,6 +3,7 @@
  */
 package nl.vanrijn.pooler;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -129,10 +130,11 @@ public class TemporalPooler {
      */
     private List<Cell> neighborhoodCells(Cell cell) {
         List<Cell> neighbors = new ArrayList<>();
-        int xxStart = Math.max(0, cell.getColumn().getxPos() - LEARNING_RADIUS);
-        int xxEnd = Math.min(xxMax, cell.getColumn().getxPos() + LEARNING_RADIUS + 1);
-        int yyStart = Math.max(0, cell.getColumn().getyPos() - LEARNING_RADIUS);
-        int yyEnd = Math.min(yyMax, cell.getColumn().getyPos() + LEARNING_RADIUS + 1);
+        Point pos = SpatialPooler.getColumnPosition(cell.getColumn(), cell.getColumn());
+        int xxStart = HelperMath.inRange(cell.getColumn().getxPos() - LEARNING_RADIUS, 0, xxMax);
+        int xxEnd = HelperMath.inRange(cell.getColumn().getxPos() + LEARNING_RADIUS + 1, 0, xxMax);
+        int yyStart = HelperMath.inRange(cell.getColumn().getyPos() - LEARNING_RADIUS, 0, yyMax);
+        int yyEnd = HelperMath.inRange(cell.getColumn().getyPos() + LEARNING_RADIUS + 1, 0, yyMax);
         int c;
         for (int yy = yyStart; yy < yyEnd; yy++) {
             for (int xx = xxStart; xx < xxEnd; xx++) {

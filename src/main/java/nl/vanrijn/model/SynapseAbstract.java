@@ -3,6 +3,8 @@
  */
 package nl.vanrijn.model;
 
+import nl.vanrijn.utils.HelperMath;
+
 /**
  * synapse A data structure representing a synapse - contains a permanence value
  * and the source input index.
@@ -48,6 +50,6 @@ public abstract class SynapseAbstract {
      * @param d
      */
     public void setPermanance(double d) {
-        this.permanance = Math.min(Math.max(d, 0), 1);
+        this.permanance = HelperMath.inRange(d, 0, 1);
     }
 }
