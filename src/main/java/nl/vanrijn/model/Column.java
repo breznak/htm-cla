@@ -6,6 +6,7 @@ package nl.vanrijn.model;
 import java.util.ArrayList;
 import java.util.List;
 import nl.vanrijn.utils.CircularList;
+import nl.vanrijn.utils.HelperMath;
 
 public class Column implements Comparable<Column> {
 
@@ -59,18 +60,6 @@ public class Column implements Comparable<Column> {
      */
     public static final int CELLS_PER_COLUMN = 3;
     private static final int COLUMN_MAX_ACTIVE = 1000;
-    /**
-     * this object is "bigger"
-     */
-    public static final int COMPARE_GREATER = -1;
-    /**
-     * this Column is "equal"
-     */
-    public static final int COMPARE_EQUAL = 0;
-    /**
-     * this Column is "smaller" than the other
-     */
-    public static final int COMPARE_LESSER = 1;
 
     public Column(int index, int xx, int yy) {
         this(index, xx, yy, null);
@@ -242,11 +231,11 @@ public class Column implements Comparable<Column> {
     @Override
     public int compareTo(Column column) {
         if (this.overlap > column.getOverlap()) {
-            return COMPARE_GREATER;
+            return HelperMath.LESSER;
         } else if (this.overlap < column.getOverlap()) {
-            return COMPARE_LESSER;
+            return HelperMath.GREATER;
         } else { // ==
-            return COMPARE_EQUAL;
+            return HelperMath.EQUAL;
         }
     }
 
