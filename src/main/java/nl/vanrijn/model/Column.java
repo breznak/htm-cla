@@ -33,7 +33,7 @@ public class Column implements Comparable<Column> {
      * potentialSynapses(c) The list of potential synapses and their permanence
      * values.
      */
-    private final Synapse[] potentialSynapses;
+    private final List<Synapse> potentialSynapses;
     /**
      * activeDutyCycle(c) A sliding average representing how often column c has
      * been active after inhibition (e.g. over the last 1000 iterations).
@@ -76,7 +76,7 @@ public class Column implements Comparable<Column> {
         this(index, xx, yy, null);
     }
 
-    public Column(int index, int x, int y, Synapse[] synapses) {
+    public Column(int index, int x, int y, List<Synapse> synapses) {
         this.columnIndex = index;
         this.xPos = x;
         this.yPos = y;
@@ -148,8 +148,8 @@ public class Column implements Comparable<Column> {
         addGreaterThanMinimalOverlap(d >= minimalOverlap);
     }
 
-    public Synapse[] getPotentialSynapses() {
-        return potentialSynapses.clone();
+    public List<Synapse> getPotentialSynapses() {
+        return potentialSynapses;
     }
 
     public List<Column> getNeigbours() {

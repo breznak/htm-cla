@@ -74,7 +74,6 @@ public class SpatialPooler {
      * input.
      */
     private ArrayList<Column> activeColumns = new ArrayList<>();
-    private Column[] columnsSaved;
     static final Logger logger = Logger.getLogger(SpatialPooler.class.getName());
     private int[] inputSpace;
 
@@ -112,25 +111,24 @@ public class SpatialPooler {
         Random random = new Random();
         int i = 0;
         List<Integer> synapsesToInputt = HelperMath.seq(columnsTotal);
-//FIXME i go to sleep here
+
         for (int y = 0; y < yyMax; y++) {
             for (int x = 0; x < xxMax; x++) {
                 Collections.shuffle(synapsesToInputt);
                 Iterator<Integer> iter = synapsesToInputt.iterator();
-                Synapse[] synapses = new Synapse[amountOfSynapses];
+                List<Synapse> synapses = new ArrayList<>(amountOfSynapses);
 
-                for (int j = 0; j < synapses.length; j++) {
+                for (int j = 0; j < synapses.size(); j++) {
                     int inputSpaceIndex = iter.next().intValue();
-                    synapses[j] = new Synapse(inputSpaceIndex, inputSpaceIndex % 12, inputSpaceIndex / 12, 0); //TODO fix init perm
+                    synapses.add(new Synapse(inputSpaceIndex, inputSpaceIndex % 12, inputSpaceIndex / 12, 0)); //TODO fix init perm
                     // TODO 4 is not correct permanenceMarge should be responsible for this value WTF?!
-                    synapses[j].setPermanance(connectedPermanance - connectedPermananceMarge + (((double) random.nextInt(4)) / 10));
+                    synapses.get(0).setPermanance(connectedPermanance - connectedPermananceMarge + (((double) random.nextInt(4)) / 10));
                     // logger.info(""+synapses[j].getPermanance());
                 }
                 columns[i] = new Column(i, x, y, synapses);
                 i++;// next column
             }
         }
-        saveSetup();
     }
 
     public Column[] getColumns() {
@@ -148,21 +146,6 @@ public class SpatialPooler {
                 synapse.setSourceInput(inputSpace[synapse.getInputSpaceIndex()]);
             }
         }
-    }
-
-    private void saveSetup() {
-        columnsSaved = new Column[columnsTotal];
-
-        for (Column column : this.columns) {
-            Synapse[] synapsesSaved = new Synapse[amountOfSynapses];
-            System.arraycopy(column.getPotentialSynapses(), 0, synapsesSaved, 0, column.getPotentialSynapses().length);
-            columnsSaved[column.getColumnIndex()] = new Column(column.getColumnIndex(), column.getxPos(), column.getyPos(), synapsesSaved);
-        }
-    }
-
-    public void restoreSavedSetup() {
-        System.out.println("restoring");
-        this.columns = columnsSaved;
     }
 
     public double getInhibitionRadius() {

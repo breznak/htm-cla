@@ -22,7 +22,7 @@ public class TemporalPoolerTest {
         DendriteSegment segment = cell.getSegments().get(0);
 
         for (LateralSynapse synaps : segment.getSynapses()) {
-            Cell cell1 = tempo.getCells()[synaps.getFromColumnIndex()][synaps.getFromCellIndex()];
+            Cell cell1 = synaps.getFromCell();
             cell1.setOutput(Cell.ACTIVE);
             cell1.setLearnState(true);
             System.out.println(synaps);
@@ -31,7 +31,7 @@ public class TemporalPoolerTest {
         DendriteSegment segment2 = cell.getSegments().get(1);
         segment2.setSequenceSegment(true);
         for (LateralSynapse synaps : segment2.getSynapses()) {
-            Cell cell1 = tempo.getCells()[synaps.getFromColumnIndex()][synaps.getFromCellIndex()];
+            Cell cell1 = synaps.getFromCell();
             cell1.setOutput(Cell.ACTIVE);
             cell1.setLearnState(true);
         }

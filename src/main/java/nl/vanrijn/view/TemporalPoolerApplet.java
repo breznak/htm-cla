@@ -260,10 +260,10 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
         for (DendriteSegment segment : cell.getSegments()) {
 
             for (LateralSynapse synapse : segment.getConnectedSynapses()) {
-                if (tempo.getCells()[synapse.getFromColumnIndex()][synapse.getFromCellIndex()].output(Cell.BEFORE) == Cell.ACTIVE) {
+                if (synapse.getFromCell().output(Cell.BEFORE) == Cell.ACTIVE) {
                     System.out.println(segment);
                     System.out.println(synapse);
-                    System.out.println(tempo.getCells()[synapse.getFromColumnIndex()][synapse.getFromCellIndex()]);
+                    System.out.println(synapse.getFromCell());
                 }
             }
 

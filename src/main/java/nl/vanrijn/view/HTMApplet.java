@@ -24,12 +24,9 @@ import java.awt.event.MouseMotionAdapter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
 import nl.vanrijn.model.Column;
-import nl.vanrijn.model.SynapseAbstract;
+import nl.vanrijn.model.Synapse;
 import nl.vanrijn.pooler.SpatialPooler;
-import nl.vanrijn.pooler.TemporalPooler;
 
 public class HTMApplet extends Applet implements Runnable {
 
@@ -41,7 +38,9 @@ public class HTMApplet extends Applet implements Runnable {
      * input(t,j) The input to this level at time t. input(t, j) is 1 if the
      * j'th input is on.
      */
-    private int[] input = new int[144];
+    private int xxMax = 12;
+    private int yyMax = 12;
+    private int[] input;
     private static final long serialVersionUID = 1L;
     private Graphics graphics;
     private Image image;
@@ -65,6 +64,7 @@ public class HTMApplet extends Applet implements Runnable {
 
     public void init() {
         Panel panel = new Panel();
+        input = new int[xxMax * yyMax];
 
         setLayout(new BorderLayout());
         desiredLocalActivity.setName("desiredLocalActivity");
@@ -78,8 +78,9 @@ public class HTMApplet extends Applet implements Runnable {
         submitButton.setActionCommand("sparse");
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(e.getActionCommand().equals("sparse"))
+                if (e.getActionCommand().equals("sparse")) {
                     createSparseDistributedRep();
+                }
             }
         });
         panel.add(submitButton, BorderLayout.NORTH);
@@ -87,10 +88,11 @@ public class HTMApplet extends Applet implements Runnable {
         Button reset = new Button("reset");
         reset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(e.getActionCommand().equals("reset"))
-                    // logger.log(Level.INFO, "sparse");
-                    // createSparseDistributedRep();
+                if (e.getActionCommand().equals("reset")) // logger.log(Level.INFO, "sparse");
+                // createSparseDistributedRep();
+                {
                     initSpatialPooler();
+                }
                 reset();
             }
         });
@@ -111,7 +113,7 @@ public class HTMApplet extends Applet implements Runnable {
         panel.add(reset);
         initSpatialPooler();
 
-        for(int i = 0; i < input.length; i++) {
+        for (int i = 0; i < input.length; i++) {
             input[i] = 0;
         }
         image = createImage(getSize().width, getSize().height);
@@ -127,7 +129,7 @@ public class HTMApplet extends Applet implements Runnable {
             @Override
             public void mouseReleased(MouseEvent e) {
                 // After the release of mouseDrag, no mouseRelease should occur.
-                if(!mouseDragged) {
+                if (!mouseDragged) {
                     mouseOver(e.getX(), e.getY());
                 }
                 mouseDragged = false;
@@ -144,7 +146,7 @@ public class HTMApplet extends Applet implements Runnable {
         addPattern.setActionCommand("addPattern");
         addPattern.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(e.getActionCommand().equals("addPattern")) {
+                if (e.getActionCommand().equals("addPattern")) {
                     addPattern();
 
                 }
@@ -155,7 +157,7 @@ public class HTMApplet extends Applet implements Runnable {
         resetPatterns.setActionCommand("resetPatterns");
         resetPatterns.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(e.getActionCommand().equals("resetPatterns")) {
+                if (e.getActionCommand().equals("resetPatterns")) {
                     patterns = new ArrayList<int[]>();
                     addPattern.setLabel("addPattern");
                 }
@@ -166,7 +168,9 @@ public class HTMApplet extends Applet implements Runnable {
         Button running = new Button("run");
         running.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(e.getActionCommand().equals("run")) running();
+                if (e.getActionCommand().equals("run")) {
+                    running();
+                }
             }
         });
         panel.add(running);
@@ -174,7 +178,9 @@ public class HTMApplet extends Applet implements Runnable {
         Button stop = new Button("stop");
         stop.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(e.getActionCommand().equals("stop")) stopping();
+                if (e.getActionCommand().equals("stop")) {
+                    stopping();
+                }
             }
         });
         panel.add(stop);
@@ -192,10 +198,10 @@ public class HTMApplet extends Applet implements Runnable {
             }
 
             public void paint(Graphics g) {
-                if(loggedColum != null) {
+                if (loggedColum != null) {
 
                     g.setColor(Color.black);
-                    if(loggedColum.getNeigbours() != null) {
+                    if (loggedColum.getNeigbours() != null) {
                         String columnBoost = df2.format(loggedColum.getBoost());
 
                         String minimalLocalActivity = df2.format(loggedColum.getMinimalLocalActivity());
@@ -210,9 +216,9 @@ public class HTMApplet extends Applet implements Runnable {
                                 + " m.d.cy=" + minimalDutyCycle, 0, 20);
                     }
 
-                    for(int i = 0; i < loggedColum.getPotentialSynapses().length; i++) {
-                        SynapseAbstract potentialSynapse = loggedColum.getPotentialSynapses()[i];
-                        if(potentialSynapse.isConnected(spat.getConnectedPermanance())) {
+                    for (int i = 0; i < loggedColum.getPotentialSynapses().size(); i++) {
+                        Synapse potentialSynapse = loggedColum.getPotentialSynapses().get(i);
+                        if (potentialSynapse.isConnected(spat.getConnectedPermanance())) {
                             g.setColor(Color.GREEN);
                         } else {
                             g.setColor(Color.RED);
@@ -269,7 +275,7 @@ public class HTMApplet extends Applet implements Runnable {
     public void reset() {
 
         graphics.clearRect(0, 0, 600, 600);
-        for(int i = 0; i < input.length; i++) {
+        for (int i = 0; i < input.length; i++) {
             input[i] = 0;
         }
         this.loggedColum = null;
@@ -278,7 +284,7 @@ public class HTMApplet extends Applet implements Runnable {
 
     private void initSpatialPooler() {
 
-        spat = new SpatialPooler(new Integer(desiredLocalActivity.getText()),
+        spat = new SpatialPooler(xxMax, yyMax, new Integer(desiredLocalActivity.getText()),
                 new Double(connectedPermanance.getText()), new Integer(minimalOverlap.getText()), new Double(
                 permananceDec.getText()), new Double(permananceInc.getText()), new Integer(amountOfSynapses
                 .getText()), new Double(inhibitionRadius.getText()));
@@ -293,15 +299,15 @@ public class HTMApplet extends Applet implements Runnable {
 
         int index = -1;
         outer:
-        for(int yy = 0; yy < 12; yy++) {
+        for (int yy = 0; yy < 12; yy++) {
 
-            for(int xx = 0; xx < 12; xx++) {
+            for (int xx = 0; xx < 12; xx++) {
                 index++;
-                if(y < 19 * yy + 116 && y > 19 * yy + 100) {
-                    if(x > 19 * xx && x < 19 * xx + 16) {
+                if (y < 19 * yy + 116 && y > 19 * yy + 100) {
+                    if (x > 19 * xx && x < 19 * xx + 16) {
 
-                        if(mousePressed) {
-                            if(input[index] == 1) {
+                        if (mousePressed) {
+                            if (input[index] == 1) {
                                 black = false;
                             } else {
                                 black = true;
@@ -309,9 +315,9 @@ public class HTMApplet extends Applet implements Runnable {
                             mousePressed = false;
 
                         } else {
-                            if(mouseDragged) {
+                            if (mouseDragged) {
 
-                                if(black) {
+                                if (black) {
                                     drawBlackOval(xx, yy);
                                     setInputValue(index, 1);
                                 } else {
@@ -322,7 +328,7 @@ public class HTMApplet extends Applet implements Runnable {
 
                             } else {
 
-                                if(input[index] == 1) {
+                                if (input[index] == 1) {
                                     drawWhiteOval(xx, yy);
 
                                     setInputValue(index, 0);
@@ -337,11 +343,11 @@ public class HTMApplet extends Applet implements Runnable {
                         break outer;
                     } else {
 
-                        if(x > 19 * xx + 260 && x < 19 * xx + 260 + 16) {
-                            if(!mousePressed) {
+                        if (x > 19 * xx + 260 && x < 19 * xx + 260 + 16) {
+                            if (!mousePressed) {
                                 logColumn(spat.getColumns()[index], xx, yy);
                             }
-                            if(mousePressed) {
+                            if (mousePressed) {
                                 mousePressed = false;
                             }
                             break outer;
@@ -355,11 +361,11 @@ public class HTMApplet extends Applet implements Runnable {
     private void logColumn(Column column, int xx, int yy) {
 
         // delete the blue dot if there is one
-        if(!(mouseDragged && loggedColum != null && this.loggedColum.getxPos() == column.getxPos() && this.loggedColum
+        if (!(mouseDragged && loggedColum != null && this.loggedColum.getxPos() == column.getxPos() && this.loggedColum
                 .getyPos() == column.getyPos())) {
 
-            if(loggedColum != null) {
-                if(loggedColum.isActive()) {
+            if (loggedColum != null) {
+                if (loggedColum.isActive()) {
                     graphics.setColor(Color.RED);
                 } else {
                     graphics.setColor(Color.WHITE);
@@ -368,7 +374,7 @@ public class HTMApplet extends Applet implements Runnable {
                         6, 6);
             }
 
-            if(loggedColum != null && this.loggedColum.getxPos() == column.getxPos()
+            if (loggedColum != null && this.loggedColum.getxPos() == column.getxPos()
                     && this.loggedColum.getyPos() == column.getyPos()) {
                 this.loggedColum = null;
                 reDraw();
@@ -390,9 +396,9 @@ public class HTMApplet extends Applet implements Runnable {
 
         graphics.setColor(Color.black);
 
-        for(int i = 0; i < column.getPotentialSynapses().length; i++) {
-            SynapseAbstract potentialSynapse = column.getPotentialSynapses()[i];
-            if(potentialSynapse.isConnected(spat.getConnectedPermanance())) {
+        for (int i = 0; i < column.getPotentialSynapses().size(); i++) {
+            Synapse potentialSynapse = column.getPotentialSynapses().get(i);
+            if (potentialSynapse.isConnected(spat.getConnectedPermanance())) {
                 graphics.setColor(Color.GREEN);
             } else {
                 graphics.setColor(Color.RED);
@@ -408,8 +414,8 @@ public class HTMApplet extends Applet implements Runnable {
      */
     public void draw() {
         graphics.setColor(Color.BLACK);
-        for(int x = 0; x < 12; x++) {
-            for(int y = 0; y < 12; y++) {
+        for (int x = 0; x < 12; x++) {
+            for (int y = 0; y < 12; y++) {
                 graphics.drawOval(19 * x, 100 + (19 * y), 16, 16);
                 graphics.drawOval(19 * x + 260, 100 + (19 * y), 16, 16);
             }
@@ -421,10 +427,10 @@ public class HTMApplet extends Applet implements Runnable {
         graphics.clearRect(0, 100, 260, 230);
         graphics.clearRect(0, 330, 500, 750);
         int j = 0;
-        for(int y = 0; y < 12; y++) {
-            for(int x = 0; x < 12; x++) {
+        for (int y = 0; y < 12; y++) {
+            for (int x = 0; x < 12; x++) {
 
-                if(input[j] == 0) {
+                if (input[j] == 0) {
                     graphics.setColor(Color.black);
                     graphics.drawOval(19 * x, 100 + (19 * y), 16, 16);
                 } else {
@@ -442,7 +448,7 @@ public class HTMApplet extends Applet implements Runnable {
         graphics.setColor(Color.black);
         // graphics.setColor(Color.getHSBColor(10, 0.5f,0.5f));
         graphics.fillOval(19 * x, 100 + (19 * y), 16, 16);
-        if(loggedColum != null) {
+        if (loggedColum != null) {
             logSynapses(loggedColum);
         }
     }
@@ -453,7 +459,7 @@ public class HTMApplet extends Applet implements Runnable {
         graphics.setColor(Color.black);
         graphics.drawOval(19 * x, 100 + (19 * y), 16, 16);
 
-        if(loggedColum != null) {
+        if (loggedColum != null) {
             logSynapses(loggedColum);
         }
     }
@@ -476,9 +482,9 @@ public class HTMApplet extends Applet implements Runnable {
         Column[] columns = spat.getColumns();
         graphics.clearRect(0, 60, 260, 40);
         graphics.drawString("new inhibitian radius " + Math.round(spat.getInhibitionRadius()), 0, 80);
-        for(int y = 0; y < 12; y++) {
-            for(int x = 0; x < 12; x++) {
-                if(columns[j].isActive()) {
+        for (int y = 0; y < 12; y++) {
+            for (int x = 0; x < 12; x++) {
+                if (columns[j].isActive()) {
                     graphics.setColor(color);
                     graphics.fillOval(19 * x + 260, 100 + (19 * y), 16, 16);
                 } else {
@@ -491,7 +497,7 @@ public class HTMApplet extends Applet implements Runnable {
             }
         }
         // if we are currently logging a column
-        if(this.loggedColum != null) {
+        if (this.loggedColum != null) {
             reDraw();
             logSynapses(loggedColum);
             graphics.setColor(Color.BLUE);
@@ -511,24 +517,24 @@ public class HTMApplet extends Applet implements Runnable {
 
         logging = new ArrayList<String>();
 
-        if(patterns.size() != 0) {
+        if (patterns.size() != 0) {
             this.starting = true;
 
             do {
                 String log = "" + minimalOverlap.getText();
                 SpatialPooler.LEARNING = true;
                 int maxLearning = 10;
-                for(int i = 0; i < maxLearning; i++) {
+                for (int i = 0; i < maxLearning; i++) {
 
-                    if(i == maxLearning - 1) {
+                    if (i == maxLearning - 1) {
                         SpatialPooler.LEARNING = false;
                     }
-                    for(int j = 0; j < patterns.size(); j++) {
+                    for (int j = 0; j < patterns.size(); j++) {
 
                         System.arraycopy(patterns.get(j), 0, input, 0, input.length);
 
                         createSparseDistributedRep();
-                        if(i == maxLearning - 1) {
+                        if (i == maxLearning - 1) {
                             log += "," + j + " " + spat.reconstructionQuality();
                         }
                         reDraw();
@@ -536,7 +542,8 @@ public class HTMApplet extends Applet implements Runnable {
 
                         try {
                             // Thread.sleep(200);
-                        } catch(Exception e) {
+                        }
+                        catch (Exception e) {
                             System.out.println("fucked");
                         }
                     }
@@ -547,15 +554,15 @@ public class HTMApplet extends Applet implements Runnable {
                 // amountOfSynapses.setText("" + ((new
                 // Integer(amountOfSynapses.getText())) + 1));
                 minimalOverlap.setText("" + ((new Integer(minimalOverlap.getText())) + 1));
-                spat.restoreSavedSetup();
+                //spat.restoreSavedSetup();
 
-                if(minimalOverlap.getText().equals("10")) {
+                if (minimalOverlap.getText().equals("10")) {
                     starting = false;
                 }
 
                 // System.out.println(this.starting);
-            } while(this.starting);
-            for(String log : logging) {
+            } while (this.starting);
+            for (String log : logging) {
                 System.out.println(log);
             }
         }
