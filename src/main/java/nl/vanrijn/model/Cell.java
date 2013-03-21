@@ -4,7 +4,6 @@
 package nl.vanrijn.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import nl.vanrijn.model.helper.SegmentUpdate;
 import nl.vanrijn.utils.CircularList;
@@ -113,19 +112,30 @@ public class Cell {
      */
     public void setOutput(int state) {
         assertEquals(state == Cell.ACTIVE || state == Cell.INACTIVE || state == Cell.PREDICT, true);
-        this.output.add(0, state);
+        this.output.add(NOW, state);
     }
 
+    /**
+     * @return the Column where this Cell belongs to
+     */
     public Column getColumn() {
         return this.partOfColumn;
     }
 
+    /**
+     * @return unique name of this cell among all Cells
+     */
     public int getName() {
         return uniqName;
     }
 
+    /**
+     * DendriteSegments are part of a Cell, they contain Synapses
+     *
+     * @return
+     */
     public List<DendriteSegment> getSegments() {
-        return Collections.unmodifiableList(segments);
+        return segments;
     }
 
 //TODO what is learnState??
@@ -151,11 +161,21 @@ public class Cell {
                 + ",learnState=" + this.learnState + ",segments.size=" + this.segments.size() + ", up= " + this.segmentUpdateList.size();
     }
 
+    /**
+     * set neighbors = cells this cell can learn from, must be within
+     * LEARNING_RADIUS
+     *
+     * @param neighbors
+     */
     public void setNeigbors(List<Cell> neighbors) {
         this.neighbors = neighbors;
     }
 
+    /**
+     * @return all neighboring Cells within LEARNING_RADIUS, this cell can
+     * learn/communicate with these.
+     */
     public List<Cell> getNeighbors() {
-        return Collections.unmodifiableList(this.neighbors);
+        return this.neighbors;
     }
 }
