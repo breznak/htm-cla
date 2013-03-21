@@ -191,7 +191,7 @@ public class SpatialPooler {
         for (int x = 0; x < xxMax; x++) {
             for (int y = 0; y < yyMax; y++) {
                 if (Math.round(this.inhibitionRadius) != Math.round(this.inhibitionRadiusBefore) || columns[x][y].getNeigbours() == null) {
-                    columns[x][y].setNeigbours(SpatialPooler.findMyNeigbors(columns[x][y], this.columns, xxMax, yyMax, inhibitionRadius));
+                    columns[x][y].setNeigbours(SpatialPooler.findMyNeigbors(columns[x][y], this.columns, inhibitionRadius));
                 }
                 double minimalLocalActivity = kthScore(columns[x][y].getNeigbours(), desiredLocalActivity);
                 // TODO if inhibitionRadius changes, shouldn't this also change?
@@ -317,14 +317,23 @@ public class SpatialPooler {
         return ktScore;
     }
 
-    private static List<Column> findMyNeigbors(Column column, Column[][] allColumns, int sizeX, int sizeY, double inhibitionRadius) {
+    /**
+     * find all columns from allColumns within inhibitionRadius of column col
+     * excluding the col itself
+     *
+     * @param col
+     * @param allColumns
+     * @param inhibitionRadius
+     * @return
+     */
+    private static List<Column> findMyNeigbors(Column col, Column[][] allColumns, double inhibitionRadius) {
         List<Column> neighbors = new ArrayList<>();
         int inhib = (int) Math.round(inhibitionRadius);
-        Point pos = SpatialPooler.getColumnPosition(column, allColumns);
-        int xxStart = Math.max(0, pos.x - inhib); //TODO Helper fn
-        int xxEnd = Math.min(sizeX, pos.x + inhib + 1);
-        int yyStart = Math.max(0, pos.y - inhib);
-        int yyEnd = Math.min(sizeY, pos.y + inhib + 1);
+        Point pos = SpatialPooler.getColumnPosition(col, allColumns);
+        int xxStart = HelperMath.inRange(pos.x - inhib, 0, allColumns.length);
+        int xxEnd = HelperMath.inRange(pos.x + inhib + 1, 0, allColumns.length);
+        int yyStart = HelperMath.inRange(pos.y - inhib, 0, allColumns[0].length);
+        int yyEnd = HelperMath.inRange(pos.y + inhib + 1, 0, allColumns[0].length);
 
         for (int y = yyStart; y < yyEnd; y++) {
             for (int x = xxStart; x < xxEnd; x++) {
@@ -337,6 +346,15 @@ public class SpatialPooler {
         return neighbors;
     }
 
+    /**
+     * get x,y-coordinates of column col in grid of allColumns;
+     *
+     * so that col == allColumns[x][y]
+     *
+     * @param col
+     * @param allColumns
+     * @return
+     */
     protected static Point getColumnPosition(Column col, Column[][] allColumns) {
         for (int x = 0; x < allColumns.length; x++) {
             for (int y = 0; y < allColumns[0].length; y++) {

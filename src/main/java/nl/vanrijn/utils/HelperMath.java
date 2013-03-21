@@ -51,4 +51,17 @@ public abstract class HelperMath {
         }
         return d;
     }
+
+    /**
+     * ensure returned value lies in <lowerBound, upperBound> range, if not,
+     * return closest boundary
+     *
+     * @param value
+     * @param lowerBound
+     * @param upperBound
+     * @return
+     */
+    public static int inRange(int value, int lowerBound, int upperBound) {
+        return Math.max(lowerBound, Math.min(upperBound, value));
+    }
 }
