@@ -102,7 +102,7 @@ public class TemporalPooler {
                 for (int i = 0; i < Column.CELLS_PER_COLUMN; i++) {
                     List<DendriteSegment> segments = new ArrayList<>();
                     Column col = new Column(i, xx, yy);
-                    cells[c][i] = new Cell(col, i, xx, yy, segments);  //! hack: cells with segments must be here, below we add elements to segments, which link to cell
+                    cells[c][i] = new Cell(col, xx, yy, segments);  //! hack: cells with segments must be here, below we add elements to segments, which link to cell
                     for (int s = 0; s < AMMOUNT_OF_SEGMENTS; s++) {
                         List<LateralSynapse> synapses = new ArrayList<>();
                         Collections.shuffle(collumnIndexes);
@@ -201,8 +201,8 @@ public class TemporalPooler {
                 Cell cellToUpdate = getBestMatchingCell(column.getColumnIndex(), Cell.BEFORE);
                 // TODO Maybe now a new segment should be created in stead of
                 // getting the best matching segment
-                DendriteSegment segment = getBestMatchingSegment(column.getColumnIndex(), cellToUpdate.getCellIndex(), Cell.BEFORE);
-                SegmentUpdate sUpdate = getSegmentActiveSynapses(column.getColumnIndex(), cellToUpdate.getCellIndex(), segment, Cell.BEFORE, true);
+                DendriteSegment segment = getBestMatchingSegment(column.getColumnIndex(), cellToUpdate.getName(), Cell.BEFORE);
+                SegmentUpdate sUpdate = getSegmentActiveSynapses(column.getColumnIndex(), cellToUpdate.getName(), segment, Cell.BEFORE, true);
                 sUpdate.setSequenceSegment(true);
                 cellToUpdate.setLearnState(true);
                 cellToUpdate.getSegmentUpdateList().add(sUpdate);

@@ -68,17 +68,25 @@ public class Cell {
      * segmentUpdateList(c,i) is the list of changes for cell i in column c.
      */
     private List<SegmentUpdate> segmentUpdateList = new ArrayList<>();
-    private final int cellIndex;
+    /**
+     * total number of cells. increasing with each new instance Cell()
+     */
+    private static int cellCounter = 0;
+    /**
+     * unique ID of cell, use getName()
+     */
+    private int uniqName;
     private final List<DendriteSegment> segments;
     private final int xpos;
     private final int ypos;
     private List<Cell> neighbors = null;
     private final Column partOfColumn;
 
-    public Cell(Column belongsToColumn, int cellIndex, int xx, int yy, List<DendriteSegment> segments) {
+    public Cell(Column belongsToColumn, int xx, int yy, List<DendriteSegment> segments) {
         assertEquals(segments != null, true); // not null
         this.partOfColumn = belongsToColumn;
-        this.cellIndex = cellIndex;
+        this.uniqName = Cell.cellCounter; //unique name
+        Cell.cellCounter++;
         this.ypos = yy;
         this.xpos = xx;
         this.segments = segments;
@@ -116,8 +124,8 @@ public class Cell {
         return this.partOfColumn;
     }
 
-    public int getCellIndex() {
-        return cellIndex;
+    public int getName() {
+        return uniqName;
     }
 
     public List<DendriteSegment> getSegments() {
@@ -143,7 +151,7 @@ public class Cell {
 
     @Override
     public String toString() {
-        return "cell=" + this.partOfColumn + "," + this.cellIndex + ", State=" + this.output
+        return "cell=" + this.partOfColumn + "," + this.uniqName + ", State=" + this.output
                 + ",learnState=" + this.learnState + ",segments.size=" + this.segments.size() + "x,y=[" + this.xpos + "," + this.ypos + "], up= "
                 + this.segmentUpdateList.size();
     }

@@ -360,7 +360,7 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
                     // System.out.println(cell +" "+cell.getXpos()+","+cell.getYpos());
                     graphics.setColor(Color.black);
 
-                    switch (cell.getCellIndex()) {
+                    switch (cell.getName()) {
                         case 0: {
 
                             // System.out.println("nuuuuu0" + cell.getBelongingCell()
@@ -390,7 +390,7 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
                     // );
                     graphics.setColor(Color.blue);
 
-                    switch (cell.getCellIndex()) {
+                    switch (cell.getName()) {
 
                         case 0: {
 
@@ -420,7 +420,7 @@ public class TemporalPoolerApplet extends Applet implements Runnable {
                     // +" "+cell.getXpos()+","+cell.getYpos()
                     // );
                     graphics.setColor(Color.red);
-                    switch (cell.getCellIndex()) {
+                    switch (cell.getName()) {
                         case 0: {
 
                             // System.out.println("nuuuuu0" + cell.getBelongingCell()
