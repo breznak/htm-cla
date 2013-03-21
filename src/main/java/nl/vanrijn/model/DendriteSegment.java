@@ -5,17 +5,16 @@ package nl.vanrijn.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.vanrijn.pooler.TemporalPooler;
 
-public class DendriteSegment {
+public class DendriteSegment<S extends SynapseAbstract> {
 
-    private List<LateralSynapse> synapses;
+    private List<S> synapses;
     private boolean sequenceSegment;
     private int segmentIndex;
     private int ammountActiveCells;
     private Cell belongsToCell;
 
-    public DendriteSegment(Cell belongsToCell, int s, List<LateralSynapse> synapses) {
+    public DendriteSegment(Cell belongsToCell, int s, List<S> synapses) {
         this.belongsToCell = belongsToCell;
         this.segmentIndex = s;
         this.synapses = synapses;
@@ -29,15 +28,15 @@ public class DendriteSegment {
         return segmentIndex;
     }
 
-    public List<LateralSynapse> getSynapses() {
+    public List<S> getSynapses() {
         return synapses;
     }
 
-    public List<LateralSynapse> getConnectedSynapses() {
-        List<LateralSynapse> connectedSynapses = new ArrayList<>();
-        for (LateralSynapse synapse : synapses) {
-            if (synapse.isConnected(TemporalPooler.CONNECTED_PERMANANCE)) {
-                connectedSynapses.add(synapse);
+    public List<S> getConnectedSynapses(double connectedPermanance) {
+        List<S> connectedSynapses = new ArrayList<>();
+        for (S syn : synapses) {
+            if (syn.isConnected(connectedPermanance)) {
+                connectedSynapses.add(syn);
             }
         }
         return connectedSynapses;
@@ -45,7 +44,7 @@ public class DendriteSegment {
 
     @Override
     public String toString() {
-        return "segment on " + getBelongingCell().getColumn() + "," + getBelongingCell().getName() + "," + this.segmentIndex + ",isSeq " + sequenceSegment + ",amm syn " + this.getSynapses().size();
+        return this.getClass().getCanonicalName() + " segment on " + getBelongingCell().getColumn() + "," + getBelongingCell().getName() + "," + this.segmentIndex + ",isSeq " + sequenceSegment + ",amm syn " + this.getSynapses().size();
     }
 
     public boolean isSequenceSegment() {
