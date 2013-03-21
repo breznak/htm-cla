@@ -14,13 +14,22 @@ import java.util.logging.Logger;
 import nl.vanrijn.model.Column;
 import nl.vanrijn.model.Synapse;
 import nl.vanrijn.model.helper.InputSpace;
+import nl.vanrijn.utils.HelperMath;
 
 public class SpatialPooler {
 
-    private List<Integer> inhibitionRadiuses = new ArrayList<>();
-    private static final int AMMOUNT_OF_COLLUMNS = 144;
     /**
-     * if learning is on, the spatial pooler can learn new patterns
+     * the amount of columns over y
+     */
+    private int yyMax; //12
+    /**
+     * the amount of columns over x
+     */
+    private int xxMax;
+    private int columnsTotal;
+    /**
+     * if learning is on, the spatial pooler can learn new patterns, turn off
+     * for prediction only/testing
      */
     public static boolean LEARNING = true;
     /**
@@ -34,11 +43,6 @@ public class SpatialPooler {
      */
     private double connectedPermanance = 0.7;
     /**
-     * minOverlap A minimum number of inputs that must be active for a column to
-     * be considered during the inhibition step.
-     */
-    private int minimalOverlap = 2;
-    /**
      * permanenceDec Amount permanence values of synapses are decremented during
      * learning.
      */
@@ -49,12 +53,18 @@ public class SpatialPooler {
      */
     private double permananceInc = 0.05;
     private double connectedPermananceMarge = 0.2;
+    /**
+     * minOverlap A minimum number of inputs that must be active for a column to
+     * be considered during the inhibition step.
+     */
+    private int minimalOverlap = 2;
     private int amountOfSynapses = 60;
     /**
      * inhibitionRadius Average connected receptive field size of the columns.
      */
     private double inhibitionRadius = 5.0;
     private double inhibitionRadiusBefore = 0.0;
+    private List<Integer> inhibitionRadiuses = new ArrayList<>();
     /**
      * columns List of all columns.
      */
@@ -64,17 +74,9 @@ public class SpatialPooler {
      * input.
      */
     private ArrayList<Column> activeColumns = new ArrayList<>();
-    static final Logger logger = Logger.getLogger(SpatialPooler.class.getName());
-    /**
-     * the amount of columns over y
-     */
-    private int yyMax = 12;
-    /**
-     * the amount of columns over x
-     */
-    private int xxMax = 12;
-    private int[] inputSpace;
     private Column[] columnsSaved;
+    static final Logger logger = Logger.getLogger(SpatialPooler.class.getName());
+    private int[] inputSpace;
 
     /**
      * Initialization Prior to receiving any inputs, the region is initialized
@@ -89,7 +91,7 @@ public class SpatialPooler {
      * natural center over the input region, and the permanence values have a
      * bias towards this center (they have higher values near the center).
      */
-    public SpatialPooler(int desiredLocalActivity, double connectedPermanance, int minimalOverlap,
+    public SpatialPooler(int sizeX, int sizeY, int desiredLocalActivity, double connectedPermanance, int minimalOverlap,
             double permananceDec, double permananceInc, int amountOfSynapses, double inhibitionRadius) {
         this.inhibitionRadius = inhibitionRadius;
         this.connectedPermanance = connectedPermanance;
@@ -98,20 +100,19 @@ public class SpatialPooler {
         this.permananceInc = permananceInc;
         this.amountOfSynapses = amountOfSynapses;
         this.inhibitionRadius = inhibitionRadius;
-
+        this.xxMax = sizeX;
+        this.yyMax = sizeY;
+        this.columnsTotal = xxMax * yyMax;
 
         // TODO A synapse can be connected but not active. And maybe also the other way arround
-        // TODO the input space has to be the same size is the column space. That is not desireable .Make this better.
+        // FIXME the input space has to be the same size is the column space. That is not desireable .Make this better.
         // logger.log(Level.INFO, "SpatialPooler");
-        columns = new Column[AMMOUNT_OF_COLLUMNS];
+        columns = new Column[columnsTotal];
 
         Random random = new Random();
         int i = 0;
-        List<Integer> synapsesToInputt = new ArrayList<>();
-        for (int k = 0; k < xxMax * yyMax; k++) { //TODO sequence method?
-            synapsesToInputt.add(k);
-        }
-
+        List<Integer> synapsesToInputt = HelperMath.seq(columnsTotal);
+//FIXME i go to sleep here
         for (int y = 0; y < yyMax; y++) {
             for (int x = 0; x < xxMax; x++) {
                 Collections.shuffle(synapsesToInputt);
@@ -150,7 +151,7 @@ public class SpatialPooler {
     }
 
     private void saveSetup() {
-        columnsSaved = new Column[AMMOUNT_OF_COLLUMNS];
+        columnsSaved = new Column[columnsTotal];
 
         for (Column column : this.columns) {
             Synapse[] synapsesSaved = new Synapse[amountOfSynapses];
