@@ -1,5 +1,7 @@
 package nl.vanrijn.model.helper;
 
+import nl.vanrijn.utils.HelperMath;
+
 public class InputSpace implements Comparable<InputSpace> {
 
     private int xPos;
@@ -32,13 +34,13 @@ public class InputSpace implements Comparable<InputSpace> {
     @Override
     public int compareTo(InputSpace o) {
         if (this.equals(o)) {
-            return 0;
+            return HelperMath.EQUAL;
         } else if ((this.yPos > o.yPos)
                 || (this.yPos == o.yPos && this.xPos > o.xPos)
                 || (this.yPos == o.yPos && this.xPos == o.xPos && this.sourceInput == 1 && o.sourceInput == 0)) {
-            return -1;
+            return HelperMath.GREATER;
         } else {
-            return 1;
+            return HelperMath.LESSER;
         }
     }
 }
