@@ -2,7 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.vanrijn.utils;
+package htm.model;
+
+import htm.utils.CircularList;
+import htm.utils.HelperMath;
 
 /**
  *

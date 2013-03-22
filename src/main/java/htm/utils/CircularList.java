@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.vanrijn.utils;
+package htm.utils;
 
 import java.util.ArrayList;
 

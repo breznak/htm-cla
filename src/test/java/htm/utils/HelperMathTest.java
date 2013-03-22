@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.vanrijn.utils;
+package htm.utils;
 
+import htm.utils.HelperMath;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
