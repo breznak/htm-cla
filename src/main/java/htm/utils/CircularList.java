@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author marek
  */
-public class CircularList extends CopyOnWriteArrayList<Boolean[]> {
+public class CircularList<T> extends CopyOnWriteArrayList<T> {
 
     private static final long serialVersionUID = 1L;
     private final int maxCapacity;
@@ -35,7 +35,7 @@ public class CircularList extends CopyOnWriteArrayList<Boolean[]> {
      * @param element
      */
     @Override
-    public void add(int index, Boolean[] element) {
+    public void add(int index, T element) {
         super.add(index, element);
         if (this.size() > maxCapacity) {
             this.remove(maxCapacity);

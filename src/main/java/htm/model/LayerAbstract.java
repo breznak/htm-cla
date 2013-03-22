@@ -11,12 +11,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author marek
  */
-public abstract class LayerAbstract<PART, PARENT> {
+public abstract class LayerAbstract<PART, PARENT, TYPE> {
 
     private final PARENT parent;
     private final PART parts;
-    public CopyOnWriteArrayList<Boolean> input;
-    public final CircularList output;
+    public final CopyOnWriteArrayList<TYPE> input;
+    public final CircularList<TYPE[]> output;
     /**
      * unique ID of cell, use getName()
      */
@@ -27,11 +27,12 @@ public abstract class LayerAbstract<PART, PARENT> {
     public final int HISTORY_STEPS;
 
     public LayerAbstract(PART parts, PARENT parent, int id, int timeStepsMax) {
-        this.output = new CircularList(timeStepsMax);
+        this.output = new CircularList<>(timeStepsMax);
         this.parent = parent;
         this.parts = parts;
         this.uniqueID = id;
         this.HISTORY_STEPS = timeStepsMax;
+        input = new CopyOnWriteArrayList<>();
     }
 
     /**
