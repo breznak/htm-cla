@@ -30,6 +30,6 @@ public abstract class Input<T, TYPE> extends LayerAbstract<Object, Object, TYPE>
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + ": id= " + this.id + " {" + input + "}";
+        return this.getClass().getSimpleName() + ": id= " + this.id + output;
     }
 }
