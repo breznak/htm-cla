@@ -20,7 +20,7 @@ public abstract class LayerAbstract<PART, PARENT, TYPE> {
     /**
      * unique ID of cell, use getName()
      */
-    private final int uniqueID;
+    public final int id;
     /**
      * will keep a buffer of its last HISTORY_STEPS output values
      */
@@ -30,18 +30,9 @@ public abstract class LayerAbstract<PART, PARENT, TYPE> {
         this.output = new CircularList<>(timeStepsMax);
         this.parent = parent;
         this.parts = parts;
-        this.uniqueID = id;
+        this.id = id;
         this.HISTORY_STEPS = timeStepsMax;
         input = new CopyOnWriteArrayList<>();
-    }
-
-    /**
-     * unique name (int) of the object
-     *
-     * @return
-     */
-    public int id() {
-        return uniqueID;
     }
 
     /**
@@ -67,7 +58,7 @@ public abstract class LayerAbstract<PART, PARENT, TYPE> {
         if (obj == null || !obj.getClass().equals(this.getClass())) {
             return false;
         }
-        if (((LayerAbstract) obj).id() == this.id()) {
+        if (((LayerAbstract) obj).id == this.id) {
             return true;
         }
         return false;

@@ -12,13 +12,13 @@ import htm.model.LayerAbstract;
  */
 public abstract class Input<T, TYPE> extends LayerAbstract<Object, Object, TYPE> {
 
-    private static final int INPUT_MODE_ASYNC = 1;
-    private static final int INPUT_MODE_SYNC = 2;
+    public static final int INPUT_MODE_ASYNC = 1;
+    public static final int INPUT_MODE_SYNC = 2;
     private int mode;
     private static int inputCounter = 0;
 
     public Input(int mode) {
-        super(null, null, inputCounter++, 1);
+        super(null, null, Input.inputCounter++, 1);
         this.mode = mode;
     }
 
@@ -30,6 +30,6 @@ public abstract class Input<T, TYPE> extends LayerAbstract<Object, Object, TYPE>
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + ": id= " + id() + " {" + input + "}";
+        return this.getClass().getSimpleName() + ": id= " + this.id + " {" + input + "}";
     }
 }
