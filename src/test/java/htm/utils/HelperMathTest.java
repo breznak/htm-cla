@@ -4,7 +4,6 @@
  */
 package htm.utils;
 
-import htm.utils.HelperMath;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
@@ -28,5 +27,12 @@ public class HelperMathTest {
         l.add(2);
         l.add(3);
         assertEquals(6, HelperMath.sum(l), 0);
+    }
+
+    @Test
+    public void checkInRange() {
+        assertEquals(HelperMath.inRange(-1, 0, 1) == 0
+                && HelperMath.inRange(99, -1, 0) == 0
+                && HelperMath.inRange(2, 1, 3) == 2, true);
     }
 }

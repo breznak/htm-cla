@@ -21,7 +21,7 @@ public class Playground {
         System.out.print("Empty for =" + loop + " = ");
         t = System.currentTimeMillis();
         // new Playground();
-        long[] l = new long[1000];
+        long[] l = new long[100];
         List<Integer> sto = HelperMath.seq(10);
         for (int i = 0;
                 i < l.length;
@@ -35,11 +35,11 @@ public class Playground {
 
     @org.junit.Test
     public void makeArray() {
-        for (int z = 0; z < 1000; z++) {
+        for (int z = 0; z < 100; z++) {
             Runnable t = new Runnable() {
                 @Override
                 public void run() {
-                    for (int i = 0; i < 10000; i++) {
+                    for (int i = 0; i < 100; i++) {
                         long l[] = new long[1000];
                     }
                 }
