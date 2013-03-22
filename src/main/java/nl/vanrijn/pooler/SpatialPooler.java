@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 import nl.vanrijn.model.Column;
-import nl.vanrijn.model.Synapse;
-import nl.vanrijn.model.helper.InputSpace;
 import nl.vanrijn.utils.HelperMath;
 
 public class SpatialPooler {
