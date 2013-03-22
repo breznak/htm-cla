@@ -4,7 +4,7 @@
  */
 package htm.utils;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * ArrayList with circular buffer functionality has a capacity, if full, remove
@@ -12,10 +12,10 @@ import java.util.ArrayList;
  *
  * @author marek
  */
-public class CircularList<T> extends ArrayList<T> {
+public class CircularList extends CopyOnWriteArrayList<Boolean[]> {
 
     private static final long serialVersionUID = 1L;
-    private int maxCapacity;
+    private final int maxCapacity;
 
     /**
      * ArrayList with circular buffer functionality has a capacity, if full,
@@ -24,7 +24,7 @@ public class CircularList<T> extends ArrayList<T> {
      * @param capacity
      */
     public CircularList(int capacity) {
-        super(capacity);
+        super();
         this.maxCapacity = capacity;
     }
 
@@ -35,7 +35,7 @@ public class CircularList<T> extends ArrayList<T> {
      * @param element
      */
     @Override
-    public void add(int index, T element) {
+    public void add(int index, Boolean[] element) {
         super.add(index, element);
         if (this.size() > maxCapacity) {
             this.remove(maxCapacity);
