@@ -32,7 +32,7 @@ public class Column implements Comparable<Column> {
      * potentialSynapses(c) The list of potential synapses and their permanence
      * values.
      */
-    private final List<Synapse> potentialSynapses;
+    private final List<LateralSynapse> potentialSynapses;
     /**
      * activeDutyCycle(c) A sliding average representing how often column c has
      * been active after inhibition (e.g. over the last 1000 iterations).
@@ -63,7 +63,7 @@ public class Column implements Comparable<Column> {
         this(index, null);
     }
 
-    public Column(int index, List<Synapse> synapses) {
+    public Column(int index, List<LateralSynapse> synapses) {
         this.columnIndex = index;
         this.potentialSynapses = synapses;
     }
@@ -125,7 +125,7 @@ public class Column implements Comparable<Column> {
         addGreaterThanMinimalOverlap(d >= minimalOverlap);
     }
 
-    public List<Synapse> getPotentialSynapses() {
+    public List<LateralSynapse> getPotentialSynapses() {
         return potentialSynapses;
     }
 
@@ -145,14 +145,14 @@ public class Column implements Comparable<Column> {
      * @param connectedPermanance
      * @return
      */
-    public Synapse[] getConnectedSynapses(double connectedPermanance) {
-        ArrayList<Synapse> connectedSynapses = new ArrayList<>();
-        for (Synapse potentialSynapse : this.potentialSynapses) {
+    public LateralSynapse[] getConnectedSynapses(double connectedPermanance) {
+        ArrayList<LateralSynapse> connectedSynapses = new ArrayList<>();
+        for (LateralSynapse potentialSynapse : this.potentialSynapses) {
             if (potentialSynapse.isConnected(connectedPermanance)) {
                 connectedSynapses.add(potentialSynapse);
             }
         }
-        return connectedSynapses.toArray(new Synapse[connectedSynapses.size()]);
+        return connectedSynapses.toArray(new LateralSynapse[connectedSynapses.size()]);
     }
 
     public double getBoost() {
@@ -166,7 +166,7 @@ public class Column implements Comparable<Column> {
      * @param d
      */
     public void increasePermanances(double d) {
-        for (Synapse potenSynapse : potentialSynapses) {
+        for (LateralSynapse potenSynapse : potentialSynapses) {
             potenSynapse.setPermanance(potenSynapse.getPermanance() + d);
         }
     }

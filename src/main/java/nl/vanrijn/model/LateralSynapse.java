@@ -11,24 +11,24 @@ import nl.vanrijn.utils.HelperMath;
  *
  * @author vanrijn
  */
-public class LateralSynapse<T> {
+public class LateralSynapse {
 
     /**
      * T fromCell ...Cell for dendrite in TemporalPooler, Column in
      * SpatialPooler
      */
-    private final T fromCell;
+    private final Cell fromCell;
     /**
      * similar like weight in NN ; range 0..1
      */
     private double permanance;
 
-    public LateralSynapse(T from, double initialPerm) {
+    public LateralSynapse(Cell from, double initialPerm) {
         this.permanance = initialPerm;
         this.fromCell = from;
     }
 
-    public T getFromCell() {
+    public Cell getFromCell() {
         return fromCell;
     }
 

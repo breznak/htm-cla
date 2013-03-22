@@ -6,7 +6,7 @@ package nl.vanrijn.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DendriteSegment<S extends SynapseAbstract> {
+public class DendriteSegment<S extends LateralSynapse> {
 
     private List<S> synapses;
     private boolean sequenceSegment;
