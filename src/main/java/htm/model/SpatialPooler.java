@@ -11,14 +11,14 @@ package htm.model;
 public class SpatialPooler {
 
     int columns;
-    int syncPC;
-    byte synapse[][];
+    int synapsesPerColumn;
+    int synapse[][] = new int[columns][synapsesPerColumn];
 
     public SpatialPooler(int outputs, int synapsesPerColumn) {
         columns = outputs;
-        syncPC = synapsesPerColumn;
+        this.synapsesPerColumn = synapsesPerColumn;
         for (int i = 0; i < columns; i++) {
-            synapse[i] = rnd.nextInt(syncPC);
+            synapse[i] = Column.initSynapses(); //TODO init not totaly in specs, see page 34
         }
     }
 }
