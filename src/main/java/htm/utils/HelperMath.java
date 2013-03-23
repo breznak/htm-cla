@@ -7,7 +7,6 @@ package htm.utils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 /**
  * HelperMath useful math functions
@@ -77,10 +76,5 @@ public abstract class HelperMath {
      */
     public static double inRange(double value, double lowerBound, double upperBound) {
         return Math.max(lowerBound, Math.min(upperBound, value));
-    }
-
-    public static int normalDistribution(int mean, int std) {
-        Random r = new Random();
-        return (int) Math.round(r.nextGaussian() * std + mean);
     }
 }
