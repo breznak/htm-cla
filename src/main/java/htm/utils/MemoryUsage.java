@@ -8,6 +8,7 @@ import com.javamex.classmexer.MemoryUtil;
 import com.javamex.classmexer.MemoryUtil.VisibilityFilter;
 import java.util.BitSet;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLongArray;
 
 /**
  *
@@ -47,10 +48,33 @@ public class MemoryUsage {
         noBytes = MemoryUtil.deepMemoryUsageOf(o, VisibilityFilter.ALL);
         System.out.println("Memory usage of byte[" + elements + "] =" + noBytes + " Bytes");
 
-        o = new BitSet(elements);
+        o = new BitSet(60);
+        noBytes = MemoryUtil.deepMemoryUsageOf(o, VisibilityFilter.ALL);
+        System.out.println("Memory usage of BitSet[" + elements + "] =" + noBytes + " Bytes");
+
+        o = new AtomicLongArray(elements);
         noBytes = MemoryUtil.deepMemoryUsageOf(o, VisibilityFilter.ALL);
         System.out.println("Memory usage of BitSet[" + elements + "] =" + noBytes + " Bytes");
 
 
+
+        final BitSet b = new BitSet(10000);
+
+        for (int z = 0; z < 10; z++) {
+
+            final Runnable t = new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 10000; i++) {
+
+                        b.flip(i);
+
+                    }
+                }
+            };
+            new Thread(t).start();
+            System.out.print("*");
+        }
+        System.out.println("b=" + b.get(777));
     }
 }
