@@ -12,7 +12,7 @@ import java.util.BitSet;
  *
  * @author marek
  */
-public class Input<T> extends LayerAbstract {
+public class Input extends LayerAbstract {
 
     public static final int INPUT_MODE_ASYNC = 1;
     public static final int INPUT_MODE_SYNC = 2;
@@ -24,7 +24,7 @@ public class Input<T> extends LayerAbstract {
         this.mode = mode;
     }
 
-    public void setRawInput(String rawInput) {
+    public void setRawInput(BitSet rawInput) { //TODO general case doesnt work
         this.output.add(0, transform(rawInput));
     }
 
@@ -58,6 +58,10 @@ public class Input<T> extends LayerAbstract {
         BitSet bs = new BitSet(granuity * range);
         bs.set(range);
         return bs; //TODO this is wrong
+    }
+
+    public static BitSet transform(BitSet binaryVector) {
+        return binaryVector;
     }
 
     @Override

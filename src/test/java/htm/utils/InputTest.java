@@ -4,8 +4,8 @@
  */
 package htm.utils;
 
-import htm.model.input.BinaryVectorInput;
 import htm.model.input.Input;
+import java.util.BitSet;
 import org.junit.Test;
 
 /**
@@ -16,9 +16,13 @@ public class InputTest {
 
     @Test
     public void checkBinaryInput() {
-        BinaryVectorInput bi = new BinaryVectorInput(Input.INPUT_MODE_SYNC);
-        Boolean[] bb = new Boolean[]{true, false, true, true};
-        bi.setRawInput(bb);
-        System.out.println(bi);
+        Input binaryVectorInput = new Input(1);
+        BitSet bb = new BitSet();
+        bb.set(1, true);
+        bb.set(2, true);
+        bb.set(3, false);
+        bb.set(4);
+        binaryVectorInput.setRawInput(bb);
+        System.out.println(binaryVectorInput);
     }
 }
