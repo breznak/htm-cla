@@ -4,6 +4,7 @@
  */
 package htm.utils;
 
+import java.util.BitSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -12,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author marek
  */
-public class CircularList<T> extends CopyOnWriteArrayList<T> {
+public class CircularList extends CopyOnWriteArrayList<BitSet> {
 
     private static final long serialVersionUID = 1L;
     private final int maxCapacity;
@@ -35,10 +36,15 @@ public class CircularList<T> extends CopyOnWriteArrayList<T> {
      * @param element
      */
     @Override
-    public void add(int index, T element) {
+    public void add(int index, BitSet element) {
         super.add(index, element);
         if (this.size() > maxCapacity) {
             this.remove(maxCapacity);
         }
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " -- " + this.get(0).toString();
     }
 }

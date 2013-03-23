@@ -5,12 +5,14 @@
 package htm.model.input;
 
 import htm.model.LayerAbstract;
+import java.awt.image.BufferedImage;
+import java.util.BitSet;
 
 /**
  *
  * @author marek
  */
-public abstract class Input<T, TYPE> extends LayerAbstract<Object, Object, TYPE> {
+public class Input<T> extends LayerAbstract {
 
     public static final int INPUT_MODE_ASYNC = 1;
     public static final int INPUT_MODE_SYNC = 2;
@@ -22,11 +24,41 @@ public abstract class Input<T, TYPE> extends LayerAbstract<Object, Object, TYPE>
         this.mode = mode;
     }
 
-    public void setRawInput(T rawInput) {
+    public void setRawInput(String rawInput) {
         this.output.add(0, transform(rawInput));
     }
 
-    abstract TYPE[] transform(T rawInput);
+    public static BitSet transform(byte[] input) {
+        return BitSet.valueOf(input);
+    }
+
+    public static BitSet transform(long[] input) {
+        return BitSet.valueOf(input);
+    }
+
+    public static BitSet transform(String input) {
+        return BitSet.valueOf(input.getBytes());
+    }
+
+    public static BitSet transform(BufferedImage input) {
+        return new BitSet();//.valueOf(input.getRGB(0, 0, input.getWidth(null), input.getHeight(null), null, 0, input.getWidth(null)));
+    }
+
+    /**
+     * approximates continuous variable in bits. Say value can be in interval
+     * 0.2meters...1meter, and i want measures in mm. Range is 0.8(m) and
+     * granuity is 1000 (#measures in One unit of Range)
+     *
+     * @param value
+     * @param range
+     * @param granuity
+     * @return
+     */
+    public static BitSet transform(double value, int range, int granuity) {
+        BitSet bs = new BitSet(granuity * range);
+        bs.set(range);
+        return bs; //TODO this is wrong
+    }
 
     @Override
     public String toString() {
