@@ -4,6 +4,8 @@
  */
 package htm.model;
 
+import htm.model.input.Input;
+
 /**
  *
  * @author marek
@@ -11,14 +13,11 @@ package htm.model;
 public class SpatialPooler {
 
     int columns;
-    int synapsesPerColumn;
-    int synapse[][] = new int[columns][synapsesPerColumn];
+    Column[] cols;
 
-    public SpatialPooler(int outputs, int synapsesPerColumn) {
-        columns = outputs;
-        this.synapsesPerColumn = synapsesPerColumn;
+    public SpatialPooler(int outputs, Input in) {
         for (int i = 0; i < columns; i++) {
-            synapse[i] = Column.initSynapses(); //TODO init not totaly in specs, see page 34
+            cols[i] = new Column(in);
         }
     }
 }
