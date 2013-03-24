@@ -10,14 +10,15 @@ import htm.model.input.Input;
  *
  * @author marek
  */
-public class SpatialPooler {
+public class SpatialPooler extends LayerAbstract {
 
     int columns;
     Column[] cols;
 
     public SpatialPooler(int outputs, Input in) {
+        super(null, null, 0, 1);
         for (int i = 0; i < columns; i++) {
-            cols[i] = new Column(in);
+            cols[i] = new Column(in, this, 1);
         }
     }
 }
