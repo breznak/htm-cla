@@ -12,7 +12,7 @@ import java.util.BitSet;
  *
  * @author marek
  */
-public class Input extends LayerAbstract {
+public class Input<PARENT> extends LayerAbstract<PARENT, BitSet> {
 
     public static final int INPUT_MODE_ASYNC = 1;
     public static final int INPUT_MODE_SYNC = 2;

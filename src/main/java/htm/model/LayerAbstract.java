@@ -5,18 +5,16 @@
 package htm.model;
 
 import htm.utils.CircularList;
-import java.util.BitSet;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  *
  * @author marek
  */
-public abstract class LayerAbstract {
+public abstract class LayerAbstract<PARENT, PARTS> {
 
-    private final LayerAbstract parent;
-    private final LayerAbstract parts;
-    public final CopyOnWriteArrayList<BitSet> input;
+    public final PARENT parent;
+    public final PARTS parts;
+    public final CircularList input = new CircularList(1);
     public final CircularList output;
     /**
      * unique ID of cell, use getName()
@@ -27,31 +25,12 @@ public abstract class LayerAbstract {
      */
     public final int HISTORY_STEPS;
 
-    public LayerAbstract(LayerAbstract parts, LayerAbstract parent, int id, int timeStepsMax) {
+    public LayerAbstract(PARTS parts, PARENT parent, int id, int timeStepsMax) {
         this.output = new CircularList(timeStepsMax);
         this.parent = parent;
         this.parts = parts;
         this.id = id;
         this.HISTORY_STEPS = timeStepsMax;
-        input = new CopyOnWriteArrayList<>();
-    }
-
-    /**
-     * higher-level structure, this is a part of it
-     *
-     * @return
-     */
-    public LayerAbstract parent() {
-        return parent;
-    }
-
-    /**
-     * lower-level structure parts, this is their parent
-     *
-     * @return
-     */
-    public LayerAbstract parts() {
-        return parts;
     }
 
     @Override
