@@ -57,7 +57,7 @@ public class Input<PARENT> extends LayerAbstract<PARENT, BitSet> {
     public static BitSet transform(double value, int range, int granuity) {
         BitSet bs = new BitSet(granuity * range);
         bs.set(range);
-        return bs; //TODO this is wrong
+        return bs; //FIXME this is wrong
     }
 
     public static BitSet transform(BitSet binaryVector) {
