@@ -17,6 +17,8 @@ public class CircularList extends CopyOnWriteArrayList<BitSet> {
 
     private static final long serialVersionUID = 1L;
     private final int maxCapacity;
+    public static final BitSet BIT_1 = new BitSet(1);
+    public static final BitSet BIT_0 = new BitSet(1);
 
     /**
      * ArrayList with circular buffer functionality has a capacity, if full,
@@ -27,6 +29,8 @@ public class CircularList extends CopyOnWriteArrayList<BitSet> {
     public CircularList(int capacity) {
         super();
         this.maxCapacity = capacity;
+        BIT_0.set(0, false);
+        BIT_1.set(0, true);
     }
 
     /**
@@ -46,5 +50,10 @@ public class CircularList extends CopyOnWriteArrayList<BitSet> {
     @Override
     public String toString() {
         return super.toString() + " -- " + this.get(0).toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return get(0).hashCode();
     }
 }
