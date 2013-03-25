@@ -40,11 +40,18 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
             <version>3.1.1</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>commons-primitives</groupId>
             <artifactId>commons-primitives</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.1</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 
