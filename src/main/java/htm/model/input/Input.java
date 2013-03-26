@@ -13,6 +13,8 @@ import java.util.BitSet;
  * @author marek
  */
 public abstract class Input<RAW> extends CircularList {
+//TODO add more input classes
+    //TODO visual, parellel, mem, storage
 
     public static final int INPUT_MODE_ASYNC = 1;
     public static final int INPUT_MODE_SYNC = 2;

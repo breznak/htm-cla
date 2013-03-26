@@ -12,7 +12,12 @@ import java.util.BitSet;
  */
 public class BinaryVectorInput extends Input<BitSet> {
 
-    public BinaryVectorInput(int mode, int outputSize) {
-        super(mode, outputSize);
+    /**
+     *
+     * @param mode
+     * @param numBits
+     */
+    public BinaryVectorInput(int mode, int numBits) {
+        super(mode, numBits);
     }
 }
