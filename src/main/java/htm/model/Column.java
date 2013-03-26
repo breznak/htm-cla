@@ -4,7 +4,6 @@
  */
 package htm.model;
 
-import htm.model.input.Input;
 import htm.utils.CircularList;
 import htm.utils.HelperMath;
 import java.util.ArrayList;
@@ -19,49 +18,60 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  *
  * @author marek
  */
-public class Column<PARENT> extends LayerAbstract<PARENT, Input> implements Runnable {
+public class Column<PARENT extends LayerAbstract> implements Runnable {
 
+    //local fields
     private int[] neighbor_idx;
     private final int syn_idx[]; //TODOoptimize to Bit mask
     private final float[] perm;
-    private final int DESIRED_LOCAL_ACTIVITY = 5; //5 winning columns, TODO compute
+    //synapses
+    static final int NUM_INPUT_SYNAPSES = 60;
+    static final float CONNECTED_SYNAPSE_PERM = 0.2f;
     private static final float PERMANENCE_DEC = 0.05f;
     private static final float PERMANENCE_INC = 0.05f;
+    //overlap columns
+    static final int MIN_OVERLAP = 2;
+    private final int DESIRED_LOCAL_ACTIVITY = 5; //5 winning columns, TODO compute
+    private float boost = 1.0f;
+    private static final float BOOST_ACCEL = 1.2f; //>1
+    final AtomicInteger overlap = new AtomicInteger(0);
+    private float emaOverlap = 0; //ema for overlap
+    //moving average
+    protected float emaActive = 0; //exponential moving average for Activation (=output ==1)
+    private static final int SLIDING_WINDOW = 100; //window size for moving average
+    //helper
+    private static final double _ALPHA = 1 / SLIDING_WINDOW; //helper for moving avg
+    private int _output = 0; // current output as int
+    private int _oldHash = 0;
+    private int _inhibitionRadiusOld = -1; //trick != inhibitionRadius
+    private SummaryStatistics stats = new SummaryStatistics();
+    private final PARENT parent;
+    public final int id;
+    private final CircularList output;
 
-    public Column(Input in, PARENT parent, int id, int histSize) {
-        super(in, parent, id, histSize);
+    public Column(PARENT parent, int id, int histSize) {
+        this.parent = parent;
+        this.id = id;
+        this.output = new CircularList(histSize);
         int center = new Random().nextInt(NUM_INPUT_SYNAPSES);
         syn_idx = initSynapsesIdx();
         perm = initSynapsePerm(center);
     }
-    static final int NUM_INPUT_SYNAPSES = 60;
-    static final float CONNECTED_SYNAPSE_PERM = 0.2f;
-    static final int MIN_OVERLAP = 2;
-    private float boost = 1.0f;
-    final AtomicInteger overlap = new AtomicInteger(0);
-    //moving average
-    protected float emaActive = 0; //exponential moving average for Activation (=output ==1)
-    private float emaOverlap = 0; //ema for overlap
-    private static final int SLIDING_WINDOW = 100; //window size for moving average
-    private static final double _ALPHA = 1 / SLIDING_WINDOW; //helper for moving avg
-    //helper
-    private int _output = 0; // current output as int
-    private int _oldHash = 0;
-    private int _inhibitionRadiusOld = -1; //trick != inhibitionRadius
-    //boost
-    private static final float BOOST_ACCEL = 1.2f; //>1
 
     // new synapse indexes
-    int[] initSynapsesIdx() {
-        return new UniformIntegerDistribution(0, input.get(0).length()).sample(NUM_INPUT_SYNAPSES);
+    private int[] initSynapsesIdx() {
+        return new UniformIntegerDistribution(0, parent.input.size()).sample(NUM_INPUT_SYNAPSES);
     }
 
     //new synapse permanence
-    float[] initSynapsePerm(int center) {
+    private float[] initSynapsePerm(int center) {
+        //67% samples lie within 1std radius -> 0.9std==50%
+        double std = parent.input.size() / parent.size(); //input size / #peers
+        NormalDistribution gauss = new NormalDistribution(center, std);
         float[] tmp = new float[NUM_INPUT_SYNAPSES];
-        float maxNormalDist = 0.4f; // maximum of normal distribution, used to scale around our CONNECTED_SYNAPSE_PERM
+        double scale = CONNECTED_SYNAPSE_PERM / gauss.probability(center + 0.9 * std); // scale to make 50% samples >= CONNECTED_SYNAPSE_PERM
         for (int i = 0; i < tmp.length; i++) {
-            tmp[i] = (float) (new NormalDistribution(center, 2).probability(syn_idx[i]) / maxNormalDist) * CONNECTED_SYNAPSE_PERM; //TODO scale to CONNECTED_PERM
+            tmp[i] = (float) (gauss.probability(syn_idx[i]) * scale); //FIXME correctly scale to CONNECTED_PERM
         }
         return tmp;
     }
@@ -70,7 +80,7 @@ public class Column<PARENT> extends LayerAbstract<PARENT, Input> implements Runn
     private int overlap() {
         int o = 0;
         for (int i = 0; i < syn_idx.length; i++) {
-            if (perm[i] > CONNECTED_SYNAPSE_PERM && (input.get(0).get(syn_idx[i]))) {
+            if (perm[i] > CONNECTED_SYNAPSE_PERM && (parent.input.get(0).get(syn_idx[i]))) {
                 o++;
             }
         }
@@ -84,30 +94,31 @@ public class Column<PARENT> extends LayerAbstract<PARENT, Input> implements Runn
     @Override
     public void run() {
         int tmp;
-        while ((tmp = input.hashCode()) == _oldHash) {
+        while ((tmp = parent.input.hashCode()) == _oldHash) {
+            System.gc();
             Thread.yield();
         }
         _oldHash = tmp;
         //phase 1
         overlap.set(overlap());
-        SpatialPooler sp = ((SpatialPooler) parent);
         Thread.yield();
 
+        SpatialPooler sp = (SpatialPooler) parent;
         //phase 2
         ArrayList<Integer> nbOverlapValues = new ArrayList<>();
         //caching
-        if ((tmp = sp.inhibitionRadius) != this._inhibitionRadiusOld) {
+        if ((tmp = sp.inhibitionRadius.get()) != this._inhibitionRadiusOld) {
             neighbor_idx = sp.neighbors(nbOverlapValues, this.id);
             this._inhibitionRadiusOld = tmp;
         }
         Collections.sort(nbOverlapValues);
         Collections.reverse(nbOverlapValues);  //TODO use reverse sort
         int minLocalActivity = nbOverlapValues.get(DESIRED_LOCAL_ACTIVITY); //kth best
-        if (overlap.get() > 0 && overlap.get() >= minLocalActivity) {
-            output.add(0, CircularList.BIT_1);
+        if (overlap.get() > 0 && overlap.get() >= minLocalActivity) {//TODO speedup
+            output.add(CircularList.BIT_1);
             _output = 1;
         } else {
-            output.add(0, CircularList.BIT_0);
+            output.add(CircularList.BIT_0);
             _output = 0;
         }
         Thread.currentThread().yield();
@@ -141,15 +152,15 @@ public class Column<PARENT> extends LayerAbstract<PARENT, Input> implements Runn
         Thread.yield();
 
         //update avg receptive field size
-        if (sp.inhibitionRadius != _inhibitionRadiusOld) { //cache multithreaded, off-sync
-            int n = sp.dimX * sp.dimY;
-            sp.inhibitionRadius = Math.round(((n - 1) * sp.inhibitionRadius + receptiveFieldSize()) / n); //avg
+        tmp = sp.inhibitionRadius.get();
+        if (tmp != _inhibitionRadiusOld) { //cache multithreaded, off-sync
+            sp.inhibitionRadius.set(Math.round(((parent.size() - 1) * tmp + receptiveFieldSize()) / parent.size())); //avg
+            _inhibitionRadiusOld = tmp;
         }
     }
-    private SummaryStatistics stats = new SummaryStatistics();
 
     int receptiveFieldSize() {
-//TODO how to do it? :)
+//FIXME how to do it? :)
         /*
          * The radius of the average connected receptive field size of all the columns.
          >>>The connected receptive field size<<<< of a column includes only the connected
