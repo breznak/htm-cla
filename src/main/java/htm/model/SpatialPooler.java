@@ -14,17 +14,13 @@ import org.apache.commons.lang.ArrayUtils;
  *
  * @author marek
  */
-public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>[][]> {
+public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>[][]> { //TODO move [][] to ArrayList
 
-    final int dimX;
-    final int dimY;
     protected static final int DEFAULT_INHIBITION_RADIUS = 5;
     protected final AtomicInteger inhibitionRadius = new AtomicInteger(SpatialPooler.DEFAULT_INHIBITION_RADIUS); //averageReceptiveFieldSize
 
     public SpatialPooler(int dimX, int dimY, CircularList input) {
-        super(new Column[dimX][dimY], 0, 1, input);
-        this.dimX = dimX;
-        this.dimY = dimY;
+        super(new Column[dimX][dimY], dimX, dimY, 0, 1, input);
 
         for (int i = 0; i < dimX; i++) {
             for (int j = 0; j < dimY; j++) {
@@ -78,10 +74,5 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>[][]> {
             }
         }
         return ArrayUtils.toPrimitive(found.toArray(new Integer[found.size()]));
-    }
-
-    @Override
-    public int size() {
-        return dimX * dimY;
     }
 }

@@ -23,13 +23,17 @@ public abstract class LayerAbstract<PARTS> {
      * will keep a buffer of its last HISTORY_STEPS output values
      */
     public final int HISTORY_STEPS;
+    public final int dimX;
+    public final int dimY;
 
-    public LayerAbstract(PARTS parts, int id, int timeStepsMax, CircularList input) {
+    public LayerAbstract(PARTS parts, int dimX, int dimY, int id, int timeStepsMax, CircularList input) {
         this.output = new CircularList(timeStepsMax);
         this.input = input;
         this.parts = parts;
         this.id = id;
         this.HISTORY_STEPS = timeStepsMax;
+        this.dimX = dimX;
+        this.dimY = dimY;
     }
 
     @Override
@@ -48,5 +52,7 @@ public abstract class LayerAbstract<PARTS> {
      *
      * @return
      */
-    abstract public int size();
+    public int size() {
+        return dimX * dimY;
+    }
 }
