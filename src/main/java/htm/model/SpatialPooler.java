@@ -61,7 +61,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
         ArrayList<Integer> found = new ArrayList<>();
         //TODO for for
         Point me = getCoordinates(curColumnID);
-        Column cur;
+        Column<SpatialPooler> cur;
         int inhib = inhibitionRadius.get();
         for (int x = me.x - inhib; x < me.x + inhib; x++) {
             for (int y = me.y - inhib; y < me.y + inhib; y++) {

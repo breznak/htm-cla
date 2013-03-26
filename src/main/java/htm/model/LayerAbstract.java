@@ -5,6 +5,7 @@
 package htm.model;
 
 import htm.utils.CircularList;
+import htm.utils.HelperMath;
 import java.util.ArrayList;
 
 /**
@@ -14,8 +15,8 @@ import java.util.ArrayList;
 public abstract class LayerAbstract<PART> {
 
     public final ArrayList<PART> parts;
-    public final CircularList input;
-    public final CircularList output;
+    protected final CircularList input;
+    private final CircularList output;
     /**
      * unique ID of cell, use getName()
      */
@@ -56,6 +57,10 @@ public abstract class LayerAbstract<PART> {
         parts.add(x * dimX + y, p);
     }
 
+    public boolean input(int index) {
+        return this.input(index, HelperMath.NOW);
+    }
+
     /**
      * number of parts
      *
@@ -63,5 +68,9 @@ public abstract class LayerAbstract<PART> {
      */
     public int size() {
         return dimX * dimY;
+    }
+
+    public boolean input(int index, int time) {
+        return input.get(time).get(index);
     }
 }

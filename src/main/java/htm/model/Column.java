@@ -80,7 +80,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private int overlap() {
         int o = 0;
         for (int i = 0; i < syn_idx.length; i++) {
-            if (perm[i] > CONNECTED_SYNAPSE_PERM && (parent.input.get(0).get(syn_idx[i]))) {
+            if (perm[i] > CONNECTED_SYNAPSE_PERM && parent.input(syn_idx[i])) {
                 o++;
             }
         }

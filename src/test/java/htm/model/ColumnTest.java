@@ -24,18 +24,17 @@ public class ColumnTest {
     @Before
     public void init() {
         in = new BinaryVectorInput(1, 4);
-        sp = new SpatialPooler(3, 5, in); //FIXME error
+        sp = new SpatialPooler(3, 5, in);
         pattern.set(0);
         pattern.set(3);
     }
 
     @Test
     public void checkColumn() {
-        col = new Column<SpatialPooler>(sp, 1, 1);
+        col = new Column<>(sp, 0, 1);
         System.out.println(col);
 
         col = sp.getColumn(10);
         System.out.println("" + col);
-
     }
 }
