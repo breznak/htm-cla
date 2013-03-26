@@ -12,19 +12,19 @@
 
 
     <dependencies>
+	<dependency>
+            <groupId>classmexer</groupId>
+            <artifactId>classmexer</artifactId>
+            <version>0.03</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.2</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-math</groupId>
-            <artifactId>commons-math</artifactId>
-            <version>20040118.003950</version>
-            <type>tar.gz</type>
-            <classifier>src</classifier>
         </dependency>
         <dependency>
             <groupId>colt</groupId>

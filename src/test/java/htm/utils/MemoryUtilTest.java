@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLongArray;
  *
  * @author marek
  */
-public class MemoryUsage {
+public class MemoryUtilTest {
 
     /**
      * measure memory footprint of java objects! run: $ javac -classpath
@@ -23,14 +23,19 @@ public class MemoryUsage {
      *
      * $ java -classpath
      * /home/marek/devel/DP/htm-java/target/classes:/home/marek/.m2/repository/junit/junit/4.8.2/junit-4.8.2.jar:/home/marek/devel/DP/htm-java/src/main/java/com/javamex/classmexer/classmexer.jar
-     * -javaagent:./com/javamex/classmexer/classmexer.jar htm.utils.MemoryUsage
+     * -javaagent:./com/javamex/classmexer/classmexer.jar
+     * htm.utils.MemoryUtilTest
      *
      * @param args
      */
-    public static void main(String[] args) {
+    //@Test//FIXME does not work 
+    public void checkMemoryRequirements() {
         Object o;
         long noBytes;
         int elements = 1000000;
+
+        System.out.println("Working Directory = "
+                + System.getProperty("user.dir"));
 
         o = new long[elements];
         noBytes = MemoryUtil.deepMemoryUsageOf(o, VisibilityFilter.ALL);
@@ -48,33 +53,12 @@ public class MemoryUsage {
         noBytes = MemoryUtil.deepMemoryUsageOf(o, VisibilityFilter.ALL);
         System.out.println("Memory usage of byte[" + elements + "] =" + noBytes + " Bytes");
 
-        o = new BitSet(60);
+        o = new BitSet(elements);
         noBytes = MemoryUtil.deepMemoryUsageOf(o, VisibilityFilter.ALL);
         System.out.println("Memory usage of BitSet[" + elements + "] =" + noBytes + " Bytes");
 
         o = new AtomicLongArray(elements);
         noBytes = MemoryUtil.deepMemoryUsageOf(o, VisibilityFilter.ALL);
         System.out.println("Memory usage of BitSet[" + elements + "] =" + noBytes + " Bytes");
-
-
-
-        final BitSet b = new BitSet(10000);
-
-        for (int z = 0; z < 10; z++) {
-
-            final Runnable t = new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < 10000; i++) {
-
-                        b.flip(i);
-
-                    }
-                }
-            };
-            new Thread(t).start();
-            System.out.print("*");
-        }
-        System.out.println("b=" + b.get(777));
     }
 }
