@@ -159,7 +159,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         }
     }
 
-    int receptiveFieldSize() {
+    protected int receptiveFieldSize() {
 //FIXME how to do it? :)
         /*
          * The radius of the average connected receptive field size of all the columns.

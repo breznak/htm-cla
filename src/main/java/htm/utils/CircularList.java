@@ -70,10 +70,14 @@ public class CircularList extends CopyOnWriteArrayList<BitSet> {
     @Override
     public String toString() {
         String s = "";
-        for (byte b : get(0).toByteArray()) {
-            s += b + " ";
+        for (int i = 0; i < size(); i++) {
+            if (get(0).get(i)) {
+                s += 1 + " ";
+            } else {
+                s += 0 + " ";
+            }
         }
-        return super.toString() + " -- " + s;//FIXME
+        return s;
     }
 
     @Override
