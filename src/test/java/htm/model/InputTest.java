@@ -29,7 +29,7 @@ public class InputTest {
         bb.set(4);
         in.setRawInput(bb);
         System.out.println(in);
-        assertEquals("BinaryVectorInput: id= 1 :: 0 1 1 0 1 ", in.toString());
+        assertEquals("BinaryVectorInput: id= 2 :: 0 1 1 0 1 ", in.toString());
     }
 
     @Test

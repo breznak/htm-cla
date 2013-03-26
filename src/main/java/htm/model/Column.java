@@ -25,7 +25,8 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private final int syn_idx[]; //TODOoptimize to Bit mask
     private final float[] perm;
     //synapses
-    static final int NUM_INPUT_SYNAPSES = 60;
+    private static final int DEFAULT_NUM_INPUT_SYNAPSES = 60;
+    private final int NUM_INPUT_SYNAPSES;// = 60;
     static final float CONNECTED_SYNAPSE_PERM = 0.2f;
     private static final float PERMANENCE_DEC = 0.05f;
     private static final float PERMANENCE_INC = 0.05f;
@@ -53,6 +54,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         this.parent = parent;
         this.id = id;
         this.output = new CircularList(histSize, 1);
+        NUM_INPUT_SYNAPSES = Math.min(DEFAULT_NUM_INPUT_SYNAPSES, parent.input.size());
         int center = new Random().nextInt(NUM_INPUT_SYNAPSES);
         syn_idx = initSynapsesIdx();
         perm = initSynapsePerm(center);
@@ -66,7 +68,6 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     //new synapse permanence
     protected float[] initSynapsePerm(int center) {
         //67% samples lie within 1std radius -> 0.9std==50%
-        System.err.println("parent in=" + parent.input.size() + " partent size=" + parent.size());
         double std = parent.input.size() / (double) parent.size(); //input size / #peers
         NormalDistribution gauss = new NormalDistribution(center, std);
         float[] tmp = new float[NUM_INPUT_SYNAPSES];
