@@ -4,7 +4,7 @@
  */
 package htm.model;
 
-import htm.model.input.Input;
+import htm.utils.CircularList;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,8 +21,8 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>[][]> {
     protected static final int DEFAULT_INHIBITION_RADIUS = 5;
     protected final AtomicInteger inhibitionRadius = new AtomicInteger(SpatialPooler.DEFAULT_INHIBITION_RADIUS); //averageReceptiveFieldSize
 
-    public SpatialPooler(int dimX, int dimY, Input in) {
-        super(new Column[dimX][dimY], null, 0, 1);
+    public SpatialPooler(int dimX, int dimY, CircularList input) {
+        super(new Column[dimX][dimY], 0, 1, input);
         this.dimX = dimX;
         this.dimY = dimY;
 

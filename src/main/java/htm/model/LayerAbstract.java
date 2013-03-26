@@ -12,9 +12,8 @@ import htm.utils.CircularList;
  */
 public abstract class LayerAbstract<PARTS> {
 
-    public final LayerAbstract parent;
     public final PARTS parts;
-    public final CircularList input = new CircularList(1);
+    public final CircularList input;
     public final CircularList output;
     /**
      * unique ID of cell, use getName()
@@ -25,9 +24,9 @@ public abstract class LayerAbstract<PARTS> {
      */
     public final int HISTORY_STEPS;
 
-    public LayerAbstract(PARTS parts, LayerAbstract parent, int id, int timeStepsMax) {
+    public LayerAbstract(PARTS parts, int id, int timeStepsMax, CircularList input) {
         this.output = new CircularList(timeStepsMax);
-        this.parent = parent;
+        this.input = input;
         this.parts = parts;
         this.id = id;
         this.HISTORY_STEPS = timeStepsMax;

@@ -4,7 +4,7 @@
  */
 package htm.model.input;
 
-import htm.model.LayerAbstract;
+import htm.utils.CircularList;
 import java.awt.image.BufferedImage;
 import java.util.BitSet;
 
@@ -12,23 +12,25 @@ import java.util.BitSet;
  *
  * @author marek
  */
-public abstract class Input<RAW> extends LayerAbstract<BitSet> {
+public abstract class Input<RAW> extends CircularList {
 
     public static final int INPUT_MODE_ASYNC = 1;
     public static final int INPUT_MODE_SYNC = 2;
     private int mode;
     private final int outputSize;
     private static int inputCounter = 0;
+    public final int id;
 
     public Input(int mode, int outputSize) {
-        super(null, null, Input.inputCounter++, 1);
+        super(1);
         this.mode = mode;
+        this.id = Input.inputCounter++;
         this.outputSize = outputSize;
-        output.add(new BitSet(outputSize)); //default zero input, to avoid init problems with other parts
+        add(new BitSet(outputSize)); //default zero input, to avoid init problems with other parts
     }
 
     public void setRawInput(RAW rawInput) { //TODO general case doesnt work
-        this.output.add(0, transform(rawInput));
+        add(0, transform(rawInput));
     }
 
     public abstract BitSet transform(RAW rawInput);
@@ -77,11 +79,6 @@ public abstract class Input<RAW> extends LayerAbstract<BitSet> {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + ": id= " + this.id + output;
-    }
-
-    @Override
-    public int size() {
-        return outputSize;
+        return this.getClass().getSimpleName() + ": id= " + this.id + super.toString();
     }
 }
