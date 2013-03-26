@@ -14,17 +14,17 @@ import org.apache.commons.lang.ArrayUtils;
  *
  * @author marek
  */
-public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>[][]> { //TODO move [][] to ArrayList
+public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
 
     protected static final int DEFAULT_INHIBITION_RADIUS = 5;
     protected final AtomicInteger inhibitionRadius = new AtomicInteger(SpatialPooler.DEFAULT_INHIBITION_RADIUS); //averageReceptiveFieldSize
 
     public SpatialPooler(int dimX, int dimY, CircularList input) {
-        super(new Column[dimX][dimY], dimX, dimY, 0, 1, input);
+        super(dimX, dimY, 0, 1, input);
 
-        for (int i = 0; i < dimX; i++) {
-            for (int j = 0; j < dimY; j++) {
-                parts[i][j] = new Column<>(this, i * dimX + j, 1);
+        for (int x = 0; x < dimX; x++) {
+            for (int y = 0; y < dimY; y++) {
+                addPart(new Column<>(this, x * dimX + y, 1), x, y);
             }
         }
     }
@@ -37,7 +37,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>[][]> { //
 
     public Column<SpatialPooler> getColumn(int column_id) {
         Point c = getCoordinates(column_id);
-        return parts[c.x][c.y];
+        return part(c.x, c.y);
     }
 
     /**
@@ -68,7 +68,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>[][]> { //
                 if (x == me.x && y == me.y) {
                     continue;
                 }
-                cur = parts[x][y];
+                cur = part(x, y);
                 found.add(cur.id);
                 overlapValues.add(cur.overlap.get());
             }

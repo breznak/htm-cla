@@ -5,14 +5,15 @@
 package htm.model;
 
 import htm.utils.CircularList;
+import java.util.ArrayList;
 
 /**
  *
  * @author marek
  */
-public abstract class LayerAbstract<PARTS> {
+public abstract class LayerAbstract<PART> {
 
-    public final PARTS parts;
+    public final ArrayList<PART> parts;
     public final CircularList input;
     public final CircularList output;
     /**
@@ -26,10 +27,10 @@ public abstract class LayerAbstract<PARTS> {
     public final int dimX;
     public final int dimY;
 
-    public LayerAbstract(PARTS parts, int dimX, int dimY, int id, int timeStepsMax, CircularList input) {
+    public LayerAbstract(int dimX, int dimY, int id, int timeStepsMax, CircularList input) {
         this.output = new CircularList(timeStepsMax);
         this.input = input;
-        this.parts = parts;
+        this.parts = new ArrayList<>(dimX * dimY);
         this.id = id;
         this.HISTORY_STEPS = timeStepsMax;
         this.dimX = dimX;
@@ -45,6 +46,14 @@ public abstract class LayerAbstract<PARTS> {
             return true;
         }
         return false;
+    }
+
+    public PART part(int x, int y) {
+        return parts.get(x * dimX + y);
+    }
+
+    public void addPart(PART p, int x, int y) {
+        parts.add(x * dimX + y, p);
     }
 
     /**
