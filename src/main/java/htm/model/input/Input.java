@@ -17,16 +17,13 @@ public abstract class Input<RAW> extends CircularList {
     public static final int INPUT_MODE_ASYNC = 1;
     public static final int INPUT_MODE_SYNC = 2;
     private int mode;
-    private final int outputSize;
     private static int inputCounter = 0;
     public final int id;
 
     public Input(int mode, int outputSize) {
-        super(1);
+        super(1, outputSize);
         this.mode = mode;
         this.id = Input.inputCounter++;
-        this.outputSize = outputSize;
-        add(new BitSet(outputSize)); //default zero input, to avoid init problems with other parts
     }
 
     public void setRawInput(RAW rawInput) { //TODO general case doesnt work
@@ -79,6 +76,6 @@ public abstract class Input<RAW> extends CircularList {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + ": id= " + this.id + super.toString();
+        return this.getClass().getSimpleName() + ": id= " + this.id + " :: " + super.toString();
     }
 }

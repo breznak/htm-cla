@@ -29,7 +29,7 @@ public abstract class LayerAbstract<PART> {
     public final int dimY;
 
     public LayerAbstract(int dimX, int dimY, int id, int timeStepsMax, CircularList input) {
-        this.output = new CircularList(timeStepsMax);
+        this.output = new CircularList(timeStepsMax, dimX * dimY);
         this.input = input;
         this.parts = new ArrayList<>(dimX * dimY);
         this.id = id;

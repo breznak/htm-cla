@@ -17,7 +17,8 @@ public class CircularList extends CopyOnWriteArrayList<BitSet> {
 
     private static final long serialVersionUID = 1L;
     public final int maxCapacity;
-    public static final BitSet BIT_1 = new BitSet(1);
+    public final int width;
+    public static final BitSet BIT_1 = new BitSet(1); //FIXME static, but bit set only after constructor
     public static final BitSet BIT_0 = new BitSet(1);
 
     /**
@@ -26,9 +27,13 @@ public class CircularList extends CopyOnWriteArrayList<BitSet> {
      *
      * @param capacity
      */
-    public CircularList(int capacity) {
+    public CircularList(int capacity, int width) {
         super();
         this.maxCapacity = capacity;
+        this.width = width;
+        BitSet defaultIN = new BitSet(width);
+        super.add(defaultIN); //default zero input, to avoid init problems with other parts
+
         BIT_0.set(0, false);
         BIT_1.set(0, true);
     }
@@ -41,6 +46,9 @@ public class CircularList extends CopyOnWriteArrayList<BitSet> {
      */
     @Override
     public void add(int index, BitSet element) {
+        if (index >= width) {
+            throw new IndexOutOfBoundsException("CircularList - adding out of bounds! width=" + width);
+        }
         super.add(index, element);
         if (super.size() > maxCapacity) {
             remove(maxCapacity);
@@ -61,10 +69,7 @@ public class CircularList extends CopyOnWriteArrayList<BitSet> {
      */
     @Override
     public int size() {
-        if (super.size() == 0) {
-            return 0;
-        }
-        return get(0).size();
+        return width;
     }
 
     @Override

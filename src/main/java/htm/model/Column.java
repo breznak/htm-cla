@@ -52,7 +52,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     public Column(PARENT parent, int id, int histSize) {
         this.parent = parent;
         this.id = id;
-        this.output = new CircularList(histSize);
+        this.output = new CircularList(histSize, 1);
         int center = new Random().nextInt(NUM_INPUT_SYNAPSES);
         syn_idx = initSynapsesIdx();
         perm = initSynapsePerm(center);
@@ -66,7 +66,8 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     //new synapse permanence
     private float[] initSynapsePerm(int center) {
         //67% samples lie within 1std radius -> 0.9std==50%
-        double std = parent.input.size() / parent.size(); //input size / #peers
+        System.err.println("parent in=" + parent.input.size() + " partent size=" + parent.size());
+        double std = parent.input.size() / (double) parent.size(); //input size / #peers
         NormalDistribution gauss = new NormalDistribution(center, std);
         float[] tmp = new float[NUM_INPUT_SYNAPSES];
         double scale = CONNECTED_SYNAPSE_PERM / gauss.probability(center + 0.9 * std); // scale to make 50% samples >= CONNECTED_SYNAPSE_PERM
