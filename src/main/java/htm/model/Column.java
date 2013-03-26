@@ -59,12 +59,12 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     }
 
     // new synapse indexes
-    private int[] initSynapsesIdx() {
+    protected int[] initSynapsesIdx() {
         return new UniformIntegerDistribution(0, parent.input.size()).sample(NUM_INPUT_SYNAPSES);
     }
 
     //new synapse permanence
-    private float[] initSynapsePerm(int center) {
+    protected float[] initSynapsePerm(int center) {
         //67% samples lie within 1std radius -> 0.9std==50%
         System.err.println("parent in=" + parent.input.size() + " partent size=" + parent.size());
         double std = parent.input.size() / (double) parent.size(); //input size / #peers
@@ -78,7 +78,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     }
 
     //overlap with input pattern
-    private int overlap() {
+    protected int overlap() {
         int o = 0;
         for (int i = 0; i < syn_idx.length; i++) {
             if (perm[i] > CONNECTED_SYNAPSE_PERM && parent.input(syn_idx[i])) {
@@ -178,7 +178,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         return i;
     }
 
-    private void increaseAllPermanences(float inc) {
+    protected void increaseAllPermanences(float inc) {
         for (int i = 0; i < perm.length; i++) {
             perm[i] += inc;
         }
