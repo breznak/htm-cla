@@ -14,12 +14,12 @@ import org.apache.commons.lang.ArrayUtils;
  *
  * @author marek
  */
-public class SpatialPooler extends LayerAbstract<Object, Column[][]> {
+public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>[][]> {
 
     final int dimX;
     final int dimY;
-    protected int inhibitionRadius = 0;
     protected static final int DEFAULT_INHIBITION_RADIUS = 5;
+    protected final AtomicInteger inhibitionRadius = new AtomicInteger(SpatialPooler.DEFAULT_INHIBITION_RADIUS); //averageReceptiveFieldSize
 
     public SpatialPooler(int dimX, int dimY, Input in) {
         super(new Column[dimX][dimY], null, 0, 1);
@@ -28,10 +28,9 @@ public class SpatialPooler extends LayerAbstract<Object, Column[][]> {
 
         for (int i = 0; i < dimX; i++) {
             for (int j = 0; j < dimY; j++) {
-                parts[i][j] = new Column(in, this, (i - 1) * dimX + j, 1);
+                parts[i][j] = new Column<>(this, i * dimX + j, 1);
             }
         }
-
     }
 
     public Point getCoordinates(int column_id) {
@@ -40,7 +39,7 @@ public class SpatialPooler extends LayerAbstract<Object, Column[][]> {
         return new Point(a, b); //TODO test
     }
 
-    public Column getColumn(int column_id) {
+    public Column<SpatialPooler> getColumn(int column_id) {
         Point c = getCoordinates(column_id);
         return parts[c.x][c.y];
     }
@@ -67,8 +66,9 @@ public class SpatialPooler extends LayerAbstract<Object, Column[][]> {
         //TODO for for
         Point me = getCoordinates(curColumnID);
         Column cur;
-        for (int x = me.x - inhibitionRadius; x < me.x + inhibitionRadius; x++) {
-            for (int y = me.y - inhibitionRadius; y < me.y + inhibitionRadius; y++) {
+        int inhib = inhibitionRadius.get();
+        for (int x = me.x - inhib; x < me.x + inhib; x++) {
+            for (int y = me.y - inhib; y < me.y + inhib; y++) {
                 if (x == me.x && y == me.y) {
                     continue;
                 }
@@ -79,5 +79,9 @@ public class SpatialPooler extends LayerAbstract<Object, Column[][]> {
         }
         return ArrayUtils.toPrimitive(found.toArray(new Integer[found.size()]));
     }
-    protected static final AtomicInteger averageReceptiveFieldSize = new AtomicInteger(SpatialPooler.DEFAULT_INHIBITION_RADIUS);
+
+    @Override
+    public int size() {
+        return dimX * dimY;
+    }
 }

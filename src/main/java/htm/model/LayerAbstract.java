@@ -10,9 +10,9 @@ import htm.utils.CircularList;
  *
  * @author marek
  */
-public abstract class LayerAbstract<PARENT, PARTS> {
+public abstract class LayerAbstract<PARTS> {
 
-    public final PARENT parent;
+    public final LayerAbstract parent;
     public final PARTS parts;
     public final CircularList input = new CircularList(1);
     public final CircularList output;
@@ -25,7 +25,7 @@ public abstract class LayerAbstract<PARENT, PARTS> {
      */
     public final int HISTORY_STEPS;
 
-    public LayerAbstract(PARTS parts, PARENT parent, int id, int timeStepsMax) {
+    public LayerAbstract(PARTS parts, LayerAbstract parent, int id, int timeStepsMax) {
         this.output = new CircularList(timeStepsMax);
         this.parent = parent;
         this.parts = parts;
@@ -43,4 +43,11 @@ public abstract class LayerAbstract<PARENT, PARTS> {
         }
         return false;
     }
+
+    /**
+     * number of parts
+     *
+     * @return
+     */
+    abstract public int size();
 }

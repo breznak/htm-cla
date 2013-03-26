@@ -16,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class CircularList extends CopyOnWriteArrayList<BitSet> {
 
     private static final long serialVersionUID = 1L;
-    private final int maxCapacity;
+    public final int maxCapacity;
     public static final BitSet BIT_1 = new BitSet(1);
     public static final BitSet BIT_0 = new BitSet(1);
 
@@ -42,14 +42,38 @@ public class CircularList extends CopyOnWriteArrayList<BitSet> {
     @Override
     public void add(int index, BitSet element) {
         super.add(index, element);
-        if (this.size() > maxCapacity) {
-            this.remove(maxCapacity);
+        if (super.size() > maxCapacity) {
+            remove(maxCapacity);
         }
     }
 
     @Override
+    public boolean add(BitSet e) {
+        this.add(0, e);
+        return true;
+    }
+
+    /**
+     * size - length of stored BitSet, !not capacity of this List, which is
+     * equal to maxCapacity
+     *
+     * @return
+     */
+    @Override
+    public int size() {
+        if (super.size() == 0) {
+            return 0;
+        }
+        return get(0).size();
+    }
+
+    @Override
     public String toString() {
-        return super.toString() + " -- " + this.get(0).toString();
+        String s = "";
+        for (byte b : get(0).toByteArray()) {
+            s += b + " ";
+        }
+        return super.toString() + " -- " + s;//FIXME
     }
 
     @Override

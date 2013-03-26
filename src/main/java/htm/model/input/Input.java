@@ -12,36 +12,46 @@ import java.util.BitSet;
  *
  * @author marek
  */
-public class Input<PARENT> extends LayerAbstract<PARENT, BitSet> {
+public abstract class Input<RAW> extends LayerAbstract<BitSet> {
 
     public static final int INPUT_MODE_ASYNC = 1;
     public static final int INPUT_MODE_SYNC = 2;
     private int mode;
+    private final int outputSize;
     private static int inputCounter = 0;
 
-    public Input(int mode) {
+    public Input(int mode, int outputSize) {
         super(null, null, Input.inputCounter++, 1);
         this.mode = mode;
+        this.outputSize = outputSize;
+        output.add(new BitSet(outputSize)); //default zero input, to avoid init problems with other parts
     }
 
-    public void setRawInput(BitSet rawInput) { //TODO general case doesnt work
+    public void setRawInput(RAW rawInput) { //TODO general case doesnt work
         this.output.add(0, transform(rawInput));
     }
 
-    public static BitSet transform(byte[] input) {
+    public abstract BitSet transform(RAW rawInput);
+
+    public BitSet transform(byte[] input) {
         return BitSet.valueOf(input);
     }
 
-    public static BitSet transform(long[] input) {
+    public BitSet transform(long[] input) {
         return BitSet.valueOf(input);
     }
 
-    public static BitSet transform(String input) {
+    public BitSet transform(String input) {
         return BitSet.valueOf(input.getBytes());
     }
 
-    public static BitSet transform(BufferedImage input) {
-        return new BitSet();//.valueOf(input.getRGB(0, 0, input.getWidth(null), input.getHeight(null), null, 0, input.getWidth(null)));
+    public BitSet transform(BufferedImage input) {
+        int[] img = input.getRGB(0, 0, input.getWidth(null), input.getHeight(null), null, 0, input.getWidth(null));
+        long[] loong = new long[img.length];
+        for (int i = 0; i < img.length; i++) {
+            loong[i] = (long) img[i];
+        }
+        return BitSet.valueOf((loong));
     }
 
     /**
@@ -54,18 +64,24 @@ public class Input<PARENT> extends LayerAbstract<PARENT, BitSet> {
      * @param granuity
      * @return
      */
-    public static BitSet transform(double value, int range, int granuity) {
-        BitSet bs = new BitSet(granuity * range);
-        bs.set(range);
-        return bs; //FIXME this is wrong
+    public BitSet transform(double value, int lowerBound, int upperBound, int granuity) {
+        BitSet bs = new BitSet(granuity * (upperBound - lowerBound));
+        int idx = (int) Math.ceil((value - 1.1 * lowerBound) / granuity);
+        bs.set(idx);
+        return bs; //FIXME this is wrong, what representation?"5"=101(2) or "5"={0,0,0,0,0,1}(in enum 0..5)
     }
 
-    public static BitSet transform(BitSet binaryVector) {
+    public BitSet transform(BitSet binaryVector) {
         return binaryVector;
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + ": id= " + this.id + output;
+    }
+
+    @Override
+    public int size() {
+        return outputSize;
     }
 }
