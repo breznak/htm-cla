@@ -55,4 +55,11 @@ public class SpatialPoolerTest {
         float ema = sp.maxNeighborsEMA(neighbors);
         System.out.println("Max neighbors' EMA=" + ema);
     }
+
+    @Test
+    public void checkBigMemory() {
+        System.out.println("BigMemory test, cca 2gb @ 100k columns!");
+        Input in = new BinaryVectorInput(1, 100000);
+        sp = new SpatialPooler(100, 1000, 1, 10, in, 0.05);
+    }
 }
