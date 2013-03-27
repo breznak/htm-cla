@@ -57,7 +57,6 @@ public abstract class LayerAbstract<PART> {
     }
 
     public void setPart(PART p, int x, int y) {
-        System.err.println("x " + x + " y " + y + " dimX " + dimX + " dimY " + dimY);
         parts.set(x * dimY + y, p);
     }
 

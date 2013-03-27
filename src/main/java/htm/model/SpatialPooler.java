@@ -28,7 +28,6 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
             Point p = getCoordinates(i);
             int x = p.x;
             int y = p.y;
-            System.err.println("==" + (x * this.dimY + y));
             setPart(new Column<>(this, i, timeSteps, sparsity), x, y);
         }
         learning(true);
@@ -101,9 +100,9 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
     @Override
     public String toString() {
         String s = this.getClass().getSimpleName() + " [id=" + id + " inhibR=" + inhibitionRadius.get() + " " + dimX + "x" + dimY + " ] \n";
-        for (int i = 0; i < dimX; i++) {
-            for (int j = 0; j < dimY; j++) {
-                s += part(i, j).output.get(0) + " ";
+        for (int i = 0; i < dimY; i++) {
+            for (int j = 0; j < dimX; j++) {
+                s += part(i, j).toString(1) + " ";
             }
             s += "\n";
         }
