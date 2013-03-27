@@ -71,4 +71,50 @@ public class ColumnTest {
         }
         System.out.println("");
     }
+
+    @Test
+    public void checkOverlap() {
+        in = new BinaryVectorInput(1, 10);
+        BitSet bs = new BitSet();
+        bs.set(1);
+        bs.set(3);
+        bs.set(8);
+        bs.set(9);
+        in.setRawInput(bs);
+        sp = new SpatialPooler(1, 2, in);
+        col = new Column<>(sp, 0, 1, 0.02);
+        System.out.println("IN=" + in + " overlap=" + col.overlap());
+    }
+
+    @Test
+    public void checkIncreaseAllPerm() {
+        in = new BinaryVectorInput(1, 10);
+        BitSet bs = new BitSet();
+        bs.set(1);
+        bs.set(3);
+        bs.set(8);
+        bs.set(9);
+        in.setRawInput(bs);
+        sp = new SpatialPooler(1, 2, in);
+        col = new Column<>(sp, 0, 1, 0.02);
+        int overOld = col.overlap();
+        col.increaseAllPermanences((float) 0.5);
+        int overNew = col.overlap();
+        System.out.println("IN=" + in + " overlapOld=" + overOld + " overlapNew=" + overNew);
+        assertEquals(true, overNew >= overOld);
+    }
+
+    @Test
+    public void checkReceptiveFieldSize() {
+        in = new BinaryVectorInput(1, 1000);
+        BitSet bs = new BitSet();
+        bs.set(1);
+        bs.set(3);
+        bs.set(8);
+        bs.set(9);
+        in.setRawInput(bs);
+        sp = new SpatialPooler(2, 2, in);
+        col = new Column<>(sp, 0, 1, 0.02);
+        System.out.println("Receptive field size=" + col.receptiveFieldSize() + " (overlap=" + col.overlap());
+    }
 }
