@@ -25,7 +25,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private final float[] perm;
     protected final PARENT parent;
     public final int id;
-    private final CircularList output;
+    protected final CircularList output;
     private boolean learning = true;
     //synapses
     private static final int DEFAULT_NUM_INPUT_SYNAPSES = 60;

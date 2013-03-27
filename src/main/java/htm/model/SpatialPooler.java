@@ -24,18 +24,20 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
     public SpatialPooler(int dimX, int dimY, int id, int timeSteps, CircularList input, double sparsity) {
         super(dimX, dimY, id, timeSteps, input);
 
-        for (int x = 0; x < dimX; x++) {
-            for (int y = 0; y < dimY; y++) {
-                addPart(new Column<>(this, x * dimX + y, timeSteps, sparsity), x, y);
-            }
+        for (int i = 0; i < this.dimX * this.dimY; i++) { //! this.dimX is important, as dimX/Y get reordered in LayerAbstract, dimX==bigger
+            Point p = getCoordinates(i);
+            int x = p.x;
+            int y = p.y;
+            System.err.println("==" + (x * this.dimY + y));
+            addPart(new Column<>(this, i, timeSteps, sparsity), x, y);
         }
         learning(true);
     }
 
     public Point getCoordinates(int column_id) {
-        int a = column_id % dimY;
+        int a = column_id % dimX;
         int b = (column_id - a) / dimX;
-        return new Point(a, b); //TODO test
+        return new Point(a, b);
     }
 
     public Column<SpatialPooler> getColumn(int column_id) {
@@ -95,5 +97,16 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
         }
         this.learning = onOff;
     }
-    //TODO toString
+
+    @Override
+    public String toString() {
+        String s = this.getClass().getSimpleName() + " [id=" + id + " inhibR=" + inhibitionRadius.get() + " " + dimX + "x" + dimY + " ] \n";
+        for (int i = 0; i < dimX; i++) {
+            for (int j = 0; j < dimY; j++) {
+                s += part(i, j).output.get(0) + " ";
+            }
+            s += "\n";
+        }
+        return s;
+    }
 }

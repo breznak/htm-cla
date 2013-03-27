@@ -31,11 +31,14 @@ public abstract class LayerAbstract<PART> {
     public LayerAbstract(int dimX, int dimY, int id, int timeStepsMax, CircularList input) {
         this.output = new CircularList(timeStepsMax, dimX * dimY);
         this.input = input;
-        this.parts = new ArrayList<>(dimX * dimY);
+        this.parts = new ArrayList<>();
+        for (int i = 0; i < dimX * dimY; i++) {
+            parts.add(null); //pre-allocate, so add(0), add(2) can succeed
+        }
         this.id = id;
         this.HISTORY_STEPS = timeStepsMax;
-        this.dimX = dimX;
-        this.dimY = dimY;
+        this.dimX = Math.max(dimX, dimY); //some parts need bigger dimension be as dimX, eg getCoordinates()
+        this.dimY = Math.min(dimX, dimY);
     }
 
     @Override
@@ -50,11 +53,12 @@ public abstract class LayerAbstract<PART> {
     }
 
     public PART part(int x, int y) {
-        return parts.get(x * dimX + y);
+        return parts.get(x * dimY + y);
     }
 
     public void addPart(PART p, int x, int y) {
-        parts.add(x * dimX + y, p);
+        System.err.println("x " + x + " y " + y + " dimX " + dimX + " dimY " + dimY);
+        parts.add(x * dimY + y, p);
     }
 
     public boolean input(int index) {
