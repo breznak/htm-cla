@@ -53,9 +53,10 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         this.parent = parent;
         this.id = id;
         this.output = new CircularList(histSize, 1);
-        NUM_INPUT_SYNAPSES = Math.min(DEFAULT_NUM_INPUT_SYNAPSES, parent.input.size());
+        int diff = (int) (new Random().nextGaussian() * DEFAULT_NUM_INPUT_SYNAPSES * 0.2); //+-20%
+        NUM_INPUT_SYNAPSES = HelperMath.inRange(DEFAULT_NUM_INPUT_SYNAPSES + diff, 1, parent.input.size());
         MIN_OVERLAP = Math.max(1, NUM_INPUT_SYNAPSES / 30);
-        DESIRED_LOCAL_ACTIVITY = HelperMath.inRange((int) (parent.size() * sparsity), 0, parent.size());
+        DESIRED_LOCAL_ACTIVITY = HelperMath.inRange((int) (parent.size() * sparsity), 0, parent.size() - 1);
         int center = new Random().nextInt(NUM_INPUT_SYNAPSES);
         syn_idx = initSynapsesIdx();
         perm = initSynapsePerm(center);
