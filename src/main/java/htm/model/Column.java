@@ -23,13 +23,13 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private int[] neighbor_idx;
     private final int syn_idx[]; //TODOoptimize to Bit mask
     private final float[] perm;
-    private final PARENT parent;
+    protected final PARENT parent;
     public final int id;
     private final CircularList output;
     //synapses
     private static final int DEFAULT_NUM_INPUT_SYNAPSES = 60;
     private final int NUM_INPUT_SYNAPSES;// = 60;
-    private static final float CONNECTED_SYNAPSE_PERM = 0.2f;
+    public static final float CONNECTED_SYNAPSE_PERM = 0.2f;
     private static final float PERMANENCE_DEC = 0.05f;
     private static final float PERMANENCE_INC = 0.05f;
     //overlap columns
@@ -59,7 +59,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         DESIRED_LOCAL_ACTIVITY = HelperMath.inRange((int) (parent.size() * sparsity), 0, parent.size() - 1);
         int center = new Random().nextInt(NUM_INPUT_SYNAPSES);
         syn_idx = initSynapsesIdx();
-        perm = initSynapsePerm(center);
+        perm = initSynapsePerm(center, syn_idx);
     }
 
     // new synapse indexes
@@ -68,14 +68,15 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     }
 
     //new synapse permanence
-    protected float[] initSynapsePerm(int center) {
+    protected float[] initSynapsePerm(int center, int[] synapse_idx) {
         //67% samples lie within 1std radius -> 0.9std==50%
         double std = parent.input.size() / (double) parent.size(); //input size / #peers
         NormalDistribution gauss = new NormalDistribution(center, std);
         float[] tmp = new float[NUM_INPUT_SYNAPSES];
-        double scale = CONNECTED_SYNAPSE_PERM / gauss.probability(center + 0.9 * std); // scale to make 50% samples >= CONNECTED_SYNAPSE_PERM
+        double scale = 1.5 * CONNECTED_SYNAPSE_PERM / gauss.probability(center, center + 0.68 * std); // scale to make 50% samples >= CONNECTED_SYNAPSE_PERM
         for (int i = 0; i < tmp.length; i++) {
-            tmp[i] = (float) (gauss.probability(syn_idx[i]) * scale); //FIXME correctly scale to CONNECTED_PERM
+            tmp[i] = (float) ((0.5 - gauss.probability(center, center + Math.abs(center - synapse_idx[i]))) * scale); //FIXME correctly scale to CONNECTED_PERM
+            ///  System.err.println("std " + std + " scale " + scale + " center " + center + "  idx=" + syn_idx[i] + " perm " + tmp[i]);
         }
         return tmp;
     }
