@@ -7,6 +7,7 @@ package htm.model;
 import htm.model.input.BinaryVectorInput;
 import htm.model.input.Input;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -60,39 +61,85 @@ public class SpatialPoolerTest {
         float ema = sp.maxNeighborsEMA(neighbors);
         System.out.println("Max neighbors' EMA=" + ema);
     }
+    /*
+     @Test
+     public void checkBigMemory() {
+     System.out.println("BigMemory test, cca 2gb @ 100k columns!");
+     Input in = new BinaryVectorInput(1, 100000);
+     sp = new SpatialPooler(100, 1000, 1, 10, in, 0.05);
+     }
+
+     @Test
+     public void checkBigParallel() {
+     Input in = new BinaryVectorInput(1, 1000000);
+     in.setRawInput(in.randomSample());
+     sp = new SpatialPooler(1000, 10, 1, 2, in, 0.02);
+     System.out.println("start!");
+     long s = System.currentTimeMillis();
+     ExecutorService pool = Executors.newCachedThreadPool(Executors.defaultThreadFactory());
+     int RUNS = 10;
+     for (int r = 0; r < RUNS; r++) {
+
+     for (int i = 0; i < sp.size(); i++) {
+     pool.submit(sp.getColumn(i));
+     }
+     }
+     try {
+     pool.awaitTermination(1, TimeUnit.MILLISECONDS);
+     System.out.println("" + sp.toString());
+     }
+     catch (InterruptedException ex) {
+     Logger.getLogger(SpatialPoolerTest.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     pool.shutdown();
+     long t = System.currentTimeMillis();
+     System.out.println("parallel took " + (t - s) + "ms!");
+     System.out.println("" + sp.toString());
+     }
+     */
 
     @Test
-    public void checkBigMemory() {
-        System.out.println("BigMemory test, cca 2gb @ 100k columns!");
-        Input in = new BinaryVectorInput(1, 100000);
-        sp = new SpatialPooler(100, 1000, 1, 10, in, 0.05);
-    }
-
-    @Test
-    public void checkBigParallel() {
-        Input in = new BinaryVectorInput(1, 1000000);
-        in.setRawInput(in.randomSample());
-        sp = new SpatialPooler(1000, 10, 1, 2, in, 0.02);
+    public void checkTestParallel() {
+        Input in = new BinaryVectorInput(1, 1000);
+        //create 5 test inputs
+        List<BitSet> patterns = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            patterns.add(in.randomSample());
+        }
+        sp = new SpatialPooler(100, 100, 1, 2, in, 0.1);
         System.out.println("start!");
         long s = System.currentTimeMillis();
-        ExecutorService pool = Executors.newCachedThreadPool(Executors.defaultThreadFactory());
-        int RUNS = 10;
-        for (int r = 0; r < RUNS; r++) {
+        ExecutorService pool = Executors.newFixedThreadPool(1, Executors.defaultThreadFactory());
+        int RUNS = 5;
+        for (BitSet p : patterns) {
+            in.setRawInput(p);
+            for (int r = 0; r < RUNS; r++) {
 
-            for (int i = 0; i < sp.size(); i++) {
-                pool.submit(sp.getColumn(i));
+                for (int i = 0; i < sp.size(); i++) {
+                    pool.submit(sp.getColumn(i));
+                }
             }
+            System.out.println("pattern " + p + " iter " + " \n" + sp);
         }
         try {
-            pool.awaitTermination(1, TimeUnit.MILLISECONDS);
-            System.out.println("" + sp.toString());
+            pool.shutdown();
+            boolean fin = pool.awaitTermination(10, TimeUnit.MILLISECONDS);
+            System.out.println("FIN " + fin);
         }
         catch (InterruptedException ex) {
             Logger.getLogger(SpatialPoolerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-        pool.shutdown();
+
         long t = System.currentTimeMillis();
         System.out.println("parallel took " + (t - s) + "ms!");
         System.out.println("" + sp.toString());
+
+
+        sp.learning(false);
+        for (int i = 0; i < 2; i++) {
+            in.setRawInput(patterns.get(i));
+            System.out.println("" + sp.input.toString());
+            sp.getColumn(0).run();
+        }
     }
 }

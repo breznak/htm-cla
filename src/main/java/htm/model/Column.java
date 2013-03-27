@@ -78,6 +78,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         for (int i = 0; i < tmp.length; i++) {
             tmp[i] = (float) ((0.5 - gauss.probability(center, center + Math.abs(center - synapse_idx[i]))) * scale); //FIXME correctly scale to CONNECTED_PERM
             ///  System.err.println("std " + std + " scale " + scale + " center " + center + "  idx=" + syn_idx[i] + " perm " + tmp[i]);
+            tmp[i] = 0.2f;
         }
         return tmp;
     }
@@ -97,6 +98,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         o *= boost;
         return o;
     }
+    private ArrayList<Integer> nbOverlapValues = new ArrayList<>();
 
     @Override
     public void run() {
@@ -106,22 +108,25 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         //Thread.yield();
         // }
         //  if (id == 999) {  System.out.println("" + this); }
-
+        System.out.println("run " + id);
         //_oldHash = tmp;
         //phase 1
         overlap = overlap();
+        System.out.println(id + " overlap" + overlap);
         Thread.yield();
 
         SpatialPooler sp = (SpatialPooler) parent;
         //phase 2
-        ArrayList<Integer> nbOverlapValues = new ArrayList<>();
         //caching
         if ((tmp = sp.inhibitionRadius.get()) != this._inhibitionRadiusOld) {
             neighbor_idx = sp.neighbors(nbOverlapValues, this.id);
+            System.out.println(id + " nb " + neighbor_idx[0]);
             this._inhibitionRadiusOld = tmp;
+            System.out.println(id + " inhibR " + tmp);
         }
         Collections.sort(nbOverlapValues);
         Collections.reverse(nbOverlapValues);  //TODO use reverse sort
+        System.err.println(DESIRED_LOCAL_ACTIVITY + " FFF" + nbOverlapValues.size());
         int minLocalActivity = nbOverlapValues.get(DESIRED_LOCAL_ACTIVITY); //kth best
         if (overlap > 0 && overlap >= minLocalActivity) {//TODO speedup
             output.add(CircularList.BIT_1);
@@ -130,6 +135,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
             output.add(CircularList.BIT_0);
             _output = 0;
         }
+        System.out.println(id + " >>> " + _output);
         Thread.currentThread().yield();
 
         //phase 3
@@ -141,12 +147,14 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
                     perm[i] -= PERMANENCE_DEC;
                 }
                 perm[i] = (float) HelperMath.inRange(perm[i], 0, 1);
+                System.out.println(id + " perm updated!");
             }
         }
         Thread.yield();
         //compute moving average
         float minDutyCycle = 0.01f * sp.maxNeighborsEMA(neighbor_idx);
         emaActive = (float) (_ALPHA * emaActive + (1 - _ALPHA) * _output);
+        System.out.println(id + " learning" + learning);
         if (learning) {
             if (emaActive > minDutyCycle) {
                 boost = 1; //TODO add Thread priorities?
@@ -156,7 +164,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
             }
         }
         emaOverlap = (float) (_ALPHA * emaOverlap + (1 - _ALPHA) * overlap);
-        if (emaOverlap < minDutyCycle) {
+        if (emaOverlap <= minDutyCycle) {
             //wrong subset of synapses is being used now, try to find useful ones
             increaseAllPermanences(0.1f * CONNECTED_SYNAPSE_PERM);
         }
