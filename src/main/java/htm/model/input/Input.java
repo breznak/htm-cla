@@ -7,6 +7,7 @@ package htm.model.input;
 import htm.utils.CircularList;
 import java.awt.image.BufferedImage;
 import java.util.BitSet;
+import java.util.Random;
 
 /**
  *
@@ -26,6 +27,15 @@ public abstract class Input<RAW> extends CircularList {
         super(1, outputSize);
         this.mode = mode;
         this.id = Input.inputCounter++;
+    }
+
+    public BitSet randomSample() {
+        BitSet rand = new BitSet(this.width);
+        Random r = new Random();
+        for (int i = 0; i < width; i++) {
+            rand.set(i, r.nextBoolean());
+        }
+        return rand;
     }
 
     public void setRawInput(RAW rawInput) { //TODO general case doesnt work
