@@ -28,15 +28,22 @@ public class InputTest {
         bb.set(3, false);
         bb.set(4);
         in.setRawInput(bb);
-        System.out.println(in);
-        assertEquals("BinaryVectorInput: id= 2 :: 0 1 1 0 1 ", in.toString());
+        System.out.println(in.getClass().getSimpleName() + ": id " + in.id + " :: " + in);
+        assertEquals("0 1 1 0 1 ", in.toString());
     }
 
     @Test
     public void checkStringInput() {
         in = new StringInput(1, 6);
         in.setRawInput("Hello");
-        System.out.println(in);
-        assertEquals("StringInput: id= 1 :: 0 0 0 1 0 0 1 0 1 0 1 0 0 1 1 0 0 0 1 1 0 1 1 0 0 0 1 1 0 1 1 0 1 1 1 1 0 1 1 0 0 0 0 0 0 0 0 0 ", in.toString());
+        System.out.println(in.getClass().getSimpleName() + ": id " + in.id + " :: " + in);
+        assertEquals("0 0 0 1 0 0 1 0 1 0 1 0 0 1 1 0 0 0 1 1 0 1 1 0 0 0 1 1 0 1 1 0 1 1 1 1 0 1 1 0 0 0 0 0 0 0 0 0 ", in.toString());
+    }
+
+    @Test
+    public void checkInputSize() {
+        in = new BinaryVectorInput(1, 5);
+        in = new BinaryVectorInput(1, 1000);
+        assertEquals(1000, in.size());
     }
 }

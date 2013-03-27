@@ -75,9 +75,4 @@ public abstract class Input<RAW> extends CircularList {
     public BitSet transform(BitSet binaryVector) {
         return binaryVector;
     }
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + ": id= " + this.id + " :: " + super.toString();
-    }
 }
