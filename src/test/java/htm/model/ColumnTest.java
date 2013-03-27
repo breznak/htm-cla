@@ -26,7 +26,7 @@ public class ColumnTest {
     @Before
     public void init() {
         in = new BinaryVectorInput(1, 4);
-        sp = new SpatialPooler(3, 5, in);
+        sp = new SpatialPooler(3, 5, 1, 1, in, 0.02);
         pattern.set(0);
         pattern.set(3);
     }
@@ -34,7 +34,7 @@ public class ColumnTest {
     @Test
     public void checkColumn() {
         in = new BinaryVectorInput(1, 1000);
-        sp = new SpatialPooler(3, 5, in);
+        sp = new SpatialPooler(3, 5, 1, 1, in, 0.02);
         col = new Column<>(sp, 0, 1, 0.02);
         System.out.println(col);
 
@@ -57,7 +57,7 @@ public class ColumnTest {
     @Test
     public void checkInitSynapsePerm() {
         in = new BinaryVectorInput(1, 10);
-        sp = new SpatialPooler(2, 2, in);
+        sp = new SpatialPooler(2, 2, 1, 1, in, 0.02);
         assertEquals(10, sp.input.size());
         System.err.println("##" + sp.input.size());
 
@@ -81,7 +81,7 @@ public class ColumnTest {
         bs.set(8);
         bs.set(9);
         in.setRawInput(bs);
-        sp = new SpatialPooler(1, 2, in);
+        sp = new SpatialPooler(1, 2, 1, 1, in, 0.02);
         col = new Column<>(sp, 0, 1, 0.02);
         System.out.println("IN=" + in + " overlap=" + col.overlap());
     }
@@ -95,7 +95,7 @@ public class ColumnTest {
         bs.set(8);
         bs.set(9);
         in.setRawInput(bs);
-        sp = new SpatialPooler(1, 2, in);
+        sp = new SpatialPooler(3, 5, 1, 1, in, 0.02);
         col = new Column<>(sp, 0, 1, 0.02);
         int overOld = col.overlap();
         col.increaseAllPermanences((float) 0.5);
@@ -113,7 +113,7 @@ public class ColumnTest {
         bs.set(8);
         bs.set(9);
         in.setRawInput(bs);
-        sp = new SpatialPooler(2, 2, in);
+        sp = new SpatialPooler(2, 2, 1, 1, in, 0.02);
         col = new Column<>(sp, 0, 1, 0.02);
         System.out.println("Receptive field size=" + col.receptiveFieldSize() + " (overlap=" + col.overlap());
     }

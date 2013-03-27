@@ -19,12 +19,12 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
     protected static final int DEFAULT_INHIBITION_RADIUS = 5;
     protected final AtomicInteger inhibitionRadius = new AtomicInteger(SpatialPooler.DEFAULT_INHIBITION_RADIUS); //averageReceptiveFieldSize
 
-    public SpatialPooler(int dimX, int dimY, CircularList input) {
-        super(dimX, dimY, 0, 1, input);
+    public SpatialPooler(int dimX, int dimY, int id, int timeSteps, CircularList input, double sparsity) {
+        super(dimX, dimY, id, timeSteps, input);
 
         for (int x = 0; x < dimX; x++) {
             for (int y = 0; y < dimY; y++) {
-                addPart(new Column<>(this, x * dimX + y, 1, 0.02), x, y);
+                addPart(new Column<>(this, x * dimX + y, timeSteps, sparsity), x, y);
             }
         }
     }
