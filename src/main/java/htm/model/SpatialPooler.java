@@ -61,7 +61,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
         return maxEMA;
     }
 
-    protected int[] neighbors(ArrayList<Integer> overlapValues, int curColumnID) {
+    protected int[] neighbors(List<Integer> overlapValues, int curColumnID) {
         List<Integer> found = new ArrayList<>();
         Point me = getCoordinates(curColumnID);
         Column<SpatialPooler> cur;
