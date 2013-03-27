@@ -117,4 +117,14 @@ public class ColumnTest {
         col = new Column<>(sp, 0, 1, 0.02);
         System.out.println("Receptive field size=" + col.receptiveFieldSize() + " (overlap=" + col.overlap());
     }
+
+    @Test
+    public void checkRun() {
+        in = new BinaryVectorInput(1, 1000);
+        BitSet bs = in.randomSample();
+        in.setRawInput(bs);
+        sp = new SpatialPooler(10, 10, 1, 1, in, 0.02);
+        Thread t = new Thread(sp.getColumn(0));
+        t.start();
+    }
 }

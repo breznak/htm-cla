@@ -5,8 +5,11 @@
 package htm.model;
 
 import htm.utils.CircularList;
+import htm.utils.HelperMath;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang.ArrayUtils;
 
@@ -60,18 +63,25 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
     }
 
     protected int[] neighbors(ArrayList<Integer> overlapValues, int curColumnID) {
-        ArrayList<Integer> found = new ArrayList<>();
+        Set<Integer> found = new HashSet<>(); // Set to keep unique elements only
         //TODO for for
         //TODO s[herical
         Point me = getCoordinates(curColumnID);
         Column<SpatialPooler> cur;
         int inhib = inhibitionRadius.get();
+        /**
+         * here we can switch geometry interpretations of the spatial pooler, a)
+         * planar -- rectangle - with edges and corners
+         *
+         * b) planar -- sphere - no edges, values flip to "other" side
+         */
         for (int x = me.x - inhib; x < me.x + inhib; x++) {
             for (int y = me.y - inhib; y < me.y + inhib; y++) {
                 if (x == me.x && y == me.y) {
                     continue;
                 }
-                cur = part(x, y);
+                // a) rectangle
+                cur = part(HelperMath.inRange(x, 0, dimX - 1), HelperMath.inRange(y, 0, dimY - 1));
                 found.add(cur.id);
                 overlapValues.add(cur.overlap);
             }
