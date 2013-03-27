@@ -62,6 +62,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
     protected int[] neighbors(ArrayList<Integer> overlapValues, int curColumnID) {
         ArrayList<Integer> found = new ArrayList<>();
         //TODO for for
+        //TODO s[herical
         Point me = getCoordinates(curColumnID);
         Column<SpatialPooler> cur;
         int inhib = inhibitionRadius.get();
@@ -84,4 +85,5 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
         }
         this.learning = onOff;
     }
+    //TODO toString
 }

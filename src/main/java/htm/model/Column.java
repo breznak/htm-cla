@@ -42,7 +42,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private float emaOverlap = 0; //ema for overlap
     //moving average
     protected float emaActive = 0; //exponential moving average for Activation (=output ==1)
-    private static final int SLIDING_WINDOW = 100; //window size for moving average
+    private static final int SLIDING_WINDOW = 100; //window size for moving average //FIXME should be same as HISTORY_STEPS ??
     //helper
     private static final double _ALPHA = 1 / SLIDING_WINDOW; //helper for moving avg
     private int _output = 0; // current output as int
