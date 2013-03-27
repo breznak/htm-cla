@@ -74,13 +74,14 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
          */
         for (int x = me.x - inhib; x < me.x + inhib; x++) {
             for (int y = me.y - inhib; y < me.y + inhib; y++) {
-                if (x == me.x && y == me.y) {
-                    continue;
-                }
                 // a) rectangle
                 //cur = part(HelperMath.inRange(x, 0, dimX - 1), HelperMath.inRange(y, 0, dimY - 1));
                 //b) sphere
                 cur = part(((x % dimX) + dimX) % dimX, ((y % dimY) + dimY) % dimY); // fuckin hack for broken modulo, must be non-negative!
+
+                if (cur.equals(me)) {
+                    continue;
+                }
                 if (!found.contains(cur.id)) {
                     found.add(cur.id);
                     overlapValues.add(cur.overlap);
