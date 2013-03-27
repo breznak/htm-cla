@@ -26,6 +26,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     protected final PARENT parent;
     public final int id;
     private final CircularList output;
+    private boolean learning = true;
     //synapses
     private static final int DEFAULT_NUM_INPUT_SYNAPSES = 60;
     private final int NUM_INPUT_SYNAPSES;// = 60;
@@ -144,11 +145,13 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         //compute moving average
         float minDutyCycle = 0.01f * sp.maxNeighborsEMA(neighbor_idx);
         emaActive = (float) (_ALPHA * emaActive + (1 - _ALPHA) * _output);
-        if (emaActive > minDutyCycle) {
-            boost = 1; //TODO add Thread priorities?
-        } else {
-            // too uncompetitive compared to other columns
-            boost *= BOOST_ACCEL;
+        if (learning) {
+            if (emaActive > minDutyCycle) {
+                boost = 1; //TODO add Thread priorities?
+            } else {
+                // too uncompetitive compared to other columns
+                boost *= BOOST_ACCEL;
+            }
         }
         emaOverlap = (float) (_ALPHA * emaOverlap + (1 - _ALPHA) * overlap);
         if (emaOverlap < minDutyCycle) {
@@ -188,6 +191,10 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         for (int i = 0; i < perm.length; i++) {
             perm[i] += inc;
         }
+    }
+
+    protected void learning(boolean onOff) {
+        learning = onOff;
     }
 
     @Override

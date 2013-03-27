@@ -18,6 +18,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
 
     protected static final int DEFAULT_INHIBITION_RADIUS = 5;
     protected final AtomicInteger inhibitionRadius = new AtomicInteger(SpatialPooler.DEFAULT_INHIBITION_RADIUS); //averageReceptiveFieldSize
+    protected boolean learning = true;
 
     public SpatialPooler(int dimX, int dimY, int id, int timeSteps, CircularList input, double sparsity) {
         super(dimX, dimY, id, timeSteps, input);
@@ -27,6 +28,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
                 addPart(new Column<>(this, x * dimX + y, timeSteps, sparsity), x, y);
             }
         }
+        learning(true);
     }
 
     public Point getCoordinates(int column_id) {
@@ -74,5 +76,12 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
             }
         }
         return ArrayUtils.toPrimitive(found.toArray(new Integer[found.size()]));
+    }
+
+    protected void learning(boolean onOff) {
+        for (Column c : parts) {
+            c.learning(onOff);
+        }
+        this.learning = onOff;
     }
 }
