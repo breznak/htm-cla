@@ -24,7 +24,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
 
         for (int x = 0; x < dimX; x++) {
             for (int y = 0; y < dimY; y++) {
-                addPart(new Column<>(this, x * dimX + y, 1), x, y);
+                addPart(new Column<>(this, x * dimX + y, 1, 0.02), x, y);
             }
         }
     }
@@ -70,7 +70,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
                 }
                 cur = part(x, y);
                 found.add(cur.id);
-                overlapValues.add(cur.overlap.get());
+                overlapValues.add(cur.overlap);
             }
         }
         return ArrayUtils.toPrimitive(found.toArray(new Integer[found.size()]));

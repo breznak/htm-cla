@@ -31,7 +31,7 @@ public class ColumnTest {
 
     @Test
     public void checkColumn() {
-        col = new Column<>(sp, 0, 1);
+        col = new Column<>(sp, 0, 1, 0.02);
         System.out.println(col);
 
         col = sp.getColumn(10);

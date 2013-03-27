@@ -9,7 +9,6 @@ import htm.utils.HelperMath;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -24,18 +23,21 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private int[] neighbor_idx;
     private final int syn_idx[]; //TODOoptimize to Bit mask
     private final float[] perm;
+    private final PARENT parent;
+    public final int id;
+    private final CircularList output;
     //synapses
     private static final int DEFAULT_NUM_INPUT_SYNAPSES = 60;
     private final int NUM_INPUT_SYNAPSES;// = 60;
-    static final float CONNECTED_SYNAPSE_PERM = 0.2f;
+    private static final float CONNECTED_SYNAPSE_PERM = 0.2f;
     private static final float PERMANENCE_DEC = 0.05f;
     private static final float PERMANENCE_INC = 0.05f;
     //overlap columns
-    static final int MIN_OVERLAP = 2;
-    private final int DESIRED_LOCAL_ACTIVITY = 5; //5 winning columns, TODO compute
+    private final int MIN_OVERLAP; // = 2;
+    private final int DESIRED_LOCAL_ACTIVITY; // = 5; //5 winning columns,  computed lateral inhibition
     private float boost = 1.0f;
     private static final float BOOST_ACCEL = 1.2f; //>1
-    final AtomicInteger overlap = new AtomicInteger(0);
+    protected int overlap = 0;
     private float emaOverlap = 0; //ema for overlap
     //moving average
     protected float emaActive = 0; //exponential moving average for Activation (=output ==1)
@@ -46,15 +48,14 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private int _oldHash = 0;
     private int _inhibitionRadiusOld = -1; //trick != inhibitionRadius
     private SummaryStatistics stats = new SummaryStatistics();
-    private final PARENT parent;
-    public final int id;
-    private final CircularList output;
 
-    public Column(PARENT parent, int id, int histSize) {
+    public Column(PARENT parent, int id, int histSize, double sparsity) {
         this.parent = parent;
         this.id = id;
         this.output = new CircularList(histSize, 1);
         NUM_INPUT_SYNAPSES = Math.min(DEFAULT_NUM_INPUT_SYNAPSES, parent.input.size());
+        MIN_OVERLAP = Math.max(1, NUM_INPUT_SYNAPSES / 30);
+        DESIRED_LOCAL_ACTIVITY = HelperMath.inRange((int) (parent.size() * sparsity), 0, parent.size());
         int center = new Random().nextInt(NUM_INPUT_SYNAPSES);
         syn_idx = initSynapsesIdx();
         perm = initSynapsePerm(center);
@@ -102,7 +103,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         }
         _oldHash = tmp;
         //phase 1
-        overlap.set(overlap());
+        overlap = overlap();
         Thread.yield();
 
         SpatialPooler sp = (SpatialPooler) parent;
@@ -116,7 +117,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         Collections.sort(nbOverlapValues);
         Collections.reverse(nbOverlapValues);  //TODO use reverse sort
         int minLocalActivity = nbOverlapValues.get(DESIRED_LOCAL_ACTIVITY); //kth best
-        if (overlap.get() > 0 && overlap.get() >= minLocalActivity) {//TODO speedup
+        if (overlap > 0 && overlap >= minLocalActivity) {//TODO speedup
             output.add(CircularList.BIT_1);
             _output = 1;
         } else {
@@ -146,7 +147,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
             // too uncompetitive compared to other columns
             boost *= BOOST_ACCEL;
         }
-        emaOverlap = (float) (_ALPHA * emaOverlap + (1 - _ALPHA) * overlap.get());
+        emaOverlap = (float) (_ALPHA * emaOverlap + (1 - _ALPHA) * overlap);
         if (emaOverlap < minDutyCycle) {
             //wrong subset of synapses is being used now, try to find useful ones
             increaseAllPermanences(0.1f * CONNECTED_SYNAPSE_PERM);
