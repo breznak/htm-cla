@@ -5,11 +5,9 @@
 package htm.model;
 
 import htm.utils.CircularList;
-import htm.utils.HelperMath;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang.ArrayUtils;
 
@@ -63,9 +61,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
     }
 
     protected int[] neighbors(ArrayList<Integer> overlapValues, int curColumnID) {
-        Set<Integer> found = new HashSet<>(); // Set to keep unique elements only
-        //TODO for for
-        //TODO s[herical
+        List<Integer> found = new ArrayList<>();
         Point me = getCoordinates(curColumnID);
         Column<SpatialPooler> cur;
         int inhib = inhibitionRadius.get();
@@ -81,9 +77,13 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
                     continue;
                 }
                 // a) rectangle
-                cur = part(HelperMath.inRange(x, 0, dimX - 1), HelperMath.inRange(y, 0, dimY - 1));
-                found.add(cur.id);
-                overlapValues.add(cur.overlap);
+                //cur = part(HelperMath.inRange(x, 0, dimX - 1), HelperMath.inRange(y, 0, dimY - 1));
+                //b) sphere
+                cur = part(((x % dimX) + dimX) % dimX, ((y % dimY) + dimY) % dimY); // fuckin hack for broken modulo, must be non-negative!
+                if (!found.contains(cur.id)) {
+                    found.add(cur.id);
+                    overlapValues.add(cur.overlap);
+                }
             }
         }
         return ArrayUtils.toPrimitive(found.toArray(new Integer[found.size()]));
