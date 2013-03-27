@@ -64,7 +64,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
 
     // new synapse indexes
     protected int[] initSynapsesIdx() {
-        return new UniformIntegerDistribution(0, parent.input.size()).sample(NUM_INPUT_SYNAPSES);
+        return new UniformIntegerDistribution(0, parent.input.size() - 1).sample(NUM_INPUT_SYNAPSES);
     }
 
     //new synapse permanence
