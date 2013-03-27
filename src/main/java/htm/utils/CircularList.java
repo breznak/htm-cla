@@ -89,4 +89,15 @@ public class CircularList extends CopyOnWriteArrayList<BitSet> {
     public int hashCode() {
         return get(0).hashCode();
     }
+
+    /**
+     * top stored elements are equal
+     *
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        return get(0).equals(o);
+    }
 }

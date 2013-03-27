@@ -33,4 +33,13 @@ public class CircularListTest {
         cl.add(bs);
         assertEquals(4, cl.size());
     }
+
+    @Test
+    public void checkEquals() {
+        cl = new CircularList(1, 1);
+        BitSet bs_one = new BitSet(1);
+        bs_one.set(0);
+        cl.add(bs_one);
+        assertEquals(true, cl.equals(CircularList.BIT_1));
+    }
 }

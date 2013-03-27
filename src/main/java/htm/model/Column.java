@@ -130,7 +130,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         Thread.currentThread().yield();
 
         //phase 3
-        if (output.get(0).equals(CircularList.BIT_1)) {
+        if (output.equals(CircularList.BIT_1)) {
             for (int i = 0; i < perm.length; i++) {
                 if (perm[i] >= CONNECTED_SYNAPSE_PERM) {
                     perm[i] += PERMANENCE_INC;
