@@ -29,7 +29,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
             int x = p.x;
             int y = p.y;
             System.err.println("==" + (x * this.dimY + y));
-            addPart(new Column<>(this, i, timeSteps, sparsity), x, y);
+            setPart(new Column<>(this, i, timeSteps, sparsity), x, y);
         }
         learning(true);
     }

@@ -56,9 +56,9 @@ public abstract class LayerAbstract<PART> {
         return parts.get(x * dimY + y);
     }
 
-    public void addPart(PART p, int x, int y) {
+    public void setPart(PART p, int x, int y) {
         System.err.println("x " + x + " y " + y + " dimX " + dimX + " dimY " + dimY);
-        parts.add(x * dimY + y, p);
+        parts.set(x * dimY + y, p);
     }
 
     public boolean input(int index) {
