@@ -8,6 +8,11 @@ import htm.model.input.BinaryVectorInput;
 import htm.model.input.Input;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,5 +66,33 @@ public class SpatialPoolerTest {
         System.out.println("BigMemory test, cca 2gb @ 100k columns!");
         Input in = new BinaryVectorInput(1, 100000);
         sp = new SpatialPooler(100, 1000, 1, 10, in, 0.05);
+    }
+
+    @Test
+    public void checkBigParallel() {
+        Input in = new BinaryVectorInput(1, 1000000);
+        in.setRawInput(in.randomSample());
+        sp = new SpatialPooler(1000, 10, 1, 2, in, 0.02);
+        System.out.println("start!");
+        long s = System.currentTimeMillis();
+        ExecutorService pool = Executors.newCachedThreadPool(Executors.defaultThreadFactory());
+        int RUNS = 10;
+        for (int r = 0; r < RUNS; r++) {
+
+            for (int i = 0; i < sp.size(); i++) {
+                pool.submit(sp.getColumn(i));
+            }
+        }
+        try {
+            pool.awaitTermination(1, TimeUnit.MILLISECONDS);
+            System.out.println("" + sp.toString());
+        }
+        catch (InterruptedException ex) {
+            Logger.getLogger(SpatialPoolerTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        pool.shutdown();
+        long t = System.currentTimeMillis();
+        System.out.println("parallel took " + (t - s) + "ms!");
+        System.out.println("" + sp.toString());
     }
 }

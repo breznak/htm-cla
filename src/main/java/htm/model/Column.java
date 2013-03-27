@@ -101,11 +101,13 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     @Override
     public void run() {
         int tmp;
-        while ((tmp = parent.input.hashCode()) == _oldHash) {
-            System.gc();
-            Thread.yield();
-        }
-        _oldHash = tmp;
+        //while ((tmp = parent.input.hashCode()) == _oldHash) {
+        //  System.gc();
+        //Thread.yield();
+        // }
+        //  if (id == 999) {  System.out.println("" + this); }
+
+        //_oldHash = tmp;
         //phase 1
         overlap = overlap();
         Thread.yield();
