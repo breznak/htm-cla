@@ -55,7 +55,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         this.output = new CircularList(histSize, 1);
         int diff = (int) (new Random().nextGaussian() * DEFAULT_NUM_INPUT_SYNAPSES * 0.2); //+-20%
         NUM_INPUT_SYNAPSES = HelperMath.inRange(DEFAULT_NUM_INPUT_SYNAPSES + diff, 1, parent.input.size());
-        MIN_OVERLAP = Math.max(1, NUM_INPUT_SYNAPSES / 30);
+        MIN_OVERLAP = HelperMath.inRange(NUM_INPUT_SYNAPSES / 30, 1, 3);//TODO what range?
         DESIRED_LOCAL_ACTIVITY = HelperMath.inRange((int) (parent.size() * sparsity), 0, parent.size() - 1);
         int center = new Random().nextInt(NUM_INPUT_SYNAPSES);
         syn_idx = initSynapsesIdx();
@@ -85,6 +85,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     protected int overlap() {
         int o = 0;
         for (int i = 0; i < syn_idx.length; i++) {
+// System.out.println("perm " + (perm[i] >= CONNECTED_SYNAPSE_PERM) + " idx " + syn_idx[i] + " --> " + ((perm[i] >= CONNECTED_SYNAPSE_PERM) && parent.input(syn_idx[i])));
             if (perm[i] > CONNECTED_SYNAPSE_PERM && parent.input(syn_idx[i])) {
                 o++;
             }
@@ -129,7 +130,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         Thread.currentThread().yield();
 
         //phase 3
-        if (output.get(0) == CircularList.BIT_1) {
+        if (output.get(0).equals(CircularList.BIT_1)) {
             for (int i = 0; i < perm.length; i++) {
                 if (perm[i] >= CONNECTED_SYNAPSE_PERM) {
                     perm[i] += PERMANENCE_INC;
@@ -165,19 +166,20 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     }
 
     protected int receptiveFieldSize() {
-//FIXME how to do it? :)
+//FIXME how to do it? :)...i think ok now, just check
         /*
          * The radius of the average connected receptive field size of all the columns.
          >>>The connected receptive field size<<<< of a column includes only the connected
          synapses (those with permanence values >= connectedPerm). This is used
          to determine the extent of lateral inhibition between columns.
          */
-        for (float f : perm) {
-            if (f >= CONNECTED_SYNAPSE_PERM) {
-                stats.addValue(f);
+        for (int i = 0; i < syn_idx.length; i++) {
+            if (perm[i] >= CONNECTED_SYNAPSE_PERM) {
+                stats.addValue(syn_idx[i]);
             }
         }
         int i = (int) Math.round(stats.getStandardDeviation());
+//        System.out.println("\n STD" + stats.getStandardDeviation());
         stats.clear();
         return i;
     }
