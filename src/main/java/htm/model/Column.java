@@ -49,15 +49,17 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private int _oldHash = 0;
     private int _inhibitionRadiusOld = -1; //trick != inhibitionRadius
     private SummaryStatistics stats = new SummaryStatistics();
+    private SpatialPooler sp;
 
     public Column(PARENT parent, int id, int histSize, double sparsity) {
         this.parent = parent;
+        sp = (SpatialPooler) parent;
         this.id = id;
         this.output = new CircularList(histSize, 1);
         int diff = (int) (new Random().nextGaussian() * DEFAULT_NUM_INPUT_SYNAPSES * 0.2); //+-20%
         NUM_INPUT_SYNAPSES = HelperMath.inRange(DEFAULT_NUM_INPUT_SYNAPSES + diff, 1, parent.input.size());
         MIN_OVERLAP = HelperMath.inRange(NUM_INPUT_SYNAPSES / 30, 1, 3);//TODO what range?
-        DESIRED_LOCAL_ACTIVITY = HelperMath.inRange((int) (parent.size() * sparsity), 0, parent.size() - 1);
+        DESIRED_LOCAL_ACTIVITY = HelperMath.inRange((int) (parent.size() * sparsity), 0, Math.min(parent.size() - 1, (sp.DEFAULT_INHIBITION_RADIUS * 2) ^ 2 - 1));
         int center = new Random().nextInt(NUM_INPUT_SYNAPSES);
         syn_idx = initSynapsesIdx();
         perm = initSynapsePerm(center, syn_idx);
@@ -115,7 +117,6 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         System.out.println(id + " overlap" + overlap);
         Thread.yield();
 
-        SpatialPooler sp = (SpatialPooler) parent;
         //phase 2
         //caching
         //     if ((tmp = sp.inhibitionRadius.get()) != this._inhibitionRadiusOld) {
@@ -142,18 +143,18 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         //phase 3
         if (_output == 1) {
             for (int i = 0; i < perm.length; i++) {
-                if (perm[i] >= CONNECTED_SYNAPSE_PERM) {
+                if (parent.input.get(0).get(syn_idx[i])) { //inc syn on ON input, dec on OFF input
                     perm[i] += PERMANENCE_INC;
                 } else {
-                    perm[i] -= PERMANENCE_DEC;//FIXME do i ever decrease a perm?
+                    perm[i] -= PERMANENCE_DEC;
                 }
                 perm[i] = (float) HelperMath.inRange(perm[i], 0, 1);
                 System.out.println(id + " perm updated!");
             }
         }
         Thread.yield();
-        //compute moving average
         float minDutyCycle = 0.01f * sp.maxNeighborsFiringRate(neighbor_idx);
+        //compute moving average
         emaActive = (float) (_ALPHA * emaActive + (1 - _ALPHA) * _output);
         System.out.println(id + " learning" + learning);
         if (learning) {
@@ -165,7 +166,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
             }
         }
         emaOverlap = (float) (_ALPHA * emaOverlap + (1 - _ALPHA) * overlap);
-        if (emaOverlap <= minDutyCycle) {
+        if (emaOverlap <= minDutyCycle) { //FIXME really use minDutyCycle here??
             //wrong subset of synapses is being used now, try to find useful ones
             increaseAllPermanences(0.1f * CONNECTED_SYNAPSE_PERM);
         }
