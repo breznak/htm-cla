@@ -78,7 +78,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         for (int i = 0; i < tmp.length; i++) {
             tmp[i] = (float) ((0.5 - gauss.probability(center, center + Math.abs(center - synapse_idx[i]))) * scale); //FIXME correctly scale to CONNECTED_PERM
             ///  System.err.println("std " + std + " scale " + scale + " center " + center + "  idx=" + syn_idx[i] + " perm " + tmp[i]);
-            tmp[i] = 0.2f;
+            tmp[i] = (float) new NormalDistribution(CONNECTED_SYNAPSE_PERM, PERMANENCE_INC / 2d).sample();
         }
         return tmp;
     }
@@ -153,7 +153,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         }
         Thread.yield();
         //compute moving average
-        float minDutyCycle = 0.01f * sp.maxNeighborsEMA(neighbor_idx);
+        float minDutyCycle = 0.01f * sp.maxNeighborsFiringRate(neighbor_idx);
         emaActive = (float) (_ALPHA * emaActive + (1 - _ALPHA) * _output);
         System.out.println(id + " learning" + learning);
         if (learning) {
@@ -173,10 +173,10 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
 
         //update avg receptive field size
         tmp = sp.inhibitionRadius.get();
-        if (tmp != _inhibitionRadiusOld) { //cache multithreaded, off-sync
-            sp.inhibitionRadius.set(Math.round(((parent.size() - 1) * tmp + receptiveFieldSize()) / parent.size())); //avg//FIXME this is growing!
-            _inhibitionRadiusOld = tmp;
-        }
+        /// if (tmp != _inhibitionRadiusOld) { //cache multithreaded, off-sync
+        sp.inhibitionRadius.set(Math.round(((parent.size() - 1) * tmp + receptiveFieldSize()) / parent.size())); //avg//FIXME this is growing!
+        _inhibitionRadiusOld = tmp;
+        /// }
     }
 
     protected int receptiveFieldSize() {

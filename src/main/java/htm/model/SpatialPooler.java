@@ -50,15 +50,15 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
      * @param neighbor_idx
      * @return
      */
-    public float maxNeighborsEMA(int[] neighbor_idx) {
-        float maxEMA = -1;
+    public float maxNeighborsFiringRate(int[] neighbor_idx) {
+        float maxFiringR = -1;
         for (int i = 0; i < neighbor_idx.length; i++) {
             float m = getColumn(neighbor_idx[i]).emaActive;
-            if (m > maxEMA) {
-                maxEMA = m;
+            if (m > maxFiringR) {
+                maxFiringR = m;
             }
         }
-        return maxEMA;
+        return maxFiringR;
     }
 
     protected int[] neighbors(List<Integer> overlapValues, int curColumnID) {

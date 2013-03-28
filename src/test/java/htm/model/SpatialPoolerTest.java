@@ -58,7 +58,7 @@ public class SpatialPoolerTest {
         List<Integer> overlap = new ArrayList<>();
         int id = 0;
         int[] neighbors = sp.neighbors(overlap, id);
-        float ema = sp.maxNeighborsEMA(neighbors);
+        float ema = sp.maxNeighborsFiringRate(neighbors);
         System.out.println("Max neighbors' EMA=" + ema);
     }
     /*
