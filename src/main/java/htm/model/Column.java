@@ -118,14 +118,14 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         SpatialPooler sp = (SpatialPooler) parent;
         //phase 2
         //caching
-        if ((tmp = sp.inhibitionRadius.get()) != this._inhibitionRadiusOld) {
-            neighbor_idx = sp.neighbors(nbOverlapValues, this.id);
-            System.out.println(id + " nb " + neighbor_idx[0]);
-            this._inhibitionRadiusOld = tmp;
-            System.out.println(id + " inhibR " + tmp);
-            Collections.sort(nbOverlapValues);
-            Collections.reverse(nbOverlapValues);  //TODO use reverse sort
-        }
+        //     if ((tmp = sp.inhibitionRadius.get()) != this._inhibitionRadiusOld) {
+        neighbor_idx = sp.neighbors(nbOverlapValues, this.id);
+        System.out.println(id + " nb " + neighbor_idx[0]);
+//        this._inhibitionRadiusOld = tmp;
+        //      System.out.println(id + " inhibR " + tmp);
+        Collections.sort(nbOverlapValues);
+        Collections.reverse(nbOverlapValues);  //TODO use reverse sort
+        //    }
 
         System.err.println(DESIRED_LOCAL_ACTIVITY + " FFF" + nbOverlapValues.size());
         int minLocalActivity = nbOverlapValues.get(DESIRED_LOCAL_ACTIVITY); //kth best
@@ -140,7 +140,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         Thread.currentThread().yield();
 
         //phase 3
-        if (output.equals(CircularList.BIT_1)) {
+        if (_output == 1) {
             for (int i = 0; i < perm.length; i++) {
                 if (perm[i] >= CONNECTED_SYNAPSE_PERM) {
                     perm[i] += PERMANENCE_INC;
@@ -165,7 +165,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
             }
         }
         emaOverlap = (float) (_ALPHA * emaOverlap + (1 - _ALPHA) * overlap);
-        if (emaOverlap < minDutyCycle) {
+        if (emaOverlap <= minDutyCycle) {
             //wrong subset of synapses is being used now, try to find useful ones
             increaseAllPermanences(0.1f * CONNECTED_SYNAPSE_PERM);
         }
@@ -174,7 +174,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         //update avg receptive field size
         tmp = sp.inhibitionRadius.get();
         if (tmp != _inhibitionRadiusOld) { //cache multithreaded, off-sync
-            sp.inhibitionRadius.set(Math.round(((parent.size() - 1) * tmp + receptiveFieldSize()) / parent.size())); //avg
+            sp.inhibitionRadius.set(Math.round(((parent.size() - 1) * tmp + receptiveFieldSize()) / parent.size())); //avg//FIXME this is growing!
             _inhibitionRadiusOld = tmp;
         }
     }

@@ -63,6 +63,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
 
     protected int[] neighbors(List<Integer> overlapValues, int curColumnID) {
         List<Integer> found = new ArrayList<>();
+        overlapValues.clear();
         Point me = getCoordinates(curColumnID);
         Column<SpatialPooler> cur;
         int inhib = inhibitionRadius.get();
