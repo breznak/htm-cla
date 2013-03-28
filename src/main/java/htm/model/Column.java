@@ -44,7 +44,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     protected float emaActive = 0; //exponential moving average for Activation (=output ==1)
     private static final int SLIDING_WINDOW = 100; //window size for moving average //FIXME should be same as HISTORY_STEPS ??
     //helper
-    private static final double _ALPHA = 1 / SLIDING_WINDOW; //helper for moving avg
+    private static final double _ALPHA = 1 / (double) SLIDING_WINDOW; //helper for moving avg
     private int _output = 0; // current output as int
     private int _oldHash = 0;
     private int _inhibitionRadiusOld = -1; //trick != inhibitionRadius
@@ -123,9 +123,10 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
             System.out.println(id + " nb " + neighbor_idx[0]);
             this._inhibitionRadiusOld = tmp;
             System.out.println(id + " inhibR " + tmp);
+            Collections.sort(nbOverlapValues);
+            Collections.reverse(nbOverlapValues);  //TODO use reverse sort
         }
-        Collections.sort(nbOverlapValues);
-        Collections.reverse(nbOverlapValues);  //TODO use reverse sort
+
         System.err.println(DESIRED_LOCAL_ACTIVITY + " FFF" + nbOverlapValues.size());
         int minLocalActivity = nbOverlapValues.get(DESIRED_LOCAL_ACTIVITY); //kth best
         if (overlap > 0 && overlap >= minLocalActivity) {//TODO speedup
@@ -144,7 +145,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
                 if (perm[i] >= CONNECTED_SYNAPSE_PERM) {
                     perm[i] += PERMANENCE_INC;
                 } else {
-                    perm[i] -= PERMANENCE_DEC;
+                    perm[i] -= PERMANENCE_DEC;//FIXME do i ever decrease a perm?
                 }
                 perm[i] = (float) HelperMath.inRange(perm[i], 0, 1);
                 System.out.println(id + " perm updated!");
@@ -164,7 +165,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
             }
         }
         emaOverlap = (float) (_ALPHA * emaOverlap + (1 - _ALPHA) * overlap);
-        if (emaOverlap <= minDutyCycle) {
+        if (emaOverlap < minDutyCycle) {
             //wrong subset of synapses is being used now, try to find useful ones
             increaseAllPermanences(0.1f * CONNECTED_SYNAPSE_PERM);
         }

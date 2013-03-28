@@ -79,13 +79,11 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
                 //b) sphere
                 cur = part(((x % dimX) + dimX) % dimX, ((y % dimY) + dimY) % dimY); // fuckin hack for broken modulo, must be non-negative!
 
-                if (cur.equals(me)) {
+                if (getCoordinates(cur.id).equals(me) || found.contains(cur.id)) {
                     continue;
                 }
-                if (!found.contains(cur.id)) {
-                    found.add(cur.id);
-                    overlapValues.add(cur.overlap);
-                }
+                found.add(cur.id);
+                overlapValues.add(cur.overlap);
             }
         }
         return ArrayUtils.toPrimitive(found.toArray(new Integer[found.size()]));
