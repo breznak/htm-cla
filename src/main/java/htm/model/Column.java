@@ -51,6 +51,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private float _inhibitionRadiusOld = -1; //trick != inhibitionRadius
     private SummaryStatistics stats = new SummaryStatistics();
     private SpatialPooler sp;
+    private List<Integer> nbOverlapValues = new ArrayList<>();
 
     public Column(PARENT parent, int id, int histSize, double sparsity) {
         this.parent = parent;
@@ -100,11 +101,10 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         o *= boost;
         return o;
     }
-    private ArrayList<Integer> nbOverlapValues = new ArrayList<>();
 
     @Override
     public void run() {
-        int tmp;
+        float tmp;
         //while ((tmp = parent.input.hashCode()) == _oldHash) {
         //  System.gc();
         //Thread.yield();
@@ -116,15 +116,13 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         Thread.yield();
 
         //phase 2
-        //caching
-        //     if ((tmp = sp.inhibitionRadius.get()) != this._inhibitionRadiusOld) {
-        neighbors = sp.neighbors(nbOverlapValues, this.id);
-        //  this._inhibitionRadiusOld = tmp;
-        Collections.sort(nbOverlapValues);
-        Collections.reverse(nbOverlapValues);  //TODO use reverse sort
-        //    }
+        if ((int) (tmp = sp.getInhibitionRadius()) != (int) this._inhibitionRadiusOld) { //caching
+            neighbors = sp.neighbors(this.id);
+            this._inhibitionRadiusOld = tmp;
+        }
 
         //kth best
+        nbOverlapValues = getSortedOverlaps(neighbors);
         if (overlap > 0 && (nbOverlapValues.size() < DESIRED_LOCAL_ACTIVITY || overlap >= nbOverlapValues.get(DESIRED_LOCAL_ACTIVITY))) {//>=minLocalActivity //TODO speedup
             output.add(CircularList.BIT_1);
             _output = 1;
@@ -158,10 +156,10 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         Thread.yield();
 
         //update avg receptive field size
-        float inh = sp.getInhibitionRadius();
+        tmp = sp.getInhibitionRadius();
         /// if (inh != _inhibitionRadiusOld) { //cache multithreaded, off-sync
-        sp.setInhibitionRadius(((parent.size() - 1) * inh + receptiveFieldSize()) / parent.size()); //avg//FIXME this is growing!
-        _inhibitionRadiusOld = inh;
+        sp.setInhibitionRadius(((parent.size() - 1) * tmp + receptiveFieldSize()) / parent.size()); //avg//FIXME this is growing!
+        _inhibitionRadiusOld = tmp;
         /// }
     }
 
@@ -220,5 +218,15 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
             }
             perm[i] = (float) HelperMath.inRange(perm[i], 0, 1);
         }
+    }
+
+    private List<Integer> getSortedOverlaps(List<Column> neighbors) {
+        List<Integer> overlaps = new ArrayList<>();
+        for (Column c : neighbors) {
+            overlaps.add(c.overlap);
+        }
+        Collections.sort(overlaps);
+        Collections.reverse(overlaps);  //TODO use reverse sort
+        return overlaps;
     }
 }

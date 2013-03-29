@@ -71,9 +71,8 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
         inhibitionRadius.set(Float.floatToRawIntBits(f));
     }
 
-    protected List<Column> neighbors(List<Integer> overlapValues, int curColumnID) {
+    protected List<Column> neighbors(int curColumnID) {
         List<Column> found = new ArrayList<>();
-        overlapValues.clear();
         Point me = getCoordinates(curColumnID);
         Column<SpatialPooler> cur;
         int inhib = (int) Math.floor(getInhibitionRadius());
@@ -94,7 +93,6 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
                     continue;
                 }
                 found.add(cur);
-                overlapValues.add(cur.overlap);
             }
         }
         return found;
