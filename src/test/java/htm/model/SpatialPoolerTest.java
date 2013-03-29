@@ -8,6 +8,7 @@ import htm.model.input.BinaryVectorInput;
 import htm.model.input.Input;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,7 +45,7 @@ public class SpatialPoolerTest {
     public void checkNeighbors() {
         sp = new SpatialPooler(10, 2, 1, 1, in, 0.02);
         int id = 0;
-        List<Column> neighbors = sp.neighbors(id);
+        List<Column> neighbors = new ArrayList<>(sp.neighbors(id));
         System.out.println("Neighbors of #" + id);
         for (int i = 0; i < neighbors.size(); i++) {
             System.out.println("nb =" + neighbors.get(i));
@@ -55,7 +56,7 @@ public class SpatialPoolerTest {
     public void checkMaxNeighborsEMA() {
         sp = new SpatialPooler(10, 2, 1, 1, in, 0.02);
         int id = 0;
-        List<Column> neighbors = sp.neighbors(id);
+        Collection<Column> neighbors = sp.neighbors(id);
         float ema = sp.maxNeighborsFiringRate(neighbors);
         System.out.println("Max neighbors' EMA=" + ema);
     }
@@ -98,26 +99,38 @@ public class SpatialPoolerTest {
 
     @Test
     public void checkTestParallel() {
-        Input in = new BinaryVectorInput(1, 1000);
+        Input in = new BinaryVectorInput(1, 10000);
         //create 5 test inputs
         List<BitSet> patterns = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 10; i++) {
             patterns.add(in.randomSample());
         }
-        sp = new SpatialPooler(10, 10, 1, 2, in, 0.3);
+        sp = new SpatialPooler(50, 10, 1, 2, in, 0.02);
         System.out.println("start!");
         long s = System.currentTimeMillis();
         ExecutorService pool = Executors.newCachedThreadPool(Executors.defaultThreadFactory());
-        int RUNS = 5;
-        for (BitSet p : patterns) {
-            in.setRawInput(p);
-            for (int r = 0; r < RUNS; r++) {
+        int RUNS = 10;
+        for (int r = 0; r < RUNS; r++) {
 
+            for (BitSet p : patterns) {
+                in.setRawInput(p);
+
+                pool = Executors.newCachedThreadPool(Executors.defaultThreadFactory());
                 for (int i = 0; i < sp.size(); i++) {
                     pool.submit(sp.getColumn(i));
                 }
+                pool.shutdown();
+
+                try {
+                    boolean fin = pool.awaitTermination(20, TimeUnit.SECONDS);
+                    System.out.println("FIN " + fin);
+                }
+                catch (InterruptedException ex) {
+                    Logger.getLogger(SpatialPoolerTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                System.out.println("pattern " + p + " iter " + " \n" + sp);
+
             }
-            System.out.println("pattern " + p + " iter " + " \n" + sp);
         }
         try {
             pool.shutdown();
@@ -130,14 +143,28 @@ public class SpatialPoolerTest {
 
         long t = System.currentTimeMillis();
         System.out.println("parallel took " + (t - s) + "ms!");
-        System.out.println("" + sp.toString());
+        //  System.out.println("" + sp.toString());
 
-
+        System.out.flush();
         sp.learning(false);
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < patterns.size(); i++) {
             in.setRawInput(patterns.get(i));
-            System.out.println("" + sp.input.toString());
-            sp.getColumn(0).run();
+            System.out.println("TEST #" + i + " INPUT=" + sp.input.toString());
+
+
+            pool = Executors.newCachedThreadPool(Executors.defaultThreadFactory());
+            for (int c = 0; c < sp.size(); c++) {
+                pool.submit(sp.getColumn(c));
+            }
+            pool.shutdown();
+            try {
+                boolean fin = pool.awaitTermination(10, TimeUnit.SECONDS);
+                System.out.println("FIN " + fin);
+            }
+            catch (InterruptedException ex) {
+                Logger.getLogger(SpatialPoolerTest.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println(">>> \n" + sp);
         }
     }
 }
