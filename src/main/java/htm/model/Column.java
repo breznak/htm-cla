@@ -135,14 +135,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
 
         //phase 3
         if (_output == 1) {
-            for (int i = 0; i < perm.length; i++) {
-                if (parent.input.get(0).get(syn_idx[i])) { //inc syn on ON input, dec on OFF input
-                    perm[i] += PERMANENCE_INC;
-                } else {
-                    perm[i] -= PERMANENCE_DEC;
-                }
-                perm[i] = (float) HelperMath.inRange(perm[i], 0, 1);
-            }
+            updateSynapses();
         }
         Thread.yield();
         float minDutyCycle = 0.01f * sp.maxNeighborsFiringRate(neighbor_idx);
@@ -208,5 +201,16 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
 
     public String toString(int i) {
         return "" + _output;
+    }
+
+    private void updateSynapses() {
+        for (int i = 0; i < perm.length; i++) {
+            if (parent.input.get(0).get(syn_idx[i])) { //inc syn on ON input, dec on OFF input
+                perm[i] += PERMANENCE_INC;
+            } else {
+                perm[i] -= PERMANENCE_DEC;
+            }
+            perm[i] = (float) HelperMath.inRange(perm[i], 0, 1);
+        }
     }
 }
