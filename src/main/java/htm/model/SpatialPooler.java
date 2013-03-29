@@ -5,6 +5,7 @@
 package htm.model;
 
 import htm.utils.CircularList;
+import htm.utils.HelperMath;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
     }
 
     protected void setInhibitionRadius(float f) {
+        f = (float) HelperMath.inRange(f, 0, dimX);
         inhibitionRadius.set(Float.floatToRawIntBits(f));
     }
 
