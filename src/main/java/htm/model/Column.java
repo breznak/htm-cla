@@ -28,7 +28,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     protected final CircularList output;
     private boolean learning = true;
     //synapses
-    private static final int DEFAULT_NUM_INPUT_SYNAPSES = 60;
+    private static final int DEFAULT_NUM_INPUT_SYNAPSES = 10;
     private final int NUM_INPUT_SYNAPSES;// = 60;
     public static final float CONNECTED_SYNAPSE_PERM = 0.2f;
     private static final float PERMANENCE_DEC = 0.05f;
@@ -42,7 +42,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private float emaOverlap = 0; //ema for overlap
     //moving average
     protected float emaActive = 0; //exponential moving average for Activation (=output ==1)
-    private static final int SLIDING_WINDOW = 100; //window size for moving average //FIXME should be same as HISTORY_STEPS ??
+    private static final int SLIDING_WINDOW = 10; //window size for moving average //FIXME should be same as HISTORY_STEPS ??
     //helper
     private static final double _ALPHA = 1 / (double) SLIDING_WINDOW; //helper for moving avg
     private int _output = 0; // current output as int
@@ -59,7 +59,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         int diff = (int) (new Random().nextGaussian() * DEFAULT_NUM_INPUT_SYNAPSES * 0.2); //+-20%
         NUM_INPUT_SYNAPSES = HelperMath.inRange(DEFAULT_NUM_INPUT_SYNAPSES + diff, 1, parent.input.size());
         MIN_OVERLAP = HelperMath.inRange(NUM_INPUT_SYNAPSES / 30, 1, 3);//TODO what range?
-        DESIRED_LOCAL_ACTIVITY = HelperMath.inRange((int) (parent.size() * sparsity), 0, Math.min(parent.size() - 1, (sp.DEFAULT_INHIBITION_RADIUS * 2) ^ 2 - 1));
+        DESIRED_LOCAL_ACTIVITY = 5;//!FIXME (int) HelperMath.inRange((int) (parent.size() * sparsity), 0, Math.min(parent.size() - 1, Math.pow(sp.DEFAULT_INHIBITION_RADIUS * 2, 2) - 1));
         int center = new Random().nextInt(NUM_INPUT_SYNAPSES);
         syn_idx = initSynapsesIdx();
         perm = initSynapsePerm(center, syn_idx);
@@ -128,9 +128,8 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         Collections.reverse(nbOverlapValues);  //TODO use reverse sort
         //    }
 
-        System.err.println(DESIRED_LOCAL_ACTIVITY + " FFF" + nbOverlapValues.size());
-        int minLocalActivity = nbOverlapValues.get(DESIRED_LOCAL_ACTIVITY); //kth best
-        if (overlap > 0 && overlap >= minLocalActivity) {//TODO speedup
+        //kth best
+        if (overlap > 0 && (nbOverlapValues.size() < DESIRED_LOCAL_ACTIVITY || overlap >= nbOverlapValues.get(DESIRED_LOCAL_ACTIVITY))) {//>=minLocalActivity //TODO speedup
             output.add(CircularList.BIT_1);
             _output = 1;
         } else {
