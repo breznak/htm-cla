@@ -89,7 +89,6 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     protected int overlap() {
         int o = 0;
         for (int i = 0; i < syn_idx.length; i++) {
-// System.out.println("perm " + (perm[i] >= CONNECTED_SYNAPSE_PERM) + " idx " + syn_idx[i] + " --> " + ((perm[i] >= CONNECTED_SYNAPSE_PERM) && parent.input(syn_idx[i])));
             if (perm[i] > CONNECTED_SYNAPSE_PERM && parent.input(syn_idx[i])) {
                 o++;
             }
@@ -109,21 +108,17 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         //  System.gc();
         //Thread.yield();
         // }
-        //  if (id == 999) {  System.out.println("" + this); }
-        System.out.println("run " + id);
         //_oldHash = tmp;
+
         //phase 1
         overlap = overlap();
-        System.out.println(id + " overlap" + overlap);
         Thread.yield();
 
         //phase 2
         //caching
         //     if ((tmp = sp.inhibitionRadius.get()) != this._inhibitionRadiusOld) {
         neighbor_idx = sp.neighbors(nbOverlapValues, this.id);
-        System.out.println(id + " nb " + neighbor_idx[0]);
-//        this._inhibitionRadiusOld = tmp;
-        //      System.out.println(id + " inhibR " + tmp);
+        //  this._inhibitionRadiusOld = tmp;
         Collections.sort(nbOverlapValues);
         Collections.reverse(nbOverlapValues);  //TODO use reverse sort
         //    }
@@ -136,7 +131,6 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
             output.add(CircularList.BIT_0);
             _output = 0;
         }
-        System.out.println(id + " >>> " + _output);
         Thread.currentThread().yield();
 
         //phase 3
@@ -148,14 +142,12 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
                     perm[i] -= PERMANENCE_DEC;
                 }
                 perm[i] = (float) HelperMath.inRange(perm[i], 0, 1);
-                System.out.println(id + " perm updated!");
             }
         }
         Thread.yield();
         float minDutyCycle = 0.01f * sp.maxNeighborsFiringRate(neighbor_idx);
         //compute moving average
         emaActive = (float) (_ALPHA * emaActive + (1 - _ALPHA) * _output);
-        System.out.println(id + " learning" + learning);
         if (learning) {
             if (emaActive > minDutyCycle) {
                 boost = 1; //TODO add Thread priorities?
