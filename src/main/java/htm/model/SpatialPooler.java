@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.commons.lang.ArrayUtils;
 
 /**
  *
@@ -50,10 +49,10 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
      * @param neighbor_idx
      * @return
      */
-    public float maxNeighborsFiringRate(int[] neighbor_idx) {
+    public float maxNeighborsFiringRate(List<Column> neighbors) {
         float maxFiringR = -1;
-        for (int i = 0; i < neighbor_idx.length; i++) {
-            float m = getColumn(neighbor_idx[i]).emaActive;
+        for (Column nb : neighbors) {
+            float m = nb.emaActive;
             if (m > maxFiringR) {
                 maxFiringR = m;
             }
@@ -72,8 +71,8 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
         inhibitionRadius.set(Float.floatToRawIntBits(f));
     }
 
-    protected int[] neighbors(List<Integer> overlapValues, int curColumnID) {
-        List<Integer> found = new ArrayList<>();
+    protected List<Column> neighbors(List<Integer> overlapValues, int curColumnID) {
+        List<Column> found = new ArrayList<>();
         overlapValues.clear();
         Point me = getCoordinates(curColumnID);
         Column<SpatialPooler> cur;
@@ -91,14 +90,14 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
                 //b) sphere
                 cur = part(((x % dimX) + dimX) % dimX, ((y % dimY) + dimY) % dimY); // fuckin hack for broken modulo, must be non-negative!
 
-                if (getCoordinates(cur.id).equals(me) || found.contains(cur.id)) {
+                if (getCoordinates(cur.id).equals(me) || found.contains(cur)) { //speedup
                     continue;
                 }
-                found.add(cur.id);
+                found.add(cur);
                 overlapValues.add(cur.overlap);
             }
         }
-        return ArrayUtils.toPrimitive(found.toArray(new Integer[found.size()]));
+        return found;
     }
 
     protected void learning(boolean onOff) {

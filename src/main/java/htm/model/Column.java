@@ -8,6 +8,7 @@ import htm.utils.CircularList;
 import htm.utils.HelperMath;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
@@ -20,7 +21,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 public class Column<PARENT extends LayerAbstract> implements Runnable {
 
     //local fields
-    private int[] neighbor_idx;
+    private List<Column> neighbors;
     private final int syn_idx[]; //TODOoptimize to Bit mask
     private final float[] perm;
     protected final PARENT parent;
@@ -117,7 +118,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         //phase 2
         //caching
         //     if ((tmp = sp.inhibitionRadius.get()) != this._inhibitionRadiusOld) {
-        neighbor_idx = sp.neighbors(nbOverlapValues, this.id);
+        neighbors = sp.neighbors(nbOverlapValues, this.id);
         //  this._inhibitionRadiusOld = tmp;
         Collections.sort(nbOverlapValues);
         Collections.reverse(nbOverlapValues);  //TODO use reverse sort
@@ -138,7 +139,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
             updateSynapses();
         }
         Thread.yield();
-        float minDutyCycle = 0.01f * sp.maxNeighborsFiringRate(neighbor_idx);
+        float minDutyCycle = 0.01f * sp.maxNeighborsFiringRate(neighbors);
         //compute moving average
         emaActive = (float) (_ALPHA * emaActive + (1 - _ALPHA) * _output);
         if (learning) {
@@ -196,6 +197,14 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     public String toString() {
         SpatialPooler sp = ((SpatialPooler) parent);
         return "Column id=" + id + " (" + sp.getCoordinates(id) + ") is active=" + _output + " inhibitionR=" + sp.getInhibitionRadius() + " boost=" + boost;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || !this.getClass().equals(obj.getClass())) {
+            return false;
+        }
+        return ((Column) obj).id == this.id;
     }
 
     public String toString(int i) {
