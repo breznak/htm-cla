@@ -90,7 +90,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
                 //b) sphere
                 cur = part(((x % dimX) + dimX) % dimX, ((y % dimY) + dimY) % dimY); // fuckin hack for broken modulo, must be non-negative!
 
-                if (getCoordinates(cur.id).equals(me) || found.contains(cur)) { //speedup
+                if (found.contains(cur) || getCoordinates(cur.id).equals(me)) {
                     continue;
                 }
                 found.add(cur);
