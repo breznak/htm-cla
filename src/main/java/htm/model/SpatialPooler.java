@@ -18,7 +18,7 @@ import org.apache.commons.lang.ArrayUtils;
 public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
 
     protected static final int DEFAULT_INHIBITION_RADIUS = 5;
-    protected final AtomicInteger inhibitionRadius = new AtomicInteger(SpatialPooler.DEFAULT_INHIBITION_RADIUS); //averageReceptiveFieldSize
+    private final AtomicInteger inhibitionRadius = new AtomicInteger(SpatialPooler.DEFAULT_INHIBITION_RADIUS); //averageReceptiveFieldSize
     protected boolean learning = true;
 
     public SpatialPooler(int dimX, int dimY, int id, int timeSteps, CircularList input, double sparsity) {
@@ -61,12 +61,23 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
         return maxFiringR;
     }
 
+    /**
+     * internally, we keep a float there, so need to cast appropriately
+     */
+    protected float getInhibitionRadius() {
+        return Float.intBitsToFloat(inhibitionRadius.get());
+    }
+
+    protected void setInhibitionRadius(float f) {
+        inhibitionRadius.set(Float.floatToRawIntBits(f));
+    }
+
     protected int[] neighbors(List<Integer> overlapValues, int curColumnID) {
         List<Integer> found = new ArrayList<>();
         overlapValues.clear();
         Point me = getCoordinates(curColumnID);
         Column<SpatialPooler> cur;
-        int inhib = inhibitionRadius.get();
+        int inhib = (int) Math.floor(getInhibitionRadius());
         /**
          * here we can switch geometry interpretations of the spatial pooler, a)
          * planar -- rectangle - with edges and corners
@@ -99,7 +110,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
 
     @Override
     public String toString() {
-        String s = this.getClass().getSimpleName() + " [id=" + id + " inhibR=" + inhibitionRadius.get() + " " + dimX + "x" + dimY + " ] \n";
+        String s = this.getClass().getSimpleName() + " [id=" + id + " inhibR=" + getInhibitionRadius() + " " + dimX + "x" + dimY + " ] \n";
         for (int i = 0; i < dimY; i++) {
             for (int j = 0; j < dimX; j++) {
                 s += part(i, j).toString(1) + " ";

@@ -47,7 +47,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private static final double _ALPHA = 1 / (double) SLIDING_WINDOW; //helper for moving avg
     private int _output = 0; // current output as int
     private int _oldHash = 0;
-    private int _inhibitionRadiusOld = -1; //trick != inhibitionRadius
+    private float _inhibitionRadiusOld = -1; //trick != inhibitionRadius
     private SummaryStatistics stats = new SummaryStatistics();
     private SpatialPooler sp;
 
@@ -157,14 +157,14 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         Thread.yield();
 
         //update avg receptive field size
-        tmp = sp.inhibitionRadius.get();
-        /// if (tmp != _inhibitionRadiusOld) { //cache multithreaded, off-sync
-        sp.inhibitionRadius.set(Math.round(((parent.size() - 1) * tmp + receptiveFieldSize()) / parent.size())); //avg//FIXME this is growing!
-        _inhibitionRadiusOld = tmp;
+        float inh = sp.getInhibitionRadius();
+        /// if (inh != _inhibitionRadiusOld) { //cache multithreaded, off-sync
+        sp.setInhibitionRadius(((parent.size() - 1) * inh + receptiveFieldSize()) / parent.size()); //avg//FIXME this is growing!
+        _inhibitionRadiusOld = inh;
         /// }
     }
 
-    protected int receptiveFieldSize() {
+    protected float receptiveFieldSize() {
 //FIXME how to do it? :)...i think ok now, just check
         /*
          * The radius of the average connected receptive field size of all the columns.
@@ -177,8 +177,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
                 stats.addValue(syn_idx[i]);
             }
         }
-        int i = (int) Math.round(stats.getStandardDeviation());
-//        System.out.println("\n STD" + stats.getStandardDeviation());
+        float i = Math.round(stats.getStandardDeviation());
         stats.clear();
         return i;
     }
@@ -196,7 +195,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     @Override
     public String toString() {
         SpatialPooler sp = ((SpatialPooler) parent);
-        return "Column id=" + id + " (" + sp.getCoordinates(id) + ") is active=" + _output + " inhibitionR=" + sp.inhibitionRadius + " boost=" + boost;
+        return "Column id=" + id + " (" + sp.getCoordinates(id) + ") is active=" + _output + " inhibitionR=" + sp.getInhibitionRadius() + " boost=" + boost;
     }
 
     public String toString(int i) {
