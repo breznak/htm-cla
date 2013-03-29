@@ -43,7 +43,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     private float emaOverlap = 0; //ema for overlap
     //moving average
     protected float emaActive = 0; //exponential moving average for Activation (=output ==1)
-    private static final int SLIDING_WINDOW = 10; //window size for moving average //FIXME should be same as HISTORY_STEPS ??
+    private static final int SLIDING_WINDOW = 2; //window size for moving average //FIXME should be same as HISTORY_STEPS ??
     //helper
     private static final double _ALPHA = 1 / (double) SLIDING_WINDOW; //helper for moving avg
     private int _output = 0; // current output as int
@@ -61,7 +61,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         int diff = (int) (new Random().nextGaussian() * DEFAULT_NUM_INPUT_SYNAPSES * 0.2); //+-20%
         NUM_INPUT_SYNAPSES = HelperMath.inRange(DEFAULT_NUM_INPUT_SYNAPSES + diff, 1, parent.input.size());
         MIN_OVERLAP = HelperMath.inRange(NUM_INPUT_SYNAPSES / 30, 1, 3);//TODO what range?
-        DESIRED_LOCAL_ACTIVITY = 5;//!FIXME (int) HelperMath.inRange((int) (parent.size() * sparsity), 0, Math.min(parent.size() - 1, Math.pow(sp.DEFAULT_INHIBITION_RADIUS * 2, 2) - 1));
+        DESIRED_LOCAL_ACTIVITY = (int) HelperMath.inRange((int) (parent.size() * sparsity), 0, Math.min(parent.size(), Math.pow(sp.DEFAULT_INHIBITION_RADIUS * 2, 2)) - 1);
         int center = new Random().nextInt(NUM_INPUT_SYNAPSES);
         syn_idx = initSynapsesIdx();
         perm = initSynapsePerm(center, syn_idx);
@@ -112,11 +112,15 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         //_oldHash = tmp;
 
         //phase 1
+        if (this.id == 0) {
+            System.out.println("here sir");
+        }
         overlap = overlap();
         Thread.yield();
 
         //phase 2
-        if ((int) (tmp = sp.getInhibitionRadius()) != (int) this._inhibitionRadiusOld) { //caching
+        tmp = sp.getInhibitionRadius();
+        if ((int) tmp != (int) this._inhibitionRadiusOld) { //caching
             neighbors = sp.neighbors(this.id);
             this._inhibitionRadiusOld = tmp;
         }
@@ -194,7 +198,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
     @Override
     public String toString() {
         SpatialPooler sp = ((SpatialPooler) parent);
-        return "Column id=" + id + " (" + sp.getCoordinates(id) + ") is active=" + _output + " inhibitionR=" + sp.getInhibitionRadius() + " boost=" + boost;
+        return "Column id=" + id + " (" + sp.getCoordinates(id) + ") is active=" + _output + " inhibitionR=" + sp.getInhibitionRadius() + " boost=" + boost + " overalap=" + overlap;
     }
 
     @Override

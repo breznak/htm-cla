@@ -43,21 +43,19 @@ public class SpatialPoolerTest {
     @Test
     public void checkNeighbors() {
         sp = new SpatialPooler(10, 2, 1, 1, in, 0.02);
-        List<Integer> overlap = new ArrayList<>();
         int id = 0;
-        int[] neighbors = sp.neighbors(overlap, id);
+        List<Column> neighbors = sp.neighbors(id);
         System.out.println("Neighbors of #" + id);
-        for (int i = 0; i < neighbors.length; i++) {
-            System.out.println("nb idx=" + neighbors[i] + " overlap=" + overlap.get(i));
+        for (int i = 0; i < neighbors.size(); i++) {
+            System.out.println("nb =" + neighbors.get(i));
         }
     }
 
     @Test
     public void checkMaxNeighborsEMA() {
         sp = new SpatialPooler(10, 2, 1, 1, in, 0.02);
-        List<Integer> overlap = new ArrayList<>();
         int id = 0;
-        int[] neighbors = sp.neighbors(overlap, id);
+        List<Column> neighbors = sp.neighbors(id);
         float ema = sp.maxNeighborsFiringRate(neighbors);
         System.out.println("Max neighbors' EMA=" + ema);
     }
@@ -106,10 +104,10 @@ public class SpatialPoolerTest {
         for (int i = 0; i < 2; i++) {
             patterns.add(in.randomSample());
         }
-        sp = new SpatialPooler(100, 100, 1, 2, in, 0.1);
+        sp = new SpatialPooler(10, 10, 1, 2, in, 0.3);
         System.out.println("start!");
         long s = System.currentTimeMillis();
-        ExecutorService pool = Executors.newFixedThreadPool(1, Executors.defaultThreadFactory());
+        ExecutorService pool = Executors.newCachedThreadPool(Executors.defaultThreadFactory());
         int RUNS = 5;
         for (BitSet p : patterns) {
             in.setRawInput(p);

@@ -17,12 +17,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
 
     protected static final int DEFAULT_INHIBITION_RADIUS = 5;
-    private final AtomicInteger inhibitionRadius = new AtomicInteger(SpatialPooler.DEFAULT_INHIBITION_RADIUS); //averageReceptiveFieldSize
+    private final AtomicInteger inhibitionRadius = new AtomicInteger(); //averageReceptiveFieldSize
     protected boolean learning = true;
 
     public SpatialPooler(int dimX, int dimY, int id, int timeSteps, CircularList input, double sparsity) {
         super(dimX, dimY, id, timeSteps, input);
-
+        setInhibitionRadius(DEFAULT_INHIBITION_RADIUS);
         for (int i = 0; i < this.dimX * this.dimY; i++) { //! this.dimX is important, as dimX/Y get reordered in LayerAbstract, dimX==bigger
             Point p = getCoordinates(i);
             int x = p.x;
