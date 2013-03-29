@@ -7,6 +7,7 @@ package htm.model;
 import htm.utils.CircularList;
 import htm.utils.HelperMath;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -21,7 +22,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 public class Column<PARENT extends LayerAbstract> implements Runnable {
 
     //local fields
-    private List<Column> neighbors;
+    private Collection<Column> neighbors;
     private final int syn_idx[]; //TODOoptimize to Bit mask
     private final float[] perm;
     protected final PARENT parent;
@@ -112,9 +113,6 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         //_oldHash = tmp;
 
         //phase 1
-        if (this.id == 0) {
-            System.out.println("here sir");
-        }
         overlap = overlap();
         Thread.yield();
 
@@ -224,7 +222,7 @@ public class Column<PARENT extends LayerAbstract> implements Runnable {
         }
     }
 
-    private List<Integer> getSortedOverlaps(List<Column> neighbors) {
+    private List<Integer> getSortedOverlaps(Collection<Column> neighbors) {
         List<Integer> overlaps = new ArrayList<>();
         for (Column c : neighbors) {
             overlaps.add(c.overlap);

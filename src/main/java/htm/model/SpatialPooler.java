@@ -8,6 +8,7 @@ import htm.utils.CircularList;
 import htm.utils.HelperMath;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,7 +51,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
      * @param neighbor_idx
      * @return
      */
-    public float maxNeighborsFiringRate(List<Column> neighbors) {
+    public float maxNeighborsFiringRate(Collection<Column> neighbors) {
         float maxFiringR = -1;
         for (Column nb : neighbors) {
             float m = nb.emaActive;
@@ -73,7 +74,7 @@ public class SpatialPooler extends LayerAbstract<Column<SpatialPooler>> {
         inhibitionRadius.set(Float.floatToRawIntBits(f));
     }
 
-    protected List<Column> neighbors(int curColumnID) {
+    protected Collection<Column> neighbors(int curColumnID) {
         List<Column> found = new ArrayList<>();
         Point me = getCoordinates(curColumnID);
         Column<SpatialPooler> cur;
