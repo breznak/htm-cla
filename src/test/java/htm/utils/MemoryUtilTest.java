@@ -17,18 +17,12 @@ import java.util.concurrent.atomic.AtomicLongArray;
 public class MemoryUtilTest {
 
     /**
-     * measure memory footprint of java objects! run: $ javac -classpath
-     * /home/marek/devel/DP/htm-java/target/classes:/home/marek/.m2/repository/junit/junit/4.8.2/junit-4.8.2.jar:/home/marek/devel/DP/htm-java/src/main/java/com/javamex/classmexer/classmexer.jar
-     * htm/utils/MemoryUsage.java
-     *
-     * $ java -classpath
-     * /home/marek/devel/DP/htm-java/target/classes:/home/marek/.m2/repository/junit/junit/4.8.2/junit-4.8.2.jar:/home/marek/devel/DP/htm-java/src/main/java/com/javamex/classmexer/classmexer.jar
-     * -javaagent:./com/javamex/classmexer/classmexer.jar
-     * htm.utils.MemoryUtilTest
+     * measure memory footprint of java objects! run: $cd target/test-classes
+     * $java -javaagent:classmexer-0.03.jar htm.utils.MemoryUtilTest
      *
      * @param args
      */
-    //@Test//FIXME does not work 
+    //@Test//FIXME does not work
     public void checkMemoryRequirements() {
         Object o;
         long noBytes;
@@ -60,5 +54,10 @@ public class MemoryUtilTest {
         o = new AtomicLongArray(elements);
         noBytes = MemoryUtil.deepMemoryUsageOf(o, VisibilityFilter.ALL);
         System.out.println("Memory usage of BitSet[" + elements + "] =" + noBytes + " Bytes");
+    }
+
+    public static void main(String[] args) {
+        MemoryUtilTest memTest = new MemoryUtilTest();
+        memTest.checkMemoryRequirements();
     }
 }
