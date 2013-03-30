@@ -11,8 +11,16 @@
     <description>web software for htm</description>
 
 
+    <repositories>
+        <repository>
+            <id>in-project</id>
+            <name>In Project Repo</name>
+            <url>file://${project.basedir}/libs</url>
+        </repository>
+    </repositories>
+
     <dependencies>
-	<dependency>
+        <dependency>
             <groupId>classmexer</groupId>
             <artifactId>classmexer</artifactId>
             <version>0.03</version>
@@ -30,11 +38,12 @@
             <groupId>colt</groupId>
             <artifactId>colt</artifactId>
             <version>1.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jblas</groupId>
-            <artifactId>jblas</artifactId>
-            <version>1.2.3</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>concurrent</artifactId>
+                    <groupId>concurrent</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
