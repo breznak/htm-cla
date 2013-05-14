@@ -1,8 +1,3 @@
-htm-cla
-=======
+Hi. I'm trying to figure out how to get ahold of you to chat about Numenta's upcoming open-source offering, and this is the only way I can figure out how to do it.
 
-Hiearchical temporal memory (HTM) cortical learning algorithms (CLA) library in java. 
-Developed on Numenta's HTM CLA research, 
-implementation based upon vincentvanrijn's work, available here: https://code.google.com/p/htm/ 
-
-Enjoy your days!
+Please email me at matt@numenta.org.  
